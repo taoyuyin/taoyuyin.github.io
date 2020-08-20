@@ -28,7 +28,7 @@
 <meta property="og:description" content="在 Linux 下通过 find 和 grep 查找包含指定字符串的文件直接上示例，拿走即用 1$ find &#x2F;home -type f -name &amp;#x27;*.py&amp;#x27; -exec grep -n &amp;#x27;MySQL&amp;#x27; --color&#x3D;auto &amp;#123;&amp;#125; \; -print  作用是在’&#x2F;home’目录下查找包含’MySQL’以’py’结尾的文件，输出内">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-08-19T12:02:41.000Z">
-<meta property="article:modified_time" content="2020-08-19T13:45:00.798Z">
+<meta property="article:modified_time" content="2020-08-20T05:49:19.317Z">
 <meta property="article:author" content="taoyuyin">
 <meta name="twitter:card" content="summary">
 
@@ -172,10 +172,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2020-08-19 20:02:41 / Modified: 21:45:00" itemprop="dateCreated datePublished" datetime="2020-08-19T20:02:41+08:00">2020-08-19</time>
+              <time title="Created: 2020-08-19 20:02:41" itemprop="dateCreated datePublished" datetime="2020-08-19T20:02:41+08:00">2020-08-19</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-08-20 13:49:19" itemprop="dateModified" datetime="2020-08-20T13:49:19+08:00">2020-08-20</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -215,7 +221,7 @@
 
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ find /home -name <span class="string">&#x27;*.py&#x27;</span> -<span class="built_in">exec</span> grep -n <span class="string">&#x27;MySQL&#x27;</span> --color=auto &#123;&#125; \; -<span class="built_in">print</span> <span class="comment"># 查找 Python 文件，搜索包含&#x27;MySQL&#x27;的行，将文件打印出来</span></span><br></pre></td></tr></table></figure>
 
-<p>其他用法可以分别查看 find 和 grep 的用法</p>
+<p>其他用法可以分别查看 find 和 grep 的用法。</p>
 
     </div>
 

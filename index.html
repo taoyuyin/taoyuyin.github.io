@@ -168,10 +168,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2020-08-19 21:46:10 / Modified: 22:29:07" itemprop="dateCreated datePublished" datetime="2020-08-19T21:46:10+08:00">2020-08-19</time>
+              <time title="Created: 2020-08-19 21:46:10" itemprop="dateCreated datePublished" datetime="2020-08-19T21:46:10+08:00">2020-08-19</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-08-20 13:49:19" itemprop="dateModified" datetime="2020-08-20T13:49:19+08:00">2020-08-20</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -195,7 +201,7 @@
       
           <h2 id="利用-PicGo-和-GitHub-构建图床"><a href="#利用-PicGo-和-GitHub-构建图床" class="headerlink" title="利用 PicGo 和 GitHub 构建图床"></a>利用 PicGo 和 GitHub 构建图床</h2><p>使用 Markdown 写作，需要有个图片上传的地方，可以利用 PicGo 和 GitHub 构建自己的图床。</p>
 <h2 id="创建-GitHub-仓库"><a href="#创建-GitHub-仓库" class="headerlink" title="创建 GitHub 仓库"></a>创建 GitHub 仓库</h2><p>我的 Repository name 用的 picgo2，点击 Create repository。</p>
-<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200812174106.png"></p>
+<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819215805.png"></p>
 <h2 id="生成-GitHub-Token"><a href="#生成-GitHub-Token" class="headerlink" title="生成 GitHub Token"></a>生成 GitHub Token</h2><p>在 GitHub 生成一个 Token，以备在 PicGo 配置用<br>点击展开头像，依次点击 Settings、Developer settings、Personal access tokens<br>或者直接输入 <a target="_blank" rel="noopener" href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></p>
 <p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819220449.png"></p>
 <p>然后点击页面的 Generate new token 按钮<br>在 Note 处输入一个名字，我输入的是刚才创建的 Repository name<br>Select scopes 勾选 repo。<br>点击下面的 Generate token 按钮。</p>
@@ -206,7 +212,7 @@
 <h2 id="配置-PicGo"><a href="#配置-PicGo" class="headerlink" title="配置 PicGo"></a>配置 PicGo</h2><p>点击图床设置下的 GitHub 图床<br>依次输入<br>设定仓库名，taoyuyin/picgo2<br>设定分支名，我用的 master<br>设定Token，刚才创建的 Token<br>指定存储路径，我用的 pics/。注意需要带上斜杠，GitHub 会自动创建个目录。</p>
 <p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819221709.png"></p>
 <p>点击确定，一个基于 PicGo 和 GitHub 的图床就构建好了。</p>
-<h2 id="上传图片"><a href="#上传图片" class="headerlink" title="上传图片"></a>上传图片</h2><p>点击上传取，就可以上传图片了，选用 Markdown 模式，上传后生成的链接可以直接在 Markdown 里使用了。</p>
+<h2 id="上传图片"><a href="#上传图片" class="headerlink" title="上传图片"></a>上传图片</h2><p>点击上传区，就可以上传图片了，选用 Markdown 模式，上传后生成的链接可以直接在 Markdown 里使用了。</p>
 
       
     </div>
@@ -249,10 +255,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2020-08-19 20:02:41 / Modified: 21:45:00" itemprop="dateCreated datePublished" datetime="2020-08-19T20:02:41+08:00">2020-08-19</time>
+              <time title="Created: 2020-08-19 20:02:41" itemprop="dateCreated datePublished" datetime="2020-08-19T20:02:41+08:00">2020-08-19</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-08-20 13:49:19" itemprop="dateModified" datetime="2020-08-20T13:49:19+08:00">2020-08-20</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -292,7 +304,7 @@
 
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ find /home -name <span class="string">&#x27;*.py&#x27;</span> -<span class="built_in">exec</span> grep -n <span class="string">&#x27;MySQL&#x27;</span> --color=auto &#123;&#125; \; -<span class="built_in">print</span> <span class="comment"># 查找 Python 文件，搜索包含&#x27;MySQL&#x27;的行，将文件打印出来</span></span><br></pre></td></tr></table></figure>
 
-<p>其他用法可以分别查看 find 和 grep 的用法</p>
+<p>其他用法可以分别查看 find 和 grep 的用法。</p>
 
       
     </div>
