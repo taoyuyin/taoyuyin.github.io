@@ -20,19 +20,25 @@
     var CONFIG = {"hostname":"taoyuyin.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="安装和使用Hexo的主题 NexTHexo 安装主题的方式非常简单，只需要将主题文件拷贝至站点目录的 themes 目录下， 然后修改下配置文件即可。 安装主题123$ cd taoyuyin.github.io$ git clone https:&#x2F;&#x2F;github.com&#x2F;theme-next&#x2F;hexo-theme-next.git themes&#x2F;next  启用主题编辑 _config.yml">
+  <meta name="description" content="利用 PicGo 和 GitHub 构建图床使用 Markdown 写作，需要有个图片上传的地方，可以利用 PicGo 和 GitHub 构建自己的图床。 创建 GitHub 仓库我的 Repository name 用的 picgo2，点击 Create repository。  生成 GitHub Token在 GitHub 生成一个 Token，以备在 PicGo 配置用点击展开头像，依次点">
 <meta property="og:type" content="article">
-<meta property="og:title" content="安装和使用Hexo的主题 NexT">
-<meta property="og:url" content="https://taoyuyin.github.io/2020/08/17/hexo-theme-next/index.html">
+<meta property="og:title" content="利用 PicGo 和 GitHub 构建图床">
+<meta property="og:url" content="https://taoyuyin.github.io/2020/08/19/bulid-picgo-with-github/index.html">
 <meta property="og:site_name" content="taoyuyin.github.io">
-<meta property="og:description" content="安装和使用Hexo的主题 NexTHexo 安装主题的方式非常简单，只需要将主题文件拷贝至站点目录的 themes 目录下， 然后修改下配置文件即可。 安装主题123$ cd taoyuyin.github.io$ git clone https:&#x2F;&#x2F;github.com&#x2F;theme-next&#x2F;hexo-theme-next.git themes&#x2F;next  启用主题编辑 _config.yml">
+<meta property="og:description" content="利用 PicGo 和 GitHub 构建图床使用 Markdown 写作，需要有个图片上传的地方，可以利用 PicGo 和 GitHub 构建自己的图床。 创建 GitHub 仓库我的 Repository name 用的 picgo2，点击 Create repository。  生成 GitHub Token在 GitHub 生成一个 Token，以备在 PicGo 配置用点击展开头像，依次点">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-08-17T14:20:00.000Z">
-<meta property="article:modified_time" content="2020-08-20T12:03:41.199Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819215805.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819220449.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819220449.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819221418.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819221709.png">
+<meta property="article:published_time" content="2020-08-19T13:46:10.000Z">
+<meta property="article:modified_time" content="2020-08-20T05:49:19.309Z">
 <meta property="article:author" content="taoyuyin">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819215805.png">
 
-<link rel="canonical" href="https://taoyuyin.github.io/2020/08/17/hexo-theme-next/">
+<link rel="canonical" href="https://taoyuyin.github.io/2020/08/19/bulid-picgo-with-github/">
 
 
 <script id="page-configurations">
@@ -45,7 +51,7 @@
   };
 </script>
 
-  <title>安装和使用Hexo的主题 NexT | taoyuyin.github.io</title>
+  <title>利用 PicGo 和 GitHub 构建图床 | taoyuyin.github.io</title>
   
 
 
@@ -155,7 +161,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://taoyuyin.github.io/2020/08/17/hexo-theme-next/">
+    <link itemprop="mainEntityOfPage" href="https://taoyuyin.github.io/2020/08/19/bulid-picgo-with-github/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -168,7 +174,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          安装和使用Hexo的主题 NexT
+          利用 PicGo 和 GitHub 构建图床
         </h1>
 
         <div class="post-meta">
@@ -178,14 +184,14 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2020-08-17 22:20:00" itemprop="dateCreated datePublished" datetime="2020-08-17T22:20:00+08:00">2020-08-17</time>
+              <time title="Created: 2020-08-19 21:46:10" itemprop="dateCreated datePublished" datetime="2020-08-19T21:46:10+08:00">2020-08-19</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-08-20 20:03:41" itemprop="dateModified" datetime="2020-08-20T20:03:41+08:00">2020-08-20</time>
+                <time title="Modified: 2020-08-20 13:49:19" itemprop="dateModified" datetime="2020-08-20T13:49:19+08:00">2020-08-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -208,25 +214,21 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="安装和使用Hexo的主题-NexT"><a href="#安装和使用Hexo的主题-NexT" class="headerlink" title="安装和使用Hexo的主题 NexT"></a>安装和使用Hexo的主题 NexT</h2><p>Hexo 安装主题的方式非常简单，只需要将主题文件拷贝至站点目录的 themes 目录下， 然后修改下配置文件即可。</p>
-<h2 id="安装主题"><a href="#安装主题" class="headerlink" title="安装主题"></a>安装主题</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> taoyuyin.github.io</span><br><span class="line">$ git <span class="built_in">clone</span> https://github.com/theme-next/hexo-theme-next.git themes/next</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+        <h2 id="利用-PicGo-和-GitHub-构建图床"><a href="#利用-PicGo-和-GitHub-构建图床" class="headerlink" title="利用 PicGo 和 GitHub 构建图床"></a>利用 PicGo 和 GitHub 构建图床</h2><p>使用 Markdown 写作，需要有个图片上传的地方，可以利用 PicGo 和 GitHub 构建自己的图床。</p>
+<h2 id="创建-GitHub-仓库"><a href="#创建-GitHub-仓库" class="headerlink" title="创建 GitHub 仓库"></a>创建 GitHub 仓库</h2><p>我的 Repository name 用的 picgo2，点击 Create repository。</p>
+<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819215805.png"></p>
+<h2 id="生成-GitHub-Token"><a href="#生成-GitHub-Token" class="headerlink" title="生成 GitHub Token"></a>生成 GitHub Token</h2><p>在 GitHub 生成一个 Token，以备在 PicGo 配置用<br>点击展开头像，依次点击 Settings、Developer settings、Personal access tokens<br>或者直接输入 <a target="_blank" rel="noopener" href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></p>
+<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819220449.png"></p>
+<p>然后点击页面的 Generate new token 按钮<br>在 Note 处输入一个名字，我输入的是刚才创建的 Repository name<br>Select scopes 勾选 repo。<br>点击下面的 Generate token 按钮。</p>
+<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819220449.png"></p>
+<p>Token 创建好了，页面暂时不要动或保存下 Token。</p>
+<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819221418.png"></p>
+<h2 id="安装-PicGo"><a href="#安装-PicGo" class="headerlink" title="安装 PicGo"></a>安装 PicGo</h2><p>我使用的是2.3.0版本<br>PicGo 下载地址 <a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/PicGo/releases">https://github.com/Molunerfinn/PicGo/releases</a><br>Mac 下直接安装就好。</p>
+<h2 id="配置-PicGo"><a href="#配置-PicGo" class="headerlink" title="配置 PicGo"></a>配置 PicGo</h2><p>点击图床设置下的 GitHub 图床<br>依次输入<br>设定仓库名，taoyuyin/picgo2<br>设定分支名，我用的 master<br>设定Token，刚才创建的 Token<br>指定存储路径，我用的 pics/。注意需要带上斜杠，GitHub 会自动创建个目录。</p>
+<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819221709.png"></p>
+<p>点击确定，一个基于 PicGo 和 GitHub 的图床就构建好了。</p>
+<h2 id="上传图片"><a href="#上传图片" class="headerlink" title="上传图片"></a>上传图片</h2><p>点击上传区，就可以上传图片了，选用 Markdown 模式，上传后生成的链接可以直接在 Markdown 里使用了。</p>
 
-<h2 id="启用主题"><a href="#启用主题" class="headerlink" title="启用主题"></a>启用主题</h2><p>编辑 _config.yml</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">theme:</span> <span class="string">next</span></span><br><span class="line"></span><br><span class="line"><span class="attr">scheme:</span> <span class="string">Pisces</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="配置主题"><a href="#配置主题" class="headerlink" title="配置主题"></a>配置主题</h2><p>编辑 themes/next/_config.yml。注意这个是主题目录下的 _config.yml 文件。</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">scheme:</span> <span class="string">Pisces</span></span><br><span class="line"></span><br><span class="line"><span class="attr">menu:</span></span><br><span class="line">  <span class="attr">home:</span> <span class="string">/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-home</span></span><br><span class="line">  <span class="attr">about:</span> <span class="string">/about/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-user</span></span><br><span class="line">  <span class="attr">archives:</span> <span class="string">/archives/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-archive</span></span><br></pre></td></tr></table></figure>
-
-<p>除了 archives 不需要创建目录，其他分类需要自己创建</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new page <span class="string">&#x27;about&#x27;</span> <span class="comment"># 创建 about 对应目录和页面</span></span><br></pre></td></tr></table></figure>
-
-
-<h2 id="预览发布"><a href="#预览发布" class="headerlink" title="预览发布"></a>预览发布</h2><p>生成博客</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo g</span><br><span class="line">$ hexo s</span><br></pre></td></tr></table></figure>
-
-<p>本地预览 访问 <a target="_blank" rel="noopener" href="http://localhost:4000/">http://localhost:4000</a></p>
-<p>发布</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo d</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -241,13 +243,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/08/17/bulid-blog-with-hexo/" rel="prev" title="利用 GitHub 和 Hexo 构建博客">
-      <i class="fa fa-chevron-left"></i> 利用 GitHub 和 Hexo 构建博客
+    <a href="/2020/08/19/grep-string-with-find/" rel="prev" title="在 Linux 下通过 find 和 grep 查找包含指定字符串的文件">
+      <i class="fa fa-chevron-left"></i> 在 Linux 下通过 find 和 grep 查找包含指定字符串的文件
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/08/19/grep-string-with-find/" rel="next" title="在 Linux 下通过 find 和 grep 查找包含指定字符串的文件">
-      在 Linux 下通过 find 和 grep 查找包含指定字符串的文件 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -306,7 +305,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8Hexo%E7%9A%84%E4%B8%BB%E9%A2%98-NexT"><span class="nav-number">1.</span> <span class="nav-text">安装和使用Hexo的主题 NexT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E4%B8%BB%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">安装主题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E7%94%A8%E4%B8%BB%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">启用主题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E4%B8%BB%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">配置主题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%84%E8%A7%88%E5%8F%91%E5%B8%83"><span class="nav-number">5.</span> <span class="nav-text">预览发布</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A9%E7%94%A8-PicGo-%E5%92%8C-GitHub-%E6%9E%84%E5%BB%BA%E5%9B%BE%E5%BA%8A"><span class="nav-number">1.</span> <span class="nav-text">利用 PicGo 和 GitHub 构建图床</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA-GitHub-%E4%BB%93%E5%BA%93"><span class="nav-number">2.</span> <span class="nav-text">创建 GitHub 仓库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E6%88%90-GitHub-Token"><span class="nav-number">3.</span> <span class="nav-text">生成 GitHub Token</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-PicGo"><span class="nav-number">4.</span> <span class="nav-text">安装 PicGo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-PicGo"><span class="nav-number">5.</span> <span class="nav-text">配置 PicGo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87"><span class="nav-number">6.</span> <span class="nav-text">上传图片</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
