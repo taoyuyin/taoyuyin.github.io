@@ -29,7 +29,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200822203424.png">
 <meta property="article:published_time" content="2020-08-22T12:15:41.000Z">
-<meta property="article:modified_time" content="2020-08-22T12:34:49.425Z">
+<meta property="article:modified_time" content="2020-08-22T15:01:01.775Z">
 <meta property="article:author" content="taoyuyin">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200822203424.png">
@@ -186,7 +186,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2020-08-22 20:15:41 / Modified: 20:34:49" itemprop="dateCreated datePublished" datetime="2020-08-22T20:15:41+08:00">2020-08-22</time>
+              <time title="Created: 2020-08-22 20:15:41 / Modified: 23:01:01" itemprop="dateCreated datePublished" datetime="2020-08-22T20:15:41+08:00">2020-08-22</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -217,7 +217,7 @@
 <h2 id="安装和使用-Docker"><a href="#安装和使用-Docker" class="headerlink" title="安装和使用 Docker"></a>安装和使用 Docker</h2><p>这篇文章的假设前提是你对 Docker 比较熟悉，或者至少安装了 Docker。<br>如果你不知道 Docker 是什么或者不知道怎么使用，需要先查阅和熟悉下 Docker 的资料和使用方法。</p>
 <h2 id="基于镜像-jupyter-scipy-notebook-再进行-build"><a href="#基于镜像-jupyter-scipy-notebook-再进行-build" class="headerlink" title="基于镜像 jupyter/scipy-notebook 再进行 build"></a>基于镜像 jupyter/scipy-notebook 再进行 build</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker search jupyter <span class="comment"># 从Docker Hub查找Jupyter镜像</span></span><br></pre></td></tr></table></figure>
 <p>发现已经有构建好的Jupyter镜像，我使用jupyter/scipy-notebook，发现没有 Hive 环境以及相关依赖，所以基于这个镜像进行了再次构建。</p>
-<h3 id="编写-requirements-txt-和-run-sh"><a href="#编写-requirements-txt-和-run-sh" class="headerlink" title="编写 requirements.txt 和 run.sh"></a>编写 requirements.txt 和 run.sh</h3><p>Python 链接 Hive 我用的是PyHive，以及相关的依赖。</p>
+<h3 id="编写-requirements-txt-和-run-sh"><a href="#编写-requirements-txt-和-run-sh" class="headerlink" title="编写 requirements.txt 和 run.sh"></a>编写 requirements.txt 和 run.sh</h3><p>Python 链接 Hive 我用的是PyHive，需要安装相关的依赖。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ cat requirements.txt</span><br><span class="line">PyHive==0.5.0</span><br><span class="line">thrift==0.10.0</span><br><span class="line">thriftpy==0.3.9</span><br><span class="line">sasl==0.2.1</span><br><span class="line">thrift-sasl==0.3.0</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cat run.sh</span><br><span class="line">tini -g -- start-notebook.sh <span class="comment"># 启动脚本</span></span><br></pre></td></tr></table></figure>
@@ -243,14 +243,14 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;Python version &#x27;</span> + sys.version)</span><br><span class="line">print(<span class="string">&#x27;Pandas version &#x27;</span> + pd.__version__)</span><br><span class="line">print(<span class="string">&#x27;Matplotlib version &#x27;</span> + matplotlib.__version__)</span><br></pre></td></tr></table></figure>
 
 <p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200822203424.png"></p>
-<p>可以写一个类似下面的简单脚本测试下 Hive 连接</p>
+<p>可以写一个类似下面的简单脚本测试下 Hive 连接功能是否正常</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyhive <span class="keyword">import</span> hive</span><br><span class="line"><span class="keyword">from</span> TCLIService.ttypes <span class="keyword">import</span> TOperationState</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">cursor = hive.connect(host=<span class="string">&#x27;&#x27;</span>,port=<span class="number">10000</span>,username=<span class="string">&#x27;x&#x27;</span>,password=<span class="string">&#x27;x&#x27;</span>,auth=<span class="string">&#x27;LDAP&#x27;</span>).cursor()</span><br><span class="line"></span><br><span class="line">hql=<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">select</span></span><br><span class="line"><span class="string">id,</span></span><br><span class="line"><span class="string">add_date</span></span><br><span class="line"><span class="string">from dwd.dwd_user_dim_user_base</span></span><br><span class="line"><span class="string">limit 1000</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">cursor.execute(hql)</span><br><span class="line">df = pd.DataFrame(cursor.fetchall(), columns = [<span class="string">&#x27;id&#x27;</span>,<span class="string">&#x27;add_date&#x27;</span>])</span><br><span class="line">df.head(<span class="number">20</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>好了，至此一个本地的 Jupyter 环境就部署好了。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://docs.docker.com/develop/">docker docs</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/">docker docs</a></li>
 <li><a target="_blank" rel="noopener" href="https://hub.docker.com/r/jupyter/scipy-notebook">scipy-notebook</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/jupyter/docker-stack">docker-stack</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/jupyter/docker-stacks">docker-stack</a></li>
 </ul>
 
     </div>
