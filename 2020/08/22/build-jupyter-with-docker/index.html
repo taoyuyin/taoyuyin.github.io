@@ -27,10 +27,12 @@
 <meta property="og:site_name" content="taoyuyin.github.io">
 <meta property="og:description" content="使用 Docker 在本地构建 Jupyter Notebook先看下 Jupyter 官方的介绍  The Jupyter Notebook is an open-source web application that allows you to create and share documents that contain live code, equations, visualization">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200822203424.png">
 <meta property="article:published_time" content="2020-08-22T12:15:41.000Z">
-<meta property="article:modified_time" content="2020-08-22T12:32:47.296Z">
+<meta property="article:modified_time" content="2020-08-22T12:34:49.425Z">
 <meta property="article:author" content="taoyuyin">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200822203424.png">
 
 <link rel="canonical" href="https://taoyuyin.github.io/2020/08/22/build-jupyter-with-docker/">
 
@@ -184,7 +186,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2020-08-22 20:15:41 / Modified: 20:32:47" itemprop="dateCreated datePublished" datetime="2020-08-22T20:15:41+08:00">2020-08-22</time>
+              <time title="Created: 2020-08-22 20:15:41 / Modified: 20:34:49" itemprop="dateCreated datePublished" datetime="2020-08-22T20:15:41+08:00">2020-08-22</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -240,6 +242,7 @@
 <h2 id="查看版本和测试功能"><a href="#查看版本和测试功能" class="headerlink" title="查看版本和测试功能"></a>查看版本和测试功能</h2><p>新建一个 Python 文件运行查看下版本</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;Python version &#x27;</span> + sys.version)</span><br><span class="line">print(<span class="string">&#x27;Pandas version &#x27;</span> + pd.__version__)</span><br><span class="line">print(<span class="string">&#x27;Matplotlib version &#x27;</span> + matplotlib.__version__)</span><br></pre></td></tr></table></figure>
 
+<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200822203424.png"></p>
 <p>可以写一个类似下面的简单脚本测试下 Hive 连接</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyhive <span class="keyword">import</span> hive</span><br><span class="line"><span class="keyword">from</span> TCLIService.ttypes <span class="keyword">import</span> TOperationState</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">cursor = hive.connect(host=<span class="string">&#x27;&#x27;</span>,port=<span class="number">10000</span>,username=<span class="string">&#x27;x&#x27;</span>,password=<span class="string">&#x27;x&#x27;</span>,auth=<span class="string">&#x27;LDAP&#x27;</span>).cursor()</span><br><span class="line"></span><br><span class="line">hql=<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">select</span></span><br><span class="line"><span class="string">id,</span></span><br><span class="line"><span class="string">add_date</span></span><br><span class="line"><span class="string">from dwd.dwd_user_dim_user_base</span></span><br><span class="line"><span class="string">limit 1000</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">cursor.execute(hql)</span><br><span class="line">df = pd.DataFrame(cursor.fetchall(), columns = [<span class="string">&#x27;id&#x27;</span>,<span class="string">&#x27;add_date&#x27;</span>])</span><br><span class="line">df.head(<span class="number">20</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
