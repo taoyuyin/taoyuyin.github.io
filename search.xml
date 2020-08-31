@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>使用 Docker 在本地构建 Jupyter Notebook</title>
+    <url>/2020/08/22/build-jupyter-with-docker/</url>
+    <content><![CDATA[<h2 id="使用-Docker-在本地构建-Jupyter-Notebook"><a href="#使用-Docker-在本地构建-Jupyter-Notebook" class="headerlink" title="使用 Docker 在本地构建 Jupyter Notebook"></a>使用 Docker 在本地构建 Jupyter Notebook</h2><p>先看下 Jupyter 官方的介绍</p>
+<blockquote>
+<p>The Jupyter Notebook is an open-source web application that allows you to create and share documents that contain live code, equations, visualizations and narrative text. Uses include: data cleaning and transformation, numerical simulation, statistical modeling, data visualization, machine learning, and much more.</p>
+</blockquote>
+<p>一个很方便地使用 Python 做数据分析和数据科学的 Web 应用，赶快在本地构建一个用起来吧。</p>
+<h2 id="安装和使用-Docker"><a href="#安装和使用-Docker" class="headerlink" title="安装和使用 Docker"></a>安装和使用 Docker</h2><p>这篇文章的假设前提是你对 Docker 比较熟悉，或者至少安装了 Docker。<br>如果你不知道 Docker 是什么或者不知道怎么使用，需要先查阅和熟悉下 Docker 的资料和使用方法。</p>
+<h2 id="基于镜像-jupyter-scipy-notebook-再进行-build"><a href="#基于镜像-jupyter-scipy-notebook-再进行-build" class="headerlink" title="基于镜像 jupyter/scipy-notebook 再进行 build"></a>基于镜像 jupyter/scipy-notebook 再进行 build</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker search jupyter <span class="comment"># 从Docker Hub查找Jupyter镜像</span></span><br></pre></td></tr></table></figure>
+<p>发现已经有构建好的Jupyter镜像，我使用jupyter/scipy-notebook，发现没有 Hive 环境以及相关依赖，所以基于这个镜像进行了再次构建。</p>
+<h3 id="编写-requirements-txt-和-run-sh"><a href="#编写-requirements-txt-和-run-sh" class="headerlink" title="编写 requirements.txt 和 run.sh"></a>编写 requirements.txt 和 run.sh</h3><p>Python 链接 Hive 我用的是PyHive，需要安装相关的依赖。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cat requirements.txt</span><br><span class="line">PyHive==0.5.0</span><br><span class="line">thrift==0.10.0</span><br><span class="line">thriftpy==0.3.9</span><br><span class="line">sasl==0.2.1</span><br><span class="line">thrift-sasl==0.3.0</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cat run.sh</span><br><span class="line">tini -g -- start-notebook.sh <span class="comment"># 启动脚本</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="编写-Dockerfile"><a href="#编写-Dockerfile" class="headerlink" title="编写 Dockerfile"></a>编写 Dockerfile</h3><p>Dockerfile 是一个文本文件，里面是指令和 shell 命令。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">FROM jupyter/scipy-notebook:b2562c469cdd    <span class="comment"># 基于一个Docker image</span></span><br><span class="line"></span><br><span class="line">USER root        <span class="comment"># 指定 root 。基础镜像以用户jovyan运行，执行 apt-get 报权限问题</span></span><br><span class="line">RUN apt-get update    <span class="comment"># RUN 后面写 shell 命令</span></span><br><span class="line">RUN apt-get install libsasl2-dev libsasl2-2 libsasl2-modules-gssapi-mit</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">USER jovyan        <span class="comment"># 切换回用户jovyan</span></span><br><span class="line">RUN mkdir code    <span class="comment"># 创建一个目录</span></span><br><span class="line">COPY ./ code    <span class="comment"># 复制指令，从上下文目录中复制文件或者目录到容器里指定路径。</span></span><br><span class="line">RUN pip install -r code/requirements.txt -i https://pypi.douban.com/simple/    <span class="comment"># 安装Python库</span></span><br><span class="line"></span><br><span class="line">RUN cp code/lib/hive.py /opt/conda/lib/python3.8/site-packages/pyhive/hive.py    <span class="comment"># 安装的库源码有语法兼容问题，这里我做了修改和替换</span></span><br><span class="line"></span><br><span class="line">CMD [<span class="string">&quot;/bin/bash&quot;</span>,<span class="string">&quot;code/run.sh&quot;</span>]        <span class="comment"># 在docker run 时运行 code/run.sh</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>最后当前目录包含如下的文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ tree ./</span><br><span class="line">./</span><br><span class="line">├── Dockerfile</span><br><span class="line">├── lib</span><br><span class="line">│   └── hive.py</span><br><span class="line">├── requirements.txt</span><br><span class="line">├── run.sh</span><br></pre></td></tr></table></figure>
+
+<h3 id="docker-build"><a href="#docker-build" class="headerlink" title="docker build"></a>docker build</h3><p>开始构建镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker build -t myrepo/jupyter -f Dockerfile . <span class="comment"># -t 镜像的名字 -f 指定要使用的Dockerfile路径</span></span><br></pre></td></tr></table></figure>
+
+<p>build 完成后可以看到镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker images</span><br><span class="line">REPOSITORY                   TAG                     IMAGE ID            CREATED             SIZE</span><br><span class="line">myrepo/jupyter               latest                  c5520af88d36        50 minutes ago      2.71GB</span><br></pre></td></tr></table></figure>
+
+<h3 id="docker-run"><a href="#docker-run" class="headerlink" title="docker run"></a>docker run</h3><p>现在创建一个容器并运行了</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker run \</span><br><span class="line">--name myrepo-jupyter \        <span class="comment"># 给容器起个名字</span></span><br><span class="line">-p 8888:8888/tcp \        <span class="comment"># 端口映射</span></span><br><span class="line">-e GRANT_SUDO=yes \        <span class="comment"># 设置环境变量</span></span><br><span class="line">--user root j\            <span class="comment"># 以 root 执行</span></span><br><span class="line">myrepo/jupyter:latest    <span class="comment"># 刚才构建的镜像</span></span><br></pre></td></tr></table></figure>
+
+<p>运行起来后终端会输出一个带 token 的本地连接 <code>http://127.0.0.1:8888/?token=</code>，点击打开。</p>
+<h2 id="查看版本和测试功能"><a href="#查看版本和测试功能" class="headerlink" title="查看版本和测试功能"></a>查看版本和测试功能</h2><p>新建一个 Python 文件运行查看下版本</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;Python version &#x27;</span> + sys.version)</span><br><span class="line">print(<span class="string">&#x27;Pandas version &#x27;</span> + pd.__version__)</span><br><span class="line">print(<span class="string">&#x27;Matplotlib version &#x27;</span> + matplotlib.__version__)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200822203424.png"></p>
+<p>可以写一个类似下面的简单脚本测试下 Hive 连接功能是否正常</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pyhive <span class="keyword">import</span> hive</span><br><span class="line"><span class="keyword">from</span> TCLIService.ttypes <span class="keyword">import</span> TOperationState</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">cursor = hive.connect(host=<span class="string">&#x27;&#x27;</span>,port=<span class="number">10000</span>,username=<span class="string">&#x27;x&#x27;</span>,password=<span class="string">&#x27;x&#x27;</span>,auth=<span class="string">&#x27;LDAP&#x27;</span>).cursor()</span><br><span class="line"></span><br><span class="line">hql=<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">select</span></span><br><span class="line"><span class="string">id,</span></span><br><span class="line"><span class="string">add_date</span></span><br><span class="line"><span class="string">from dwd.dwd_user_dim_user_base</span></span><br><span class="line"><span class="string">limit 1000</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">cursor.execute(hql)</span><br><span class="line">df = pd.DataFrame(cursor.fetchall(), columns = [<span class="string">&#x27;id&#x27;</span>,<span class="string">&#x27;add_date&#x27;</span>])</span><br><span class="line">df.head(<span class="number">20</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>好了，至此一个本地的 Jupyter 环境就部署好了。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://docs.docker.com/">docker docs</a></li>
+<li><a href="https://hub.docker.com/r/jupyter/scipy-notebook">scipy-notebook</a></li>
+<li><a href="https://github.com/jupyter/docker-stacks">docker-stack</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>利用 GitHub 和 Hexo 构建博客</title>
+    <url>/2020/08/17/bulid-blog-with-hexo/</url>
+    <content><![CDATA[<h2 id="利用-GitHub-和-Hexo-构建博客"><a href="#利用-GitHub-和-Hexo-构建博客" class="headerlink" title="利用 GitHub 和 Hexo 构建博客"></a>利用 GitHub 和 Hexo 构建博客</h2><p>对比于 WordPress，Hexo 这种 Markdown 风格的博客系统，更能让作者关注写作本身，而且搭配 GitHub 不需要独立部署，资料在本地和云端都可以很好地备份。</p>
+<h2 id="创建-GitHub-仓库"><a href="#创建-GitHub-仓库" class="headerlink" title="创建 GitHub 仓库"></a>创建 GitHub 仓库</h2><p>创建一个以 owner.github.io 命名的仓库，可以直接生成 xxx.github.io 域名的GitHub Pages，推荐用这种命名方式生成博客。</p>
+<p>图例<br><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200812174106.png"></p>
+<p>我的以 taoyuyin.github.io 命名，创建完成就可以直接访问了，<a href="https://taoyuyin.github.io/">https://taoyuyin.github.io/</a></p>
+<h2 id="Hexo-安装和初始化"><a href="#Hexo-安装和初始化" class="headerlink" title="Hexo 安装和初始化"></a>Hexo 安装和初始化</h2><p>安装 Hexo</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install -g hexo</span><br></pre></td></tr></table></figure>
+
+<p>初始化</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ mkdir taoyuyin.github.io</span><br><span class="line">$ <span class="built_in">cd</span> taoyuyin.github.io/</span><br><span class="line">$ hexo init <span class="comment"># 初始化</span></span><br></pre></td></tr></table></figure>
+
+<p>生成博客</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo g</span><br></pre></td></tr></table></figure>
+
+<p>如果需要本地访问，启动服务，然后通过浏览器访问本地端口4000，<a href="http://localhost:4000/">http://localhost:4000</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo s</span><br></pre></td></tr></table></figure>
+
+<h2 id="发布到-GitHub"><a href="#发布到-GitHub" class="headerlink" title="发布到 GitHub"></a>发布到 GitHub</h2><p>发布到 GitHub，需要安装Git发布插件 hexo-deployer-git</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install hexo-deployer-git --save <span class="comment"># 安装插件</span></span><br></pre></td></tr></table></figure>
+
+<p>编辑 _config.yml，补充 deploy 内容</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repository:</span> <span class="string">https://github.com/taoyuyin/taoyuyin.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
+
+<p>发布</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo d</span><br></pre></td></tr></table></figure>
+
+<p>至此，一个基于 GitHub 和 Hexo 的博客就构建好了</p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>利用 PicGo 和 GitHub 构建图床</title>
+    <url>/2020/08/19/bulid-picgo-with-github/</url>
+    <content><![CDATA[<h2 id="利用-PicGo-和-GitHub-构建图床"><a href="#利用-PicGo-和-GitHub-构建图床" class="headerlink" title="利用 PicGo 和 GitHub 构建图床"></a>利用 PicGo 和 GitHub 构建图床</h2><p>使用 Markdown 写作，需要有个图片上传的地方，可以利用 PicGo 和 GitHub 构建自己的图床。</p>
+<h2 id="创建-GitHub-仓库"><a href="#创建-GitHub-仓库" class="headerlink" title="创建 GitHub 仓库"></a>创建 GitHub 仓库</h2><p>我的 Repository name 用的 picgo2，点击 Create repository。</p>
+<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819215805.png"></p>
+<h2 id="生成-GitHub-Token"><a href="#生成-GitHub-Token" class="headerlink" title="生成 GitHub Token"></a>生成 GitHub Token</h2><p>在 GitHub 生成一个 Token，以备在 PicGo 配置用<br>点击展开头像，依次点击 Settings、Developer settings、Personal access tokens<br>或者直接输入 <a href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></p>
+<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819220449.png"></p>
+<p>然后点击页面的 Generate new token 按钮<br>在 Note 处输入一个名字，我输入的是刚才创建的 Repository name<br>Select scopes 勾选 repo。<br>点击下面的 Generate token 按钮。</p>
+<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819220449.png"></p>
+<p>Token 创建好了，页面暂时不要动或保存下 Token。</p>
+<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819221418.png"></p>
+<h2 id="安装-PicGo"><a href="#安装-PicGo" class="headerlink" title="安装 PicGo"></a>安装 PicGo</h2><p>我使用的是2.3.0版本<br>PicGo 下载地址 <a href="https://github.com/Molunerfinn/PicGo/releases">https://github.com/Molunerfinn/PicGo/releases</a><br>Mac 下直接安装就好。</p>
+<h2 id="配置-PicGo"><a href="#配置-PicGo" class="headerlink" title="配置 PicGo"></a>配置 PicGo</h2><p>点击图床设置下的 GitHub 图床<br>依次输入<br>设定仓库名，taoyuyin/picgo2<br>设定分支名，我用的 master<br>设定Token，刚才创建的 Token<br>指定存储路径，我用的 pics/。注意需要带上斜杠，GitHub 会自动创建个目录。</p>
+<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819221709.png"></p>
+<p>点击确定，一个基于 PicGo 和 GitHub 的图床就构建好了。</p>
+<h2 id="上传图片"><a href="#上传图片" class="headerlink" title="上传图片"></a>上传图片</h2><p>点击上传区，就可以上传图片了，选用 Markdown 模式，上传后生成的链接可以直接在 Markdown 里使用了。</p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>培养点宏观数据思维</title>
+    <url>/2020/08/29/d-keep-macro-data-in-mind/</url>
+    <content><![CDATA[<h2 id="记住些宏观数据"><a href="#记住些宏观数据" class="headerlink" title="记住些宏观数据"></a>记住些宏观数据</h2><p>在生活和工作中经常会接触到各种各样的信息，信息的质量参差不齐，应该怎样判断信息的真实性。信息里面有时候会包含一些数据，可以从甄别数据合理性的角度帮助对信息的判断。现在的信息传播和流动很快，数据量非常大，脑子不能记住很多的数据。那么该怎么甄别数据的合理性呢，可以记住一些宏观的数据，用这些数据作为我们的锚点数据，用这些锚点数据验证新接触到的数据的合理性。虽然不能给出准确地判断，拥有了宏观数据思维，随着锚点数据越来越广，对信息进行更合理地判断，不再人云亦云。下面列一些很常见的数据，从这些数据抽象形容下宏观数据思维。</p>
+<h2 id="国家宏观数据"><a href="#国家宏观数据" class="headerlink" title="国家宏观数据"></a>国家宏观数据</h2><p>下面的数据都是宏观数据，来源于国家统计局2019年度数据，看的过程中可以把这些数据默记下来。<br>从以下数据展开：</p>
+<ul>
+<li>行政区划</li>
+<li>人口</li>
+<li>就业人口</li>
+<li>GDP</li>
+<li>财政</li>
+<li>教育</li>
+</ul>
+<p>先大概列这些，太多了确实记不住。</p>
+<h3 id="行政区划"><a href="#行政区划" class="headerlink" title="行政区划"></a>行政区划</h3><p>一级行政区34个：<br>中国共计34个一级行政区，包括23个省、5个自治区、4个直辖市、2个特别行政区。</p>
+<p><strong>地级市337个：</strong><br>广东省最多，21个地级市，青海省最少，2个地级市。</p>
+<p><strong>县级行政区2844个：</strong><br>包括973个市辖区、<strong>388个县级市、1312个县、</strong>117个自治县、49个旗、3个自治旗、1个特区、1个林区。</p>
+<h3 id="人口"><a href="#人口" class="headerlink" title="人口"></a>人口</h3><p>年末总人口14亿：<br>男性人口71527万，女性人口68478万。<br><strong>男女人口比例为1.0445:1。</strong></p>
+<p>城镇人口84843万，乡村人口55162万。<br><strong>城镇乡村人口比例为1.5381:1，城镇人口占比60.6%。</strong></p>
+<p>人口出生率(‰)        10.48<br>人口死亡率(‰)        7.14<br>人口自然增长率(‰)    3.34</p>
+<p><strong>人口自然增长率自 2000 年以来呈逐年下降趋势，2009-2015 趋于稳定，全面二孩政策于2016年1月1日起正式实施，2016年人口自然增长率有回升，之后又呈下降趋势。</strong></p>
+<h3 id="就业人口"><a href="#就业人口" class="headerlink" title="就业人口"></a>就业人口</h3><p>就业人员(万人)        77471.0<br>城镇就业人员(万人)        44247.0<br>乡村就业人员(万人)        33224.0</p>
+<p><strong>就业人口占总人口的55.33%</strong></p>
+<h3 id="GDP"><a href="#GDP" class="headerlink" title="GDP"></a>GDP</h3><p>国内生产总值(亿元) 990865.1，<strong>接近百万亿人民币。</strong><br><strong>换成同口径美元为143635.77亿，排名世界第二，排名第一是美国214315.52亿，排名第三是日本50827.82亿。</strong></p>
+<p>人均国内生产总值(元)70892。<br><strong>人均GDP突破1万美元大关，按照世界银行标准，属于中等偏上收入国家，开始向高收入国家迈进。</strong></p>
+<h3 id="财政"><a href="#财政" class="headerlink" title="财政"></a>财政</h3><p>财政收入(亿元)        190382.23<br>财政支出(亿元)        238874.02<br>国家税收收入(亿元)        157992.21<br>国家国内增值税(亿元)    62346.22<br>国家企业所得税(亿元)    37300.07<br>国家个人所得税(亿元)    10388.48</p>
+<p><strong>国家财政收入的82.99%来自税收，增值税、企业所得税、个人所得税占整体税收的69.65%，个人所得税占整体税收的6.58%。</strong></p>
+<p>关于中国税收，另开文章做介绍。</p>
+<h3 id="教育"><a href="#教育" class="headerlink" title="教育"></a>教育</h3><p>研究生培养机构学校数(所)        815<br>本科院校学校数(所)                1245<br>专科院校学校数(所)                1418<br>普通高等学校在校学生数(万人)    3031<br>普通高中在校学生数(万人)        2414<br>初中在校学生数(万人)            4827<br>普通小学在校学生数(万人)        10561<br><strong>小学生人数规模是1亿多。</strong></p>
+<h2 id="数据思考场景"><a href="#数据思考场景" class="headerlink" title="数据思考场景"></a>数据思考场景</h2><p>看了这么多数据，用一个场景模拟下判断数据合理性。<br>假设一条信息包含高考考生规模，如果人数是 1500 万，可能不太好判断数字是否精准，起码可以结合总人口和出生率推算出同龄人口规模的数量级是对的。<br>如果人数是 5000 万，不考虑初升高升学率和各年龄人口占比差异，高中及以下 12 个年级粗略计算 6 亿人，再加上大学生，中国超过一半的人在上学，这显然不合理。<br>看下实际数，2019 年高考人数1031万。所以有了宏观数据做参考，很容易判断一些信息里数据的量级和规模的合理性。</p>
+<p>借助这个思路，可以梳理出你的业务中的宏观数据，形成业务宏观数据思维，助力对业务的思考。</p>
+<p>看一个场景，目前就职于在线教育行业，主要人群面向中小学生，初中小学生人数规模是1.5亿，粗略用行业转化率3%计算，付费用户群体达 500 万的规模，从各种渠道看到的行业数据看，在线教育的渗透率还有提升的空间，主要看怎么做触达和转化。</p>
+<p>如果恰巧你也是数据从业者，以宏观数据为脉络，形成数据网络，助力对信息的判断和方向的把控。</p>
+<p>再看一个场景，上面的城镇人口占比60.6%，也就是城镇化率。<br>2000年中国城镇化率为35.877%，2009年为47.88%，2000至2009年十年间年均1.2%增长。<br>2010年为49.226%，2019年为60.6%，近十年间仍保持年均1.1%的增幅。这是房价整体上涨不会降的原因。<br>中国城镇化率首次突破50%是在2011年，这一年美国城镇化率是80.944%，世界城镇化率是52.1%，中国还低于世界平均水平。中国城镇化率赶上并超过世界水平是在2013年。<br>2019年美国城镇化率是82.459%，如果以美国为标准，中国有一定的差距。不过美国2000年是79.057%，近二十年增长空间仅为3.4%。中国未来推进城镇化率，还有上升的空间，不过未来十年增速会下降，城镇化推动房价上升的权重也会下降。</p>
+<p>记住一些关键数据，多一种思考问题的视角和方式。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://data.stats.gov.cn/">国家数据</a></li>
+<li><a href="https://data.worldbank.org.cn/indicator">世界银行数据</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>数据</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>在 Linux 下通过 find 和 grep 查找包含指定字符串的文件</title>
+    <url>/2020/08/19/grep-string-with-find/</url>
+    <content><![CDATA[<h2 id="在-Linux-下通过-find-和-grep-查找包含指定字符串的文件"><a href="#在-Linux-下通过-find-和-grep-查找包含指定字符串的文件" class="headerlink" title="在 Linux 下通过 find 和 grep 查找包含指定字符串的文件"></a>在 Linux 下通过 find 和 grep 查找包含指定字符串的文件</h2><p>直接上示例，拿走即用</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ find /home -<span class="built_in">type</span> f -name <span class="string">&#x27;*.py&#x27;</span> -<span class="built_in">exec</span> grep -n <span class="string">&#x27;MySQL&#x27;</span> --color=auto &#123;&#125; \; -<span class="built_in">print</span></span><br></pre></td></tr></table></figure>
+
+<p>作用是在’/home’目录下查找包含’MySQL’以’py’结尾的文件，输出内容和行号，将结果打印在屏幕</p>
+<p>注意点：</p>
+<ul>
+<li>可以根据要查找的字符串或文件类型修改单引号里面的内容</li>
+<li>最好不要使用根目录，尽量缩小 Path 范围</li>
+</ul>
+<h2 id="拆分讲解"><a href="#拆分讲解" class="headerlink" title="拆分讲解"></a>拆分讲解</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ find /home -<span class="built_in">type</span> f <span class="comment"># 类型参数， f 为普通文件</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ find /home -name <span class="string">&#x27;*.py&#x27;</span> <span class="comment"># 根据文件名查找，查找 Python 文件</span></span><br></pre></td></tr></table></figure>
+
+<p>结合 -exec 与其他命令配合使用， find 在返回后执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ find /home -name <span class="string">&#x27;*.py&#x27;</span> -<span class="built_in">exec</span> grep -n <span class="string">&#x27;MySQL&#x27;</span> &#123;&#125; \; <span class="comment"># 查找 Python 文件，搜索包含&#x27;MySQL&#x27;的行</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ find /home -name <span class="string">&#x27;*.py&#x27;</span> -<span class="built_in">exec</span> grep -n <span class="string">&#x27;MySQL&#x27;</span> --color=auto &#123;&#125; \; -<span class="built_in">print</span> <span class="comment"># 查找 Python 文件，搜索包含&#x27;MySQL&#x27;的行，将文件打印出来</span></span><br></pre></td></tr></table></figure>
+
+<p>其他用法可以分别查看 find 和 grep 的用法。</p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Hello World</title>
+    <url>/2020/08/17/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>安装和使用Hexo的主题 NexT</title>
+    <url>/2020/08/17/hexo-theme-next/</url>
+    <content><![CDATA[<h2 id="安装和使用Hexo的主题-NexT"><a href="#安装和使用Hexo的主题-NexT" class="headerlink" title="安装和使用Hexo的主题 NexT"></a>安装和使用Hexo的主题 NexT</h2><p>Hexo 安装主题的方式非常简单，只需要将主题文件拷贝至站点目录的 themes 目录下， 然后修改下配置文件即可。</p>
+<h2 id="安装主题"><a href="#安装主题" class="headerlink" title="安装主题"></a>安装主题</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> taoyuyin.github.io</span><br><span class="line">$ git <span class="built_in">clone</span> https://github.com/theme-next/hexo-theme-next.git themes/next</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="启用主题"><a href="#启用主题" class="headerlink" title="启用主题"></a>启用主题</h2><p>编辑 _config.yml</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">theme:</span> <span class="string">next</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="配置主题"><a href="#配置主题" class="headerlink" title="配置主题"></a>配置主题</h2><p>编辑 themes/next/_config.yml。注意这个是主题目录下的 _config.yml 文件。</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">scheme:</span> <span class="string">Pisces</span></span><br><span class="line"></span><br><span class="line"><span class="attr">menu:</span></span><br><span class="line">  <span class="attr">home:</span> <span class="string">/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-home</span></span><br><span class="line">  <span class="attr">about:</span> <span class="string">/about/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-user</span></span><br><span class="line">  <span class="attr">archives:</span> <span class="string">/archives/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-archive</span></span><br></pre></td></tr></table></figure>
+
+<p>除了 archives 不需要创建目录，其他分类需要自己创建</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new page <span class="string">&#x27;about&#x27;</span> <span class="comment"># 创建 about 对应目录和页面</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="预览发布"><a href="#预览发布" class="headerlink" title="预览发布"></a>预览发布</h2><p>生成博客</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo g</span><br><span class="line">$ hexo s</span><br></pre></td></tr></table></figure>
+
+<p>本地预览 访问 <a href="http://localhost:4000/">http://localhost:4000</a></p>
+<p>发布</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo d</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+  </entry>
+</search>
