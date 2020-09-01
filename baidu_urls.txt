@@ -1,0 +1,7 @@
+https://taoyuyin.github.io/2020/08/29/d-keep-macro-data-in-mind/
+https://taoyuyin.github.io/2020/08/22/build-jupyter-with-docker/
+https://taoyuyin.github.io/2020/08/19/bulid-picgo-with-github/
+https://taoyuyin.github.io/2020/08/19/grep-string-with-find/
+https://taoyuyin.github.io/2020/08/17/hexo-theme-next/
+https://taoyuyin.github.io/2020/08/17/bulid-blog-with-hexo/
+https://taoyuyin.github.io/2020/08/17/hello-world/
