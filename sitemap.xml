@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://taoyuyin.github.io/awesome/index.html</loc>
+    
+    <lastmod>2020-09-09</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://taoyuyin.github.io/2020/09/09/data-warehouse-and-data-lake/</loc>
+    
+    <lastmod>2020-09-09</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://taoyuyin.github.io/about/index.html</loc>
     
     <lastmod>2020-09-09</lastmod>
@@ -26,13 +40,6 @@
     <loc>https://taoyuyin.github.io/2020/08/22/build-jupyter-with-docker/</loc>
     
     <lastmod>2020-08-22</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://taoyuyin.github.io/awesome/index.html</loc>
-    
-    <lastmod>2020-08-21</lastmod>
     
   </url>
   
