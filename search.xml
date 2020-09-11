@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>使用 Docker 在本地构建 Jupyter Notebook</title>
-    <url>/2020/08/22/build-jupyter-with-docker/</url>
+    <url>/2020/08/build-jupyter-with-docker/</url>
     <content><![CDATA[<h2 id="使用-Docker-在本地构建-Jupyter-Notebook"><a href="#使用-Docker-在本地构建-Jupyter-Notebook" class="headerlink" title="使用 Docker 在本地构建 Jupyter Notebook"></a>使用 Docker 在本地构建 Jupyter Notebook</h2><p>先看下 Jupyter 官方的介绍</p>
 <blockquote>
 <p>The Jupyter Notebook is an open-source web application that allows you to create and share documents that contain live code, equations, visualizations and narrative text. Uses include: data cleaning and transformation, numerical simulation, statistical modeling, data visualization, machine learning, and much more.</p>
@@ -53,7 +53,7 @@
   </entry>
   <entry>
     <title>利用 GitHub 和 Hexo 构建博客</title>
-    <url>/2020/08/17/bulid-blog-with-hexo/</url>
+    <url>/2020/08/bulid-blog-with-hexo/</url>
     <content><![CDATA[<h2 id="利用-GitHub-和-Hexo-构建博客"><a href="#利用-GitHub-和-Hexo-构建博客" class="headerlink" title="利用 GitHub 和 Hexo 构建博客"></a>利用 GitHub 和 Hexo 构建博客</h2><p>对比于 WordPress，Hexo 这种 Markdown 风格的博客系统，更能让作者关注写作本身，而且搭配 GitHub 不需要独立部署，资料在本地和云端都可以很好地备份。</p>
 <h2 id="创建-GitHub-仓库"><a href="#创建-GitHub-仓库" class="headerlink" title="创建 GitHub 仓库"></a>创建 GitHub 仓库</h2><p>创建一个以 owner.github.io 命名的仓库，可以直接生成 xxx.github.io 域名的GitHub Pages，推荐用这种命名方式生成博客。</p>
 <p>图例<br><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200812174106.png"></p>
@@ -87,7 +87,7 @@
   </entry>
   <entry>
     <title>利用 PicGo 和 GitHub 构建图床</title>
-    <url>/2020/08/19/bulid-picgo-with-github/</url>
+    <url>/2020/08/bulid-picgo-with-github/</url>
     <content><![CDATA[<h2 id="利用-PicGo-和-GitHub-构建图床"><a href="#利用-PicGo-和-GitHub-构建图床" class="headerlink" title="利用 PicGo 和 GitHub 构建图床"></a>利用 PicGo 和 GitHub 构建图床</h2><p>使用 Markdown 写作，需要有个图片上传的地方，可以利用 PicGo 和 GitHub 构建自己的图床。</p>
 <h2 id="创建-GitHub-仓库"><a href="#创建-GitHub-仓库" class="headerlink" title="创建 GitHub 仓库"></a>创建 GitHub 仓库</h2><p>我的 Repository name 用的 picgo2，点击 Create repository。</p>
 <p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819215805.png"></p>
@@ -109,7 +109,7 @@
   </entry>
   <entry>
     <title>培养点宏观数据思维</title>
-    <url>/2020/08/29/d-keep-macro-data-in-mind/</url>
+    <url>/2020/08/d-keep-macro-data-in-mind/</url>
     <content><![CDATA[<h2 id="记住些宏观数据"><a href="#记住些宏观数据" class="headerlink" title="记住些宏观数据"></a>记住些宏观数据</h2><p>在生活和工作中经常会接触到各种各样的信息，信息的质量参差不齐，应该怎样判断信息的真实性。信息里面有时候会包含一些数据，可以从甄别数据合理性的角度帮助对信息的判断。现在的信息传播和流动很快，数据量非常大，脑子不能记住很多的数据。那么该怎么甄别数据的合理性呢，可以记住一些宏观的数据，用这些数据作为我们的锚点数据，用这些锚点数据验证新接触到的数据的合理性。虽然不能给出准确地判断，拥有了宏观数据思维，随着锚点数据越来越广，对信息进行更合理地判断，不再人云亦云。下面列一些很常见的数据，从这些数据抽象形容下宏观数据思维。</p>
 <h2 id="国家宏观数据"><a href="#国家宏观数据" class="headerlink" title="国家宏观数据"></a>国家宏观数据</h2><p>下面的数据都是宏观数据，来源于国家统计局2019年度数据，看的过程中可以把这些数据默记下来。<br>从以下数据展开：</p>
 <ul>
@@ -153,7 +153,7 @@
   </entry>
   <entry>
     <title>在 Linux 下通过 find 和 grep 查找包含指定字符串的文件</title>
-    <url>/2020/08/19/grep-string-with-find/</url>
+    <url>/2020/08/grep-string-with-find/</url>
     <content><![CDATA[<h2 id="在-Linux-下通过-find-和-grep-查找包含指定字符串的文件"><a href="#在-Linux-下通过-find-和-grep-查找包含指定字符串的文件" class="headerlink" title="在 Linux 下通过 find 和 grep 查找包含指定字符串的文件"></a>在 Linux 下通过 find 和 grep 查找包含指定字符串的文件</h2><p>直接上示例，拿走即用</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ find /home -<span class="built_in">type</span> f -name <span class="string">&#x27;*.py&#x27;</span> -<span class="built_in">exec</span> grep -n <span class="string">&#x27;MySQL&#x27;</span> --color=auto &#123;&#125; \; -<span class="built_in">print</span></span><br></pre></td></tr></table></figure>
 
@@ -180,7 +180,7 @@
   </entry>
   <entry>
     <title>Hello World</title>
-    <url>/2020/08/17/hello-world/</url>
+    <url>/2020/08/hello-world/</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
 <h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
 
@@ -198,7 +198,7 @@
   </entry>
   <entry>
     <title>安装和使用Hexo的主题 NexT</title>
-    <url>/2020/08/17/hexo-theme-next/</url>
+    <url>/2020/08/hexo-theme-next/</url>
     <content><![CDATA[<h2 id="安装和使用Hexo的主题-NexT"><a href="#安装和使用Hexo的主题-NexT" class="headerlink" title="安装和使用Hexo的主题 NexT"></a>安装和使用Hexo的主题 NexT</h2><p>Hexo 安装主题的方式非常简单，只需要将主题文件拷贝至站点目录的 themes 目录下， 然后修改下配置文件即可。</p>
 <h2 id="安装主题"><a href="#安装主题" class="headerlink" title="安装主题"></a>安装主题</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> taoyuyin.github.io</span><br><span class="line">$ git <span class="built_in">clone</span> https://github.com/theme-next/hexo-theme-next.git themes/next</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
@@ -224,7 +224,7 @@
   </entry>
   <entry>
     <title>数据仓库（Data Warehouse）与数据湖（Data Lake）</title>
-    <url>/2020/09/09/data-warehouse-and-data-lake/</url>
+    <url>/2020/09/data-warehouse-and-data-lake/</url>
     <content><![CDATA[<h2 id="数据仓库（Data-Warehouse）与数据湖（Data-Lake）"><a href="#数据仓库（Data-Warehouse）与数据湖（Data-Lake）" class="headerlink" title="数据仓库（Data Warehouse）与数据湖（Data Lake）"></a>数据仓库（Data Warehouse）与数据湖（Data Lake）</h2><p>看维基百科的定义</p>
 <p>Data Lake</p>
 <blockquote>
