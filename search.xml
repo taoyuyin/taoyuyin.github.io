@@ -272,9 +272,9 @@
 <p>从目前发展和应用来看，最首要的区别体现在结构化上，数据仓库是预设计处理后的结构化数据，写入时Schema，更易于读取和理解，数据湖是写入时Schemaless，读取时进行Schema设计，所以后期对数据处理的的技能要求相对高。</p>
 <h2 id="发展趋势"><a href="#发展趋势" class="headerlink" title="发展趋势"></a>发展趋势</h2><p>分别用GoogleTrends和百度指数看下数据湖和数据仓库的关注趋势，因为Google和百度的受众用户不同，也可以大概看出国内外的趋势区别。</p>
 <p>GoogleTrends近5年的趋势</p>
-<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200910191700.png"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200910191700.png"></p>
 <p>百度指数近5年的趋势</p>
-<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200910191645.png"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200910191645.png"></p>
 <p>可以明显看出国内外对数据仓库的关注度都高于数据湖。从GoogleTrends长期看Data Lake的关注趋势持续走高，Data Warehouse关注趋势呈下降趋势，尤其是几年Data Lake的关注度快要赶上Data Warehouse。<br>Data Warehouse 这一概念的提出需要追溯到20世纪80年代，Data Lake 这个概念相对Data Warehouse 比较晚，是在2011年由Pentaho CTO James Dixon提出。<br>可以看出国外对Data Lake的关注比较早，国内在2018年初开始有关注。<br>按照这种趋势，国外会有大量的产品或服务让Data Lake逐步落地，国内目前还是以数据仓库为主导，等数据湖相关产品和配套服务成熟，趋势上可能会发生变化。</p>
 <h2 id="行业发展"><a href="#行业发展" class="headerlink" title="行业发展"></a>行业发展</h2><p>各大云计算供应商AWS，Microsoft Azure，阿里云也有针对Data Lake的云产品和服务，目前主要以降低成本为主要卖点，把数据采用对象存储，同时把存储和计算分开，对需要使用的数据分配计算资源，以达到降低存储和计算的资源总成本。<br>随着企业内数据种类的增多和数据规模的提升，长期看这种商业模式的数据湖会逐渐成为企业数据解决方案的选择。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
