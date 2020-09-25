@@ -36,7 +36,7 @@
 <h2 id="查看版本和测试功能"><a href="#查看版本和测试功能" class="headerlink" title="查看版本和测试功能"></a>查看版本和测试功能</h2><p>新建一个 Python 文件运行查看下版本</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;Python version &#x27;</span> + sys.version)</span><br><span class="line">print(<span class="string">&#x27;Pandas version &#x27;</span> + pd.__version__)</span><br><span class="line">print(<span class="string">&#x27;Matplotlib version &#x27;</span> + matplotlib.__version__)</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200822203424.png"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200822203424.png"></p>
 <p>可以写一个类似下面的简单脚本测试下 Hive 连接功能是否正常</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pyhive <span class="keyword">import</span> hive</span><br><span class="line"><span class="keyword">from</span> TCLIService.ttypes <span class="keyword">import</span> TOperationState</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">cursor = hive.connect(host=<span class="string">&#x27;&#x27;</span>,port=<span class="number">10000</span>,username=<span class="string">&#x27;x&#x27;</span>,password=<span class="string">&#x27;x&#x27;</span>,auth=<span class="string">&#x27;LDAP&#x27;</span>).cursor()</span><br><span class="line"></span><br><span class="line">hql=<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">select</span></span><br><span class="line"><span class="string">id,</span></span><br><span class="line"><span class="string">add_date</span></span><br><span class="line"><span class="string">from dwd.dwd_user_dim_user_base</span></span><br><span class="line"><span class="string">limit 1000</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">cursor.execute(hql)</span><br><span class="line">df = pd.DataFrame(cursor.fetchall(), columns = [<span class="string">&#x27;id&#x27;</span>,<span class="string">&#x27;add_date&#x27;</span>])</span><br><span class="line">df.head(<span class="number">20</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
@@ -56,7 +56,7 @@
     <url>/2020/08/bulid-blog-with-hexo/</url>
     <content><![CDATA[<h2 id="利用-GitHub-和-Hexo-构建博客"><a href="#利用-GitHub-和-Hexo-构建博客" class="headerlink" title="利用 GitHub 和 Hexo 构建博客"></a>利用 GitHub 和 Hexo 构建博客</h2><p>对比于 WordPress，Hexo 这种 Markdown 风格的博客系统，更能让作者关注写作本身，而且搭配 GitHub 不需要独立部署，资料在本地和云端都可以很好地备份。</p>
 <h2 id="创建-GitHub-仓库"><a href="#创建-GitHub-仓库" class="headerlink" title="创建 GitHub 仓库"></a>创建 GitHub 仓库</h2><p>创建一个以 owner.github.io 命名的仓库，可以直接生成 xxx.github.io 域名的GitHub Pages，推荐用这种命名方式生成博客。</p>
-<p>图例<br><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200812174106.png"></p>
+<p>图例<br><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200812174106.png"></p>
 <p>我的以 taoyuyin.github.io 命名，创建完成就可以直接访问了，<a href="https://taoyuyin.github.io/">https://taoyuyin.github.io/</a></p>
 <h2 id="Hexo-安装和初始化"><a href="#Hexo-安装和初始化" class="headerlink" title="Hexo 安装和初始化"></a>Hexo 安装和初始化</h2><p>安装 Hexo</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install -g hexo</span><br></pre></td></tr></table></figure>
@@ -90,16 +90,16 @@
     <url>/2020/08/bulid-picgo-with-github/</url>
     <content><![CDATA[<h2 id="利用-PicGo-和-GitHub-构建图床"><a href="#利用-PicGo-和-GitHub-构建图床" class="headerlink" title="利用 PicGo 和 GitHub 构建图床"></a>利用 PicGo 和 GitHub 构建图床</h2><p>使用 Markdown 写作，需要有个图片上传的地方，可以利用 PicGo 和 GitHub 构建自己的图床。</p>
 <h2 id="创建-GitHub-仓库"><a href="#创建-GitHub-仓库" class="headerlink" title="创建 GitHub 仓库"></a>创建 GitHub 仓库</h2><p>我的 Repository name 用的 picgo2，点击 Create repository。</p>
-<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819215805.png"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200819215805.png"></p>
 <h2 id="生成-GitHub-Token"><a href="#生成-GitHub-Token" class="headerlink" title="生成 GitHub Token"></a>生成 GitHub Token</h2><p>在 GitHub 生成一个 Token，以备在 PicGo 配置用<br>点击展开头像，依次点击 Settings、Developer settings、Personal access tokens<br>或者直接输入 <a href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></p>
-<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819220449.png"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200819220449.png"></p>
 <p>然后点击页面的 Generate new token 按钮<br>在 Note 处输入一个名字，我输入的是刚才创建的 Repository name<br>Select scopes 勾选 repo。<br>点击下面的 Generate token 按钮。</p>
-<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819220449.png"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200819220449.png"></p>
 <p>Token 创建好了，页面暂时不要动或保存下 Token。</p>
-<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819221418.png"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200819221418.png"></p>
 <h2 id="安装-PicGo"><a href="#安装-PicGo" class="headerlink" title="安装 PicGo"></a>安装 PicGo</h2><p>我使用的是2.3.0版本<br>PicGo 下载地址 <a href="https://github.com/Molunerfinn/PicGo/releases">https://github.com/Molunerfinn/PicGo/releases</a><br>Mac 下直接安装就好。</p>
 <h2 id="配置-PicGo"><a href="#配置-PicGo" class="headerlink" title="配置 PicGo"></a>配置 PicGo</h2><p>点击图床设置下的 GitHub 图床<br>依次输入<br>设定仓库名，taoyuyin/picgo2<br>设定分支名，我用的 master<br>设定Token，刚才创建的 Token<br>指定存储路径，我用的 pics/。注意需要带上斜杠，GitHub 会自动创建个目录。</p>
-<p><img src="https://raw.githubusercontent.com/taoyuyin/picgo/master/pics/20200819221709.png"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200819221709.png"></p>
 <p>点击确定，一个基于 PicGo 和 GitHub 的图床就构建好了。</p>
 <h2 id="上传图片"><a href="#上传图片" class="headerlink" title="上传图片"></a>上传图片</h2><p>点击上传区，就可以上传图片了，选用 Markdown 模式，上传后生成的链接可以直接在 Markdown 里使用了。</p>
 ]]></content>

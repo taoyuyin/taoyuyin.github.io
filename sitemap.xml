@@ -2,6 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://taoyuyin.gitee.io/2020/08/build-jupyter-with-docker/</loc>
+    
+    <lastmod>2020-09-25</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://taoyuyin.gitee.io/2020/08/bulid-blog-with-hexo/</loc>
+    
+    <lastmod>2020-09-25</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://taoyuyin.gitee.io/2020/08/bulid-picgo-with-github/</loc>
+    
+    <lastmod>2020-09-25</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://taoyuyin.gitee.io/2020/09/data-warehouse-and-data-lake/</loc>
     
     <lastmod>2020-09-20</lastmod>
@@ -44,30 +65,9 @@
   </url>
   
   <url>
-    <loc>https://taoyuyin.gitee.io/2020/08/build-jupyter-with-docker/</loc>
-    
-    <lastmod>2020-08-22</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://taoyuyin.gitee.io/2020/08/grep-string-with-find/</loc>
     
     <lastmod>2020-08-20</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://taoyuyin.gitee.io/2020/08/bulid-picgo-with-github/</loc>
-    
-    <lastmod>2020-08-20</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://taoyuyin.gitee.io/2020/08/bulid-blog-with-hexo/</loc>
-    
-    <lastmod>2020-08-17</lastmod>
     
   </url>
   
@@ -81,7 +81,7 @@
 
   <url>
     <loc>https://taoyuyin.gitee.io/</loc>
-    <lastmod>2020-09-21</lastmod>
+    <lastmod>2020-09-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -91,14 +91,14 @@
   
   <url>
     <loc>https://taoyuyin.gitee.io/categories/%E6%8A%80%E6%9C%AF/</loc>
-    <lastmod>2020-09-21</lastmod>
+    <lastmod>2020-09-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://taoyuyin.gitee.io/categories/%E6%95%B0%E6%8D%AE/</loc>
-    <lastmod>2020-09-21</lastmod>
+    <lastmod>2020-09-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
