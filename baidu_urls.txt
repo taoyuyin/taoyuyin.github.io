@@ -1,3 +1,4 @@
+https://taoyuyin.gitee.io/2020/10/t-dmbok-data-management/
 https://taoyuyin.gitee.io/2020/09/d-china-taxation-overview/
 https://taoyuyin.gitee.io/2020/09/data-warehouse-and-data-lake/
 https://taoyuyin.gitee.io/2020/08/d-keep-macro-data-in-mind/
