@@ -1,0 +1,10 @@
+https://taoyuyin.gitee.io/2020/10/t-dmbok-data-management/
+https://taoyuyin.gitee.io/2020/09/d-china-taxation-overview/
+https://taoyuyin.gitee.io/2020/09/data-warehouse-and-data-lake/
+https://taoyuyin.gitee.io/2020/08/d-keep-macro-data-in-mind/
+https://taoyuyin.gitee.io/2020/08/build-jupyter-with-docker/
+https://taoyuyin.gitee.io/2020/08/bulid-picgo-with-github/
+https://taoyuyin.gitee.io/2020/08/grep-string-with-find/
+https://taoyuyin.gitee.io/2020/08/hexo-theme-next/
+https://taoyuyin.gitee.io/2020/08/bulid-blog-with-hexo/
+https://taoyuyin.gitee.io/2020/08/hello-world/
