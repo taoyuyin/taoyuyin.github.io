@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://taoyuyin.gitee.io/2020/08/hello-world/</loc>
+    <lastmod>2023-02-18</lastmod>
+  </url>
+  <url>
     <loc>https://taoyuyin.gitee.io/2020/10/t-dmbok-data-management/</loc>
     <lastmod>2020-10-18</lastmod>
   </url>
@@ -35,9 +39,5 @@
   <url>
     <loc>https://taoyuyin.gitee.io/2020/08/grep-string-with-find/</loc>
     <lastmod>2020-08-20</lastmod>
-  </url>
-  <url>
-    <loc>https://taoyuyin.gitee.io/2020/08/hello-world/</loc>
-    <lastmod>2020-08-17</lastmod>
   </url>
 </urlset> 
