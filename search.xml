@@ -52,40 +52,6 @@
       </categories>
   </entry>
   <entry>
-    <title>利用 GitHub 和 Hexo 构建博客</title>
-    <url>/2020/08/bulid-blog-with-hexo/</url>
-    <content><![CDATA[<h2 id="利用-GitHub-和-Hexo-构建博客"><a href="#利用-GitHub-和-Hexo-构建博客" class="headerlink" title="利用 GitHub 和 Hexo 构建博客"></a>利用 GitHub 和 Hexo 构建博客</h2><p>对比于 WordPress，Hexo 这种 Markdown 风格的博客系统，更能让作者关注写作本身，而且搭配 GitHub 不需要独立部署，资料在本地和云端都可以很好地备份。</p>
-<h2 id="创建-GitHub-仓库"><a href="#创建-GitHub-仓库" class="headerlink" title="创建 GitHub 仓库"></a>创建 GitHub 仓库</h2><p>创建一个以 owner.github.io 命名的仓库，可以直接生成 xxx.github.io 域名的GitHub Pages，推荐用这种命名方式生成博客。</p>
-<p>图例<br><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200812174106.png"></p>
-<p>我的以 taoyuyin.github.io 命名，创建完成就可以直接访问了，<a href="https://taoyuyin.github.io/">https://taoyuyin.github.io/</a></p>
-<h2 id="Hexo-安装和初始化"><a href="#Hexo-安装和初始化" class="headerlink" title="Hexo 安装和初始化"></a>Hexo 安装和初始化</h2><p>安装 Hexo</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install -g hexo</span><br></pre></td></tr></table></figure>
-
-<p>初始化</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ mkdir taoyuyin.github.io</span><br><span class="line">$ <span class="built_in">cd</span> taoyuyin.github.io/</span><br><span class="line">$ hexo init <span class="comment"># 初始化</span></span><br></pre></td></tr></table></figure>
-
-<p>生成博客</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo g</span><br></pre></td></tr></table></figure>
-
-<p>如果需要本地访问，启动服务，然后通过浏览器访问本地端口4000，<a href="http://localhost:4000/">http://localhost:4000</a></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo s</span><br></pre></td></tr></table></figure>
-
-<h2 id="发布到-GitHub"><a href="#发布到-GitHub" class="headerlink" title="发布到 GitHub"></a>发布到 GitHub</h2><p>发布到 GitHub，需要安装Git发布插件 hexo-deployer-git</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install hexo-deployer-git --save <span class="comment"># 安装插件</span></span><br></pre></td></tr></table></figure>
-
-<p>编辑 _config.yml，补充 deploy 内容</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repository:</span> <span class="string">https://github.com/taoyuyin/taoyuyin.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
-
-<p>发布</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo d</span><br></pre></td></tr></table></figure>
-
-<p>至此，一个基于 GitHub 和 Hexo 的博客就构建好了</p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-  </entry>
-  <entry>
     <title>利用 PicGo 和 GitHub 构建图床</title>
     <url>/2020/08/bulid-picgo-with-github/</url>
     <content><![CDATA[<h2 id="利用-PicGo-和-GitHub-构建图床"><a href="#利用-PicGo-和-GitHub-构建图床" class="headerlink" title="利用 PicGo 和 GitHub 构建图床"></a>利用 PicGo 和 GitHub 构建图床</h2><p>使用 Markdown 写作，需要有个图片上传的地方，可以利用 PicGo 和 GitHub 构建自己的图床。</p>
@@ -430,50 +396,6 @@
 
 <p>其他用法可以分别查看 find 和 grep 的用法。</p>
 ]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Hello World</title>
-    <url>/2020/08/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>安装和使用Hexo的主题 NexT</title>
-    <url>/2020/08/hexo-theme-next/</url>
-    <content><![CDATA[<h2 id="安装和使用Hexo的主题-NexT"><a href="#安装和使用Hexo的主题-NexT" class="headerlink" title="安装和使用Hexo的主题 NexT"></a>安装和使用Hexo的主题 NexT</h2><p>Hexo 安装主题的方式非常简单，只需要将主题文件拷贝至站点目录的 themes 目录下， 然后修改下配置文件即可。</p>
-<h2 id="安装主题"><a href="#安装主题" class="headerlink" title="安装主题"></a>安装主题</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> taoyuyin.github.io</span><br><span class="line">$ git <span class="built_in">clone</span> https://github.com/theme-next/hexo-theme-next.git themes/next</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="启用主题"><a href="#启用主题" class="headerlink" title="启用主题"></a>启用主题</h2><p>编辑 _config.yml</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">theme:</span> <span class="string">next</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h2 id="配置主题"><a href="#配置主题" class="headerlink" title="配置主题"></a>配置主题</h2><p>编辑 themes/next/_config.yml。注意这个是主题目录下的 _config.yml 文件。</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">scheme:</span> <span class="string">Pisces</span></span><br><span class="line"></span><br><span class="line"><span class="attr">menu:</span></span><br><span class="line">  <span class="attr">home:</span> <span class="string">/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-home</span></span><br><span class="line">  <span class="attr">about:</span> <span class="string">/about/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-user</span></span><br><span class="line">  <span class="attr">archives:</span> <span class="string">/archives/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-archive</span></span><br></pre></td></tr></table></figure>
-
-<p>除了 archives 不需要创建目录，其他分类需要自己创建</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new page <span class="string">&#x27;about&#x27;</span> <span class="comment"># 创建 about 对应目录和页面</span></span><br></pre></td></tr></table></figure>
-
-
-<h2 id="预览发布"><a href="#预览发布" class="headerlink" title="预览发布"></a>预览发布</h2><p>生成博客</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo g</span><br><span class="line">$ hexo s</span><br></pre></td></tr></table></figure>
-
-<p>本地预览 访问 <a href="http://localhost:4000/">http://localhost:4000</a></p>
-<p>发布</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo d</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>技术</category>
       </categories>
