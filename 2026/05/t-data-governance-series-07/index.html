@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="fppm4jYJLq7zYsAnjUA03HIBZ-2FJrmsLCNs6ufcumc">
+  <meta name="msvalidate.01" content="7f6cc3cefb714c53bdee98be40f0dcea">
+  <meta name="baidu-site-verification" content="MGjSWkLqa4rAvbBU">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"taoyuyin.gitee.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="很多企业在做数据治理时，最先关注的往往是：  数据仓库 BI报表 数据平台 数据质量工具  但真正做一段时间后，几乎都会碰到同一个问题：  为什么系统越来越多，数据反而越来越乱？  有时候甚至会出现一种情况：  两张报表的数据都没错 但结果就是对不上  继续往下追，最后发现：  原来大家说的根本不是同一个东西。  而这背后真正缺失的，往往就是：  数据标准。  一、很多企业的数据问题，本质是“标准">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据标准，为什么是数据治理的起点？">
+<meta property="og:url" content="https://taoyuyin.gitee.io/2026/05/t-data-governance-series-07/index.html">
+<meta property="og:site_name" content="taoyuyin">
+<meta property="og:description" content="很多企业在做数据治理时，最先关注的往往是：  数据仓库 BI报表 数据平台 数据质量工具  但真正做一段时间后，几乎都会碰到同一个问题：  为什么系统越来越多，数据反而越来越乱？  有时候甚至会出现一种情况：  两张报表的数据都没错 但结果就是对不上  继续往下追，最后发现：  原来大家说的根本不是同一个东西。  而这背后真正缺失的，往往就是：  数据标准。  一、很多企业的数据问题，本质是“标准">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-05-11T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-11T06:11:14.807Z">
+<meta property="article:author" content="陶玉印">
+<meta property="article:tag" content="数据 技术 读书 商业 数据平台 数据仓库 数据治理 陶玉印">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://taoyuyin.gitee.io/2026/05/t-data-governance-series-07/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>数据标准，为什么是数据治理的起点？ | taoyuyin</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-176856665-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-176856665-1');
+      }
+    </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?6a50c5c210cb69091bddcc5ebd9bfffe";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">taoyuyin</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-awesome">
+
+    <a href="/awesome/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>Awesome</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+
+
+  <meta name="google-site-verification" content="fppm4jYJLq7zYsAnjUA03HIBZ-2FJrmsLCNs6ufcumc" /> 
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://taoyuyin.gitee.io/2026/05/t-data-governance-series-07/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="陶玉印">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="taoyuyin">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          数据标准，为什么是数据治理的起点？
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-05-11 10:00:00 / 修改时间：14:11:14" itemprop="dateCreated datePublished" datetime="2026-05-11T10:00:00+08:00">2026-05-11</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>很多企业在做数据治理时，最先关注的往往是：</p>
+<ul>
+<li>数据仓库</li>
+<li>BI报表</li>
+<li>数据平台</li>
+<li>数据质量工具</li>
+</ul>
+<p>但真正做一段时间后，几乎都会碰到同一个问题：</p>
+<blockquote>
+<p>为什么系统越来越多，数据反而越来越乱？</p>
+</blockquote>
+<p>有时候甚至会出现一种情况：</p>
+<ul>
+<li>两张报表的数据都没错</li>
+<li>但结果就是对不上</li>
+</ul>
+<p>继续往下追，最后发现：</p>
+<blockquote>
+<p>原来大家说的根本不是同一个东西。</p>
+</blockquote>
+<p>而这背后真正缺失的，往往就是：</p>
+<blockquote>
+<p>数据标准。</p>
+</blockquote>
+<h3 id="一、很多企业的数据问题，本质是“标准问题”"><a href="#一、很多企业的数据问题，本质是“标准问题”" class="headerlink" title="一、很多企业的数据问题，本质是“标准问题”"></a>一、很多企业的数据问题，本质是“标准问题”</h3><p>举几个非常常见的场景：</p>
+<p><strong>场景1：什么叫“订单”？</strong></p>
+<p>销售部门认为：</p>
+<blockquote>
+<p>客户下单就算订单。</p>
+</blockquote>
+<p>财务部门认为：</p>
+<blockquote>
+<p>完成审核才算订单。</p>
+</blockquote>
+<p>生产部门认为：</p>
+<blockquote>
+<p>下发生产计划才算订单。</p>
+</blockquote>
+<p>结果：</p>
+<p>同样是“订单数”，三个部门三种结果。</p>
+<p><strong>场景2：什么叫“库存”？</strong></p>
+<p>仓库看的是：</p>
+<blockquote>
+<p>实物库存。</p>
+</blockquote>
+<p>财务看的是：</p>
+<blockquote>
+<p>可结算库存。</p>
+</blockquote>
+<p>生产看的是：</p>
+<blockquote>
+<p>可领用库存。</p>
+</blockquote>
+<p>最后：</p>
+<ul>
+<li>数据都是真的</li>
+<li>但口径完全不同</li>
+</ul>
+<p><strong>场景3：组织架构不统一</strong></p>
+<p>人力系统一套组织编码；<br>ERP另一套；<br>财务系统可能还有第三套。</p>
+<p>于是你会发现：</p>
+<blockquote>
+<p>同一个部门，在不同系统里是“不同的组织”。</p>
+</blockquote>
+<p>这些问题表面看是：</p>
+<ul>
+<li>系统问题</li>
+<li>数据问题</li>
+</ul>
+<p>但本质上，其实是：</p>
+<blockquote>
+<p>没有统一的数据标准。</p>
+</blockquote>
+<h3 id="二、什么是“数据标准”？"><a href="#二、什么是“数据标准”？" class="headerlink" title="二、什么是“数据标准”？"></a>二、什么是“数据标准”？</h3><p>很多人会把“数据标准”理解成：</p>
+<ul>
+<li>字段命名规范</li>
+<li>表结构规范</li>
+<li>技术文档</li>
+</ul>
+<p>这些当然属于标准的一部分，但还不够。</p>
+<p>真正的数据标准，核心解决的是：</p>
+<blockquote>
+<p>同一个数据，在全公司范围内“怎么理解、怎么算、怎么使用”。</p>
+</blockquote>
+<p>它至少包括几个层面：</p>
+<p><strong>1️⃣ 业务标准</strong></p>
+<p>例如：</p>
+<ul>
+<li>什么是订单？</li>
+<li>什么是收入？</li>
+<li>什么是有效客户？</li>
+</ul>
+<p>👉 这是最核心的一层。</p>
+<p><strong>2️⃣ 指标标准</strong></p>
+<p>例如：</p>
+<ul>
+<li>收入怎么算？</li>
+<li>库存周转率怎么算？</li>
+<li>产能利用率怎么算？</li>
+</ul>
+<p>👉 保证报表之间一致。</p>
+<p><strong>3️⃣ 主数据标准</strong></p>
+<p>例如：</p>
+<ul>
+<li>物料编码规则</li>
+<li>客户编码规则</li>
+<li>供应商编码规则</li>
+</ul>
+<p>👉 保证系统之间一致。</p>
+<p><strong>4️⃣ 技术标准</strong></p>
+<p>例如：</p>
+<ul>
+<li>字段命名</li>
+<li>数据类型</li>
+<li>接口规范</li>
+</ul>
+<p>👉 保证技术实现统一。</p>
+<h3 id="三、为什么说“数据标准”是治理起点？"><a href="#三、为什么说“数据标准”是治理起点？" class="headerlink" title="三、为什么说“数据标准”是治理起点？"></a>三、为什么说“数据标准”是治理起点？</h3><p>因为数据治理后面所有工作，都建立在“统一标准”之上。</p>
+<p>没有标准，数据仓库会越来越乱</p>
+<p>不同系统：</p>
+<ul>
+<li>名称不同</li>
+<li>含义不同</li>
+<li>口径不同</li>
+</ul>
+<p>你只能不断做：</p>
+<ul>
+<li>转换</li>
+<li>映射</li>
+<li>特殊处理</li>
+</ul>
+<p>最终数据模型会越来越复杂。</p>
+<p>没有标准，数据质量无法真正做好</p>
+<p>你会发现：</p>
+<blockquote>
+<p>连“什么叫正确”都不清楚。</p>
+</blockquote>
+<p>例如：</p>
+<blockquote>
+<p>什么叫异常订单？<br>什么叫有效库存？</p>
+</blockquote>
+<p>没有标准，就没有判断依据。</p>
+<p>没有标准，BI一定会“打架”</p>
+<p>很多企业都有这种场景：</p>
+<ul>
+<li>财务报表一个数</li>
+<li>经营分析另一个数</li>
+<li>业务部门还有第三个数</li>
+</ul>
+<p>大家都觉得自己是对的。</p>
+<p>其实问题不是谁错了，而是：</p>
+<blockquote>
+<p>大家用的不是同一套标准。</p>
+</blockquote>
+<h3 id="四、为什么很多企业“标准做不下去”？"><a href="#四、为什么很多企业“标准做不下去”？" class="headerlink" title="四、为什么很多企业“标准做不下去”？"></a>四、为什么很多企业“标准做不下去”？</h3><p>这也是一个很现实的问题。</p>
+<p>很多企业其实不是没做过数据标准，而是：</p>
+<blockquote>
+<p>做完之后，没人用。</p>
+</blockquote>
+<p>常见原因包括：</p>
+<p><strong>1️⃣ 只停留在文档层面</strong></p>
+<p>做了一套：</p>
+<ul>
+<li>Excel</li>
+<li>Word</li>
+<li>标准手册</li>
+</ul>
+<p>然后放进共享目录。</p>
+<p>几个月后，没人再打开。</p>
+<p><strong>2️⃣ 业务没有参与</strong></p>
+<p>很多标准是IT自己定义的。</p>
+<p>结果：</p>
+<ul>
+<li>业务不认可</li>
+<li>实际流程不适配</li>
+</ul>
+<p>最后只能“形式存在”。</p>
+<p><strong>3️⃣ 标准和系统脱节</strong></p>
+<p>文档是一套；<br>系统实现又是另一套。</p>
+<p>最终：</p>
+<blockquote>
+<p>标准只是“参考资料”。</p>
+</blockquote>
+<h3 id="五、那数据标准应该怎么做？"><a href="#五、那数据标准应该怎么做？" class="headerlink" title="五、那数据标准应该怎么做？"></a>五、那数据标准应该怎么做？</h3><p>这里不讲“大而全”，讲几个真正能落地的方法。</p>
+<p><strong>1️⃣ 先统一“关键指标”</strong></p>
+<p>不要一上来做几千个字段标准。</p>
+<p>建议优先统一：</p>
+<ul>
+<li>收入</li>
+<li>订单</li>
+<li>库存</li>
+<li>销量</li>
+</ul>
+<p>这些真正影响经营的数据。</p>
+<p><strong>2️⃣ 先解决“争议最大”的问题</strong></p>
+<p>因为这些问题：</p>
+<ul>
+<li>最容易引发冲突</li>
+<li>最影响业务信任</li>
+</ul>
+<p>例如：</p>
+<ul>
+<li>到底什么叫“有效订单”？</li>
+<li>到底哪个库存口径用于经营分析？</li>
+</ul>
+<p><strong>3️⃣ 标准必须“进入系统”</strong></p>
+<p>这是关键。</p>
+<p>真正有效的标准，不应该只存在于文档里，而应该：</p>
+<ul>
+<li>进入数据模型</li>
+<li>进入接口规则</li>
+<li>进入报表逻辑</li>
+</ul>
+<p>👉 只有系统真正执行，标准才算落地。</p>
+<p><strong>4️⃣ 建立“标准变更机制”</strong></p>
+<p>业务一定会变化。</p>
+<p>所以标准不能：</p>
+<blockquote>
+<p>一次制定，永久不变。</p>
+</blockquote>
+<p>而应该有：</p>
+<ul>
+<li>申请</li>
+<li>评审</li>
+<li>发布</li>
+<li>生效</li>
+</ul>
+<p>这样才能持续演进。</p>
+<p><strong>5️⃣ 数据标准，本质是“业务共识”</strong></p>
+<p>这一点特别重要。</p>
+<p>很多人以为：</p>
+<blockquote>
+<p>数据标准是技术工作。</p>
+</blockquote>
+<p>但实际上：</p>
+<blockquote>
+<p>它更像是“业务语言统一”。</p>
+</blockquote>
+<p>所以真正推动标准落地的关键，不是技术，而是：</p>
+<ul>
+<li>业务参与</li>
+<li>管理推动</li>
+<li>跨部门协同</li>
+</ul>
+<h3 id="六、一个很现实的理解"><a href="#六、一个很现实的理解" class="headerlink" title="六、一个很现实的理解"></a>六、一个很现实的理解</h3><p>很多企业的数据治理推进不下去，并不是因为：</p>
+<ul>
+<li>技术能力不够</li>
+<li>平台能力不够</li>
+</ul>
+<p>而是因为：</p>
+<blockquote>
+<p>大家对“同一个数据”没有形成共识。</p>
+</blockquote>
+<p>而数据标准，解决的正是这个问题。</p>
+<h3 id="七、写在最后"><a href="#七、写在最后" class="headerlink" title="七、写在最后"></a>七、写在最后</h3><p>数据治理有很多内容：</p>
+<ul>
+<li>数据仓库</li>
+<li>数据质量</li>
+<li>主数据</li>
+<li>BI分析</li>
+</ul>
+<p>但如果一定要问：</p>
+<blockquote>
+<p>哪件事最适合作为起点？</p>
+</blockquote>
+<p>我的理解始终是：</p>
+<blockquote>
+<p>数据标准。</p>
+</blockquote>
+<p>因为只有先说清楚：</p>
+<ul>
+<li>数据是什么</li>
+<li>怎么计算</li>
+<li>怎么使用</li>
+</ul>
+<p>后面的治理，才真正有基础。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2026/05/t-data-governance-series-06/" rel="prev" title="什么是“真正的数据治理体系”？">
+      <i class="fa fa-chevron-left"></i> 什么是“真正的数据治理体系”？
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%BE%88%E5%A4%9A%E4%BC%81%E4%B8%9A%E7%9A%84%E6%95%B0%E6%8D%AE%E9%97%AE%E9%A2%98%EF%BC%8C%E6%9C%AC%E8%B4%A8%E6%98%AF%E2%80%9C%E6%A0%87%E5%87%86%E9%97%AE%E9%A2%98%E2%80%9D"><span class="nav-number">1.</span> <span class="nav-text">一、很多企业的数据问题，本质是“标准问题”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AF%E2%80%9C%E6%95%B0%E6%8D%AE%E6%A0%87%E5%87%86%E2%80%9D%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">二、什么是“数据标准”？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AF%B4%E2%80%9C%E6%95%B0%E6%8D%AE%E6%A0%87%E5%87%86%E2%80%9D%E6%98%AF%E6%B2%BB%E7%90%86%E8%B5%B7%E7%82%B9%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">三、为什么说“数据标准”是治理起点？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BE%88%E5%A4%9A%E4%BC%81%E4%B8%9A%E2%80%9C%E6%A0%87%E5%87%86%E5%81%9A%E4%B8%8D%E4%B8%8B%E5%8E%BB%E2%80%9D%EF%BC%9F"><span class="nav-number">4.</span> <span class="nav-text">四、为什么很多企业“标准做不下去”？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E9%82%A3%E6%95%B0%E6%8D%AE%E6%A0%87%E5%87%86%E5%BA%94%E8%AF%A5%E6%80%8E%E4%B9%88%E5%81%9A%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">五、那数据标准应该怎么做？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E4%B8%80%E4%B8%AA%E5%BE%88%E7%8E%B0%E5%AE%9E%E7%9A%84%E7%90%86%E8%A7%A3"><span class="nav-number">6.</span> <span class="nav-text">六、一个很现实的理解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="nav-number">7.</span> <span class="nav-text">七、写在最后</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">陶玉印</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:taoyuyin@gmail.com" title="E-Mail → mailto:taoyuyin@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/taoyuyin" title="Zhi → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;taoyuyin" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>Zhi</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">陶玉印</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
