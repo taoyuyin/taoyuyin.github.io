@@ -183,6 +183,375 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://taoyuyin.gitee.io/2026/05/t-data-governance-series-09/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="陶玉印">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="taoyuyin">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2026/05/t-data-governance-series-09/" class="post-title-link" itemprop="url">数据治理组织，应该怎么设计？</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-05-26 10:00:00 / 修改时间：08:53:41" itemprop="dateCreated datePublished" datetime="2026-05-26T10:00:00+08:00">2026-05-26</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>很多企业在推进数据治理时，前期往往会投入大量精力在：</p>
+<ul>
+<li>数据平台</li>
+<li>数据仓库</li>
+<li>BI系统</li>
+<li>数据质量工具</li>
+</ul>
+<p>这些都很重要。</p>
+<p>但真正做一段时间后，很多团队会慢慢发现：</p>
+<blockquote>
+<p>技术问题其实没那么难，真正难的是——<br>事情到底谁来推动？问题到底谁来负责？</p>
+</blockquote>
+<p>你会看到很多熟悉的场景：</p>
+<ul>
+<li>数据有问题，但没人认领</li>
+<li>规则定了，但没人执行</li>
+<li>报表对不上，部门之间互相解释</li>
+<li>数据治理开会很热闹，落地却很慢</li>
+</ul>
+<p>最后项目进入一种状态：</p>
+<blockquote>
+<p>“大家都知道重要，但就是推进不动。”</p>
+</blockquote>
+<p>而这背后，真正缺少的，往往不是技术，而是：</p>
+<blockquote>
+<p>数据治理组织机制。</p>
+</blockquote>
+<h3 id="一、很多企业的数据治理，为什么越做越累？"><a href="#一、很多企业的数据治理，为什么越做越累？" class="headerlink" title="一、很多企业的数据治理，为什么越做越累？"></a>一、很多企业的数据治理，为什么越做越累？</h3><p>因为它通常是这样开始的：</p>
+<p>第一阶段：IT部门发起</p>
+<p>企业想做数字化，于是：</p>
+<ul>
+<li>建数仓</li>
+<li>做BI</li>
+<li>做指标</li>
+</ul>
+<p>数据治理也顺理成章交给IT团队。</p>
+<p>刚开始问题不大。</p>
+<p>但随着推进深入，很快会发现：</p>
+<p><strong>IT能处理“数据”，却很难决定“业务”</strong></p>
+<p>例如：</p>
+<ul>
+<li>什么是营收收入？</li>
+<li>哪个库存口径用于经营分析？</li>
+<li>客户怎么分类？</li>
+</ul>
+<p>这些问题，本质上都是：</p>
+<blockquote>
+<p>业务规则问题。</p>
+</blockquote>
+<p>IT可以实现，但不能替业务拍板。</p>
+<p>于是项目慢慢进入一种尴尬状态：</p>
+<ul>
+<li>IT在推进</li>
+<li>业务在观望</li>
+<li>管理层偶尔关注</li>
+<li>但没人真正“负责治理”</li>
+</ul>
+<p>最后：</p>
+<blockquote>
+<p>数据治理变成了一项“长期协调工作”。</p>
+</blockquote>
+<h3 id="二、为什么说“数据治理本质是组织问题”？"><a href="#二、为什么说“数据治理本质是组织问题”？" class="headerlink" title="二、为什么说“数据治理本质是组织问题”？"></a>二、为什么说“数据治理本质是组织问题”？</h3><p>因为数据天然具有一个特点：</p>
+<blockquote>
+<p>它是“跨部门”的。</p>
+</blockquote>
+<p>例如：</p>
+<p>一个订单，会经过：</p>
+<ul>
+<li>销售</li>
+<li>财务</li>
+<li>生产</li>
+<li>仓储</li>
+<li>供应链</li>
+</ul>
+<p>每个部门：</p>
+<ul>
+<li>都会产生数据</li>
+<li>都会使用数据</li>
+<li>也都会定义数据</li>
+</ul>
+<p>于是问题就来了：</p>
+<blockquote>
+<p>谁说了算？</p>
+</blockquote>
+<p>如果没有组织机制，最后通常会变成：</p>
+<ul>
+<li>各自维护自己的口径</li>
+<li>各自相信自己的数据</li>
+</ul>
+<p>最终：</p>
+<blockquote>
+<p>企业内部形成多个“数据世界”。</p>
+</blockquote>
+<h3 id="三、数据治理组织，到底在解决什么？"><a href="#三、数据治理组织，到底在解决什么？" class="headerlink" title="三、数据治理组织，到底在解决什么？"></a>三、数据治理组织，到底在解决什么？</h3><p>很多人会把“数据治理组织”理解成：</p>
+<blockquote>
+<p>成立一个数据治理部门。</p>
+</blockquote>
+<p>但真正核心的，其实不是“部门”，而是：</p>
+<blockquote>
+<p>责任机制。</p>
+</blockquote>
+<p>它要解决的是：</p>
+<p><strong>1️⃣ 谁定义数据？</strong></p>
+<p>例如：</p>
+<ul>
+<li>收入口径谁定？</li>
+<li>客户分类谁定？</li>
+<li>物料编码规则谁定？</li>
+</ul>
+<p><strong>2️⃣ 谁维护数据？</strong></p>
+<p>例如：</p>
+<ul>
+<li>数据错误谁修复？</li>
+<li>主数据谁审核？</li>
+<li>指标变更谁管理？</li>
+</ul>
+<p><strong>3️⃣ 谁对结果负责？</strong></p>
+<p>例如：</p>
+<ul>
+<li>报表不一致怎么办？</li>
+<li>数据质量下降怎么办？</li>
+</ul>
+<p>👉 如果这些问题没有明确答案：</p>
+<p>那么数据治理一定会越来越难推进。</p>
+<h3 id="四、一个比较实用的数据治理组织模型"><a href="#四、一个比较实用的数据治理组织模型" class="headerlink" title="四、一个比较实用的数据治理组织模型"></a>四、一个比较实用的数据治理组织模型</h3><p>很多企业一听“组织建设”，容易想到：</p>
+<ul>
+<li>大规模组织调整</li>
+<li>新成立部门</li>
+<li>复杂管理体系</li>
+</ul>
+<p>其实未必需要。</p>
+<p>对于大部分企业，更现实的方法是：</p>
+<blockquote>
+<p>在现有组织上，建立“数据治理责任体系”。</p>
+</blockquote>
+<p>这里分享一个比较通用、也比较容易落地的模型。</p>
+<h3 id="五、三个核心角色（非常关键）"><a href="#五、三个核心角色（非常关键）" class="headerlink" title="五、三个核心角色（非常关键）"></a>五、三个核心角色（非常关键）</h3><p><strong>1️⃣ Data Owner（数据Owner）</strong></p>
+<p>这是整个治理体系里最核心的角色。</p>
+<p>通常由：</p>
+<ul>
+<li>业务负责人</li>
+<li>部门负责人</li>
+</ul>
+<p>担任。</p>
+<p>例如：</p>
+<ul>
+<li>销售数据 → 销售负责人</li>
+<li>库存数据 → 仓储负责人</li>
+</ul>
+<p><strong>Owner负责什么？</strong></p>
+<p>核心只有一句话：</p>
+<blockquote>
+<p>对数据结果负责。</p>
+</blockquote>
+<p>包括：</p>
+<ul>
+<li>数据定义</li>
+<li>指标口径</li>
+<li>数据准确性</li>
+</ul>
+<p>👉 注意：</p>
+<p>Owner一定是业务角色，而不是IT。</p>
+<p>因为：</p>
+<blockquote>
+<p>业务最懂业务数据。</p>
+</blockquote>
+<p><strong>2️⃣ Data Steward（数据管理员/数据管家）</strong></p>
+<p>这个角色更偏执行与运营。</p>
+<p>通常来自：</p>
+<ul>
+<li>业务骨干</li>
+<li>数据团队</li>
+<li>信息化团队</li>
+</ul>
+<p><strong>Steward负责什么？</strong></p>
+<p>例如：</p>
+<ul>
+<li>数据维护</li>
+<li>规则执行</li>
+<li>数据问题跟踪</li>
+<li>数据质量监控</li>
+</ul>
+<p>如果说Owner负责“方向”，那么Steward负责：</p>
+<blockquote>
+<p>“日常运行”。</p>
+</blockquote>
+<p><strong>3️⃣ 数据治理委员会（很多企业忽略）</strong></p>
+<p>这是跨部门协调的关键。</p>
+<p>因为很多问题：</p>
+<ul>
+<li>不是某一个部门能决定的</li>
+<li>而是涉及多个业务口径</li>
+</ul>
+<p>例如：</p>
+<ul>
+<li>收入口径</li>
+<li>订单定义</li>
+<li>库存规则</li>
+</ul>
+<p>这些问题，必须有：</p>
+<blockquote>
+<p>企业级协调机制。</p>
+</blockquote>
+<p><strong>委员会不需要天天开会</strong></p>
+<p>但需要具备几个能力：</p>
+<ul>
+<li>标准审批</li>
+<li>冲突协调</li>
+<li>优先级决策</li>
+<li>重大问题推动</li>
+</ul>
+<h3 id="六、一个特别容易被忽略的问题"><a href="#六、一个特别容易被忽略的问题" class="headerlink" title="六、一个特别容易被忽略的问题"></a>六、一个特别容易被忽略的问题</h3><p>很多企业会任命：</p>
+<ul>
+<li>数据负责人</li>
+<li>数据管理员</li>
+</ul>
+<p>但最后发现：</p>
+<blockquote>
+<p>角色有了，事情还是推进不动。</p>
+</blockquote>
+<p>为什么？</p>
+<p>因为：</p>
+<blockquote>
+<p>“责任”没有真正进入业务流程。</p>
+</blockquote>
+<p>举个典型例子：</p>
+<p>如果：</p>
+<ul>
+<li>数据质量问题</li>
+<li>不影响绩效</li>
+<li>不影响业务流程</li>
+<li>不影响结果考核</li>
+</ul>
+<p>那么再强调“重要”，也很难长期执行。</p>
+<p>所以数据治理组织真正有效，往往需要：</p>
+<p><strong>数据责任“进入管理体系”</strong></p>
+<p>例如：</p>
+<ul>
+<li>数据质量纳入部门考核</li>
+<li>核心指标必须统一口径</li>
+<li>主数据变更必须审批</li>
+</ul>
+<p>👉 当数据开始影响业务运行时，治理才会真正发生。</p>
+<h3 id="七、很多企业治理推进不下去，其实是“节奏错了”"><a href="#七、很多企业治理推进不下去，其实是“节奏错了”" class="headerlink" title="七、很多企业治理推进不下去，其实是“节奏错了”"></a>七、很多企业治理推进不下去，其实是“节奏错了”</h3><p>还有一种常见问题：</p>
+<blockquote>
+<p>一开始就想搭建“大而全”的治理体系。</p>
+</blockquote>
+<p>结果：</p>
+<ul>
+<li>会议越来越多</li>
+<li>规则越来越复杂</li>
+<li>业务越来越疲惫</li>
+</ul>
+<p>最后：</p>
+<blockquote>
+<p>大家逐渐失去耐心。</p>
+</blockquote>
+<p>更合理的方式通常是：</p>
+<p><strong>1️⃣ 先明确关键领域</strong></p>
+<p>例如：</p>
+<ul>
+<li>销售</li>
+<li>库存</li>
+<li>生产</li>
+</ul>
+<p>不要一开始覆盖全公司。</p>
+<p><strong>2️⃣ 先解决关键问题</strong></p>
+<p>例如：</p>
+<ul>
+<li>指标不一致</li>
+<li>主数据混乱</li>
+<li>数据质量问题</li>
+</ul>
+<p>先做出“可见效果”。</p>
+<p><strong>3️⃣ 用结果建立信任</strong></p>
+<p>这是非常重要的一步。</p>
+<p>当业务看到：</p>
+<ul>
+<li>数据开始可信</li>
+<li>报表开始统一</li>
+<li>协同效率提升</li>
+</ul>
+<p>治理体系才会真正获得支持。</p>
+<h3 id="八、一个很现实的理解"><a href="#八、一个很现实的理解" class="headerlink" title="八、一个很现实的理解"></a>八、一个很现实的理解</h3><p>很多企业会认为：</p>
+<blockquote>
+<p>数据治理是“IT升级”。</p>
+</blockquote>
+<p>但真正成熟之后会发现：</p>
+<blockquote>
+<p>数据治理其实是“管理升级”。</p>
+</blockquote>
+<p>因为它最终改变的是：</p>
+<ul>
+<li>企业内部协同方式</li>
+<li>数据责任机制</li>
+<li>决策运行模式</li>
+</ul>
+<h3 id="九、写在最后"><a href="#九、写在最后" class="headerlink" title="九、写在最后"></a>九、写在最后</h3><p>很多数据治理项目，最后真正拉开差距的，并不完全是：</p>
+<ul>
+<li>技术平台</li>
+<li>工具能力</li>
+<li>系统架构</li>
+</ul>
+<p>而是：</p>
+<blockquote>
+<p>在上面的基础之上，有没有形成一套真正能持续运行的组织机制。</p>
+</blockquote>
+<p>因为：</p>
+<blockquote>
+<p>技术可以快速建设，<br>但“组织共识”和“责任体系”，才决定数据治理能走多远。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://taoyuyin.gitee.io/2026/05/t-data-governance-series-08/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2033,100 +2402,11 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://taoyuyin.gitee.io/2020/08/grep-string-with-find/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="陶玉印">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="taoyuyin">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/08/grep-string-with-find/" class="post-title-link" itemprop="url">在 Linux 下通过 find 和 grep 查找包含指定字符串的文件</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-19 20:02:41" itemprop="dateCreated datePublished" datetime="2020-08-19T20:02:41+08:00">2020-08-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-20 13:49:19" itemprop="dateModified" datetime="2020-08-20T13:49:19+08:00">2020-08-20</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="在-Linux-下通过-find-和-grep-查找包含指定字符串的文件"><a href="#在-Linux-下通过-find-和-grep-查找包含指定字符串的文件" class="headerlink" title="在 Linux 下通过 find 和 grep 查找包含指定字符串的文件"></a>在 Linux 下通过 find 和 grep 查找包含指定字符串的文件</h2><p>直接上示例，拿走即用</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ find /home -<span class="built_in">type</span> f -name <span class="string">&#x27;*.py&#x27;</span> -<span class="built_in">exec</span> grep -n <span class="string">&#x27;MySQL&#x27;</span> --color=auto &#123;&#125; \; -<span class="built_in">print</span></span><br></pre></td></tr></table></figure>
-
-<p>作用是在’/home’目录下查找包含’MySQL’以’py’结尾的文件，输出内容和行号，将结果打印在屏幕</p>
-<p>注意点：</p>
-<ul>
-<li>可以根据要查找的字符串或文件类型修改单引号里面的内容</li>
-<li>最好不要使用根目录，尽量缩小 Path 范围</li>
-</ul>
-<h2 id="拆分讲解"><a href="#拆分讲解" class="headerlink" title="拆分讲解"></a>拆分讲解</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ find /home -<span class="built_in">type</span> f <span class="comment"># 类型参数， f 为普通文件</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ find /home -name <span class="string">&#x27;*.py&#x27;</span> <span class="comment"># 根据文件名查找，查找 Python 文件</span></span><br></pre></td></tr></table></figure>
-
-<p>结合 -exec 与其他命令配合使用， find 在返回后执行</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ find /home -name <span class="string">&#x27;*.py&#x27;</span> -<span class="built_in">exec</span> grep -n <span class="string">&#x27;MySQL&#x27;</span> &#123;&#125; \; <span class="comment"># 查找 Python 文件，搜索包含&#x27;MySQL&#x27;的行</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ find /home -name <span class="string">&#x27;*.py&#x27;</span> -<span class="built_in">exec</span> grep -n <span class="string">&#x27;MySQL&#x27;</span> --color=auto &#123;&#125; \; -<span class="built_in">print</span> <span class="comment"># 查找 Python 文件，搜索包含&#x27;MySQL&#x27;的行，将文件打印出来</span></span><br></pre></td></tr></table></figure>
-
-<p>其他用法可以分别查看 find 和 grep 的用法。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
 
 
 
@@ -2191,7 +2471,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
