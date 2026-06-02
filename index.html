@@ -183,6 +183,393 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://taoyuyin.gitee.io/2026/06/t-data-governance-series-10/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="陶玉印">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="taoyuyin">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2026/06/t-data-governance-series-10/" class="post-title-link" itemprop="url">从报表到数据资产：企业数据能力的演进路径</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2026-06-02 10:00:00" itemprop="dateCreated datePublished" datetime="2026-06-02T10:00:00+08:00">2026-06-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2026-06-01 14:58:39" itemprop="dateModified" datetime="2026-06-01T14:58:39+08:00">2026-06-01</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>这些年，无论是数字化转型、智能制造，还是人工智能，几乎都绕不开一个关键词：</p>
+<blockquote>
+<p>数据。</p>
+</blockquote>
+<p>很多企业也确实投入了大量资源：</p>
+<ul>
+<li>上ERP</li>
+<li>建MES</li>
+<li>做数据仓库</li>
+<li>上BI平台</li>
+<li>搭数据中台</li>
+</ul>
+<p>但如果认真观察会发现，不同企业的数据建设效果差异非常大。</p>
+<p>有的企业：</p>
+<ul>
+<li>报表越来越多</li>
+<li>数据越来越全</li>
+<li>但业务依然靠经验决策</li>
+</ul>
+<p>而有的企业：</p>
+<ul>
+<li>数据已经成为经营管理的重要组成部分</li>
+<li>甚至开始驱动业务创新</li>
+</ul>
+<p>同样是数据建设，为什么会出现如此大的差异？</p>
+<p>因为企业之间最大的区别，往往不是技术水平，而是：</p>
+<blockquote>
+<p>数据能力所处的发展阶段不同。</p>
+</blockquote>
+<p>数据治理的本质，不是建设几个系统，也不是做几个项目。</p>
+<p>从更长周期来看，它实际上是在推动企业完成一次能力升级：</p>
+<p>从报表驱动，走向数据驱动；从数据资源，走向数据资产。</p>
+<h3 id="一、企业数据能力的发展，往往会经历四个阶段"><a href="#一、企业数据能力的发展，往往会经历四个阶段" class="headerlink" title="一、企业数据能力的发展，往往会经历四个阶段"></a>一、企业数据能力的发展，往往会经历四个阶段</h3><p>过去十多年，我参与过互联网企业的数据平台建设，也参与过制造业数据仓库和数据治理项目。</p>
+<p>回头来看，大多数企业的数据能力演进路径其实非常相似。</p>
+<p>大致可以分为四个阶段。</p>
+<h4 id="第一阶段：报表时代"><a href="#第一阶段：报表时代" class="headerlink" title="第一阶段：报表时代"></a>第一阶段：报表时代</h4><p>这是绝大多数企业数字化建设的起点。</p>
+<p>企业建设ERP、财务系统、进销存系统之后，最直接的需求就是：</p>
+<blockquote>
+<p>我要看报表。</p>
+</blockquote>
+<p>于是开始建设：</p>
+<ul>
+<li>日报</li>
+<li>周报</li>
+<li>月报</li>
+<li>经营分析报表</li>
+</ul>
+<p>这个阶段最大的特点是：</p>
+<blockquote>
+<p>数据用于展示结果。</p>
+</blockquote>
+<p>例如：</p>
+<ul>
+<li>本月销售额是多少</li>
+<li>本月生产多少产品</li>
+<li>库存还有多少</li>
+</ul>
+<p>企业开始拥有数据，但数据主要承担的是：</p>
+<blockquote>
+<p>统计和汇报功能。</p>
+</blockquote>
+<p><strong>这个阶段的典型问题</strong></p>
+<p>每个部门都有自己的报表：</p>
+<ul>
+<li>财务有财务报表</li>
+<li>销售有销售报表</li>
+<li>生产有生产报表</li>
+</ul>
+<p>结果经常出现：</p>
+<blockquote>
+<p>同一个指标，不同部门算出来的结果不一样。</p>
+</blockquote>
+<p>于是管理层开始产生疑问：</p>
+<blockquote>
+<p>到底哪个数据是真的？</p>
+</blockquote>
+<p>这时候企业会发现：</p>
+<blockquote>
+<p>问题已经不是没有数据，而是数据不一致。</p>
+</blockquote>
+<p>于是进入第二阶段。</p>
+<h4 id="第二阶段：数据整合时代"><a href="#第二阶段：数据整合时代" class="headerlink" title="第二阶段：数据整合时代"></a>第二阶段：数据整合时代</h4><p>为了统一数据，企业开始建设：</p>
+<ul>
+<li>数据仓库</li>
+<li>数据平台</li>
+<li>BI系统</li>
+</ul>
+<p>通过整合ERP、MES、CRM等系统数据：</p>
+<p>形成统一的数据出口。</p>
+<p>这一阶段解决的是：</p>
+<blockquote>
+<p>数据集中问题。</p>
+</blockquote>
+<p>企业开始拥有：</p>
+<ul>
+<li>统一指标</li>
+<li>统一报表</li>
+<li>统一分析平台</li>
+</ul>
+<p>相比第一阶段，这是一次巨大进步。</p>
+<p><strong>但新的问题出现了</strong></p>
+<p>很多企业走到这里后会发现：</p>
+<p>虽然数据统一了，但业务依然不完全信任数据。</p>
+<p>原因很简单：</p>
+<ul>
+<li>客户编码不统一</li>
+<li>物料编码不统一</li>
+<li>指标口径不统一</li>
+</ul>
+<p>于是：</p>
+<blockquote>
+<p>数据仓库建好了，但数据治理的问题开始暴露出来。</p>
+</blockquote>
+<p>企业进入第三阶段。</p>
+<h4 id="第三阶段：数据治理时代"><a href="#第三阶段：数据治理时代" class="headerlink" title="第三阶段：数据治理时代"></a>第三阶段：数据治理时代</h4><p>这个阶段，企业开始意识到：</p>
+<blockquote>
+<p>数据问题不是技术问题，而是管理问题。</p>
+</blockquote>
+<p>开始关注：</p>
+<ul>
+<li>数据标准</li>
+<li>数据质量</li>
+<li>主数据管理</li>
+<li>元数据管理</li>
+<li>数据责任体系</li>
+</ul>
+<p>企业不再仅仅关注：</p>
+<blockquote>
+<p>数据怎么存。</p>
+</blockquote>
+<p>而开始关注：</p>
+<blockquote>
+<p>数据是否可信。</p>
+</blockquote>
+<p>这是一个重要转折点。</p>
+<p><strong>在这个阶段</strong></p>
+<p>企业逐步建立：</p>
+<ul>
+<li>Data Owner</li>
+<li>Data Steward</li>
+<li>数据治理委员会</li>
+</ul>
+<p>建立：</p>
+<ul>
+<li>数据标准体系</li>
+<li>数据质量机制</li>
+<li>主数据管理体系</li>
+</ul>
+<p>经过一段时间后，企业内部会出现一个明显变化：</p>
+<blockquote>
+<p>大家开始逐步相信同一套数据。</p>
+</blockquote>
+<p>这其实是数据治理最大的价值之一。</p>
+<p>因为：</p>
+<blockquote>
+<p>信任，才是数据价值释放的前提。</p>
+</blockquote>
+<h4 id="第四阶段：数据资产时代"><a href="#第四阶段：数据资产时代" class="headerlink" title="第四阶段：数据资产时代"></a>第四阶段：数据资产时代</h4><p>这是很多企业努力的方向，也是数据治理真正想达到的目标。</p>
+<p>什么叫数据资产？</p>
+<p>简单来说：</p>
+<blockquote>
+<p>数据能够持续创造价值，并且被企业主动运营。</p>
+</blockquote>
+<p>这时候数据已经不仅仅是：</p>
+<ul>
+<li>报表来源</li>
+<li>分析依据</li>
+</ul>
+<p>而成为企业的重要生产要素。</p>
+<p><strong>数据开始支撑经营</strong></p>
+<p>例如：</p>
+<ul>
+<li>销售预测</li>
+<li>库存优化</li>
+<li>采购计划</li>
+<li>生产排程</li>
+<li>渠道管理</li>
+<li>客户运营</li>
+</ul>
+<p>数据开始驱动决策</p>
+<p>管理层讨论问题时：</p>
+<p>不再是：</p>
+<blockquote>
+<p>“我觉得……”</p>
+</blockquote>
+<p>而是：</p>
+<blockquote>
+<p>“数据告诉我们……”</p>
+</blockquote>
+<p><strong>数据开始创造新的价值</strong></p>
+<p>例如：</p>
+<ul>
+<li>数据产品</li>
+<li>数据服务</li>
+<li>数据运营</li>
+<li>AI应用</li>
+</ul>
+<p>尤其在人工智能时代。</p>
+<p>企业会越来越深刻地认识到：</p>
+<blockquote>
+<p>AI的上限，很大程度取决于数据的质量和治理水平。</p>
+</blockquote>
+<h3 id="二、为什么很多企业始终停留在“报表阶段”？"><a href="#二、为什么很多企业始终停留在“报表阶段”？" class="headerlink" title="二、为什么很多企业始终停留在“报表阶段”？"></a>二、为什么很多企业始终停留在“报表阶段”？</h3><p>这是一个值得思考的问题。</p>
+<p>很多企业投入了大量资金：</p>
+<ul>
+<li>买系统</li>
+<li>建平台</li>
+<li>招团队</li>
+</ul>
+<p>但几年之后：</p>
+<p>依然停留在做报表。</p>
+<p>原因往往不是技术。</p>
+<p>而是缺少三个关键能力。</p>
+<h4 id="第一：统一标准"><a href="#第一：统一标准" class="headerlink" title="第一：统一标准"></a>第一：统一标准</h4><p>没有统一标准：</p>
+<ul>
+<li>指标无法统一</li>
+<li>数据无法复用</li>
+<li>资产无法沉淀</li>
+</ul>
+<h4 id="第二：治理机制"><a href="#第二：治理机制" class="headerlink" title="第二：治理机制"></a>第二：治理机制</h4><p>没有治理机制：</p>
+<ul>
+<li>数据质量无法持续改善</li>
+<li>主数据无法长期维护</li>
+</ul>
+<h4 id="第三：业务参与"><a href="#第三：业务参与" class="headerlink" title="第三：业务参与"></a>第三：业务参与</h4><p>数据治理从来不是IT部门的事情。</p>
+<p>真正的数据资产：</p>
+<p>一定是业务和技术共同建设的结果。</p>
+<h3 id="三、制造业企业的数据资产化，更应该关注什么？"><a href="#三、制造业企业的数据资产化，更应该关注什么？" class="headerlink" title="三、制造业企业的数据资产化，更应该关注什么？"></a>三、制造业企业的数据资产化，更应该关注什么？</h3><p>结合大量制造业实践，我认为有三个优先方向。</p>
+<h4 id="优先做好主数据"><a href="#优先做好主数据" class="headerlink" title="优先做好主数据"></a>优先做好主数据</h4><p>重点包括：</p>
+<ul>
+<li>物料</li>
+<li>客户</li>
+<li>供应商</li>
+</ul>
+<p>这是所有分析和决策的基础。</p>
+<h4 id="优先做好核心指标"><a href="#优先做好核心指标" class="headerlink" title="优先做好核心指标"></a>优先做好核心指标</h4><p>重点包括：</p>
+<ul>
+<li>收入</li>
+<li>库存</li>
+<li>订单</li>
+<li>产量</li>
+<li>交付</li>
+</ul>
+<p>不要一开始追求几千个指标。</p>
+<p>先把最关键的几十个指标做好。</p>
+<h4 id="优先做好治理闭环"><a href="#优先做好治理闭环" class="headerlink" title="优先做好治理闭环"></a>优先做好治理闭环</h4><p>重点：</p>
+<ul>
+<li>发现问题</li>
+<li>解决问题</li>
+<li>防止重复发生</li>
+</ul>
+<p>形成持续改进机制。</p>
+<h3 id="四、AI时代，数据治理正在被重新定义"><a href="#四、AI时代，数据治理正在被重新定义" class="headerlink" title="四、AI时代，数据治理正在被重新定义"></a>四、AI时代，数据治理正在被重新定义</h3><p>过去很多企业认为：</p>
+<blockquote>
+<p>数据治理是成本。</p>
+</blockquote>
+<p>今天越来越多企业开始意识到：</p>
+<blockquote>
+<p>数据治理是能力建设。</p>
+</blockquote>
+<p>尤其随着生成式AI的发展。</p>
+<p>企业逐渐发现：</p>
+<p>如果：</p>
+<ul>
+<li>数据标准不统一</li>
+<li>主数据混乱</li>
+<li>数据质量不稳定</li>
+</ul>
+<p>那么：</p>
+<ul>
+<li>企业知识库效果差</li>
+<li>AI问答不可信</li>
+<li>智能分析结果不准确</li>
+</ul>
+<p>换句话说：</p>
+<blockquote>
+<p>AI不是替代数据治理，而是在倒逼企业重视数据治理。</p>
+</blockquote>
+<p>未来企业之间的竞争，很可能不只是：</p>
+<blockquote>
+<p>谁拥有AI</p>
+</blockquote>
+<p>而是：</p>
+<blockquote>
+<p>谁拥有更高质量的数据资产。</p>
+</blockquote>
+<h3 id="五、写在最后"><a href="#五、写在最后" class="headerlink" title="五、写在最后"></a>五、写在最后</h3><p>回顾整个系列，我们讨论了：</p>
+<ul>
+<li>为什么数据治理项目会失败</li>
+<li>制造业数据治理难在哪</li>
+<li>ERP与MES如何打通</li>
+<li>数据仓库为什么建而不用</li>
+<li>数据质量如何持续改善</li>
+<li>什么是真正的数据治理体系</li>
+<li>数据标准为什么是起点</li>
+<li>主数据管理到底要不要做</li>
+<li>数据治理组织如何设计</li>
+</ul>
+<p>最终，其实都在回答同一个问题：</p>
+<blockquote>
+<p>企业为什么要做数据治理？</p>
+</blockquote>
+<p>我的答案是：</p>
+<blockquote>
+<p>数据治理从来不是为了治理而治理。</p>
+</blockquote>
+<p>它真正的意义在于：</p>
+<blockquote>
+<p>让企业的数据，从记录业务，走向支撑业务；从支撑业务，走向驱动业务；最终成为企业持续创造价值的数据资产。</p>
+</blockquote>
+<p>而这，或许才是数据治理最值得投入的地方。</p>
+<h4 id="系列结语"><a href="#系列结语" class="headerlink" title="系列结语"></a>系列结语</h4><p>如果把企业数据建设比作盖房子：</p>
+<ul>
+<li>数据平台是钢筋水泥</li>
+<li>数据仓库是主体结构</li>
+<li>数据标准是设计图纸</li>
+<li>数据治理是施工管理</li>
+<li>数据资产则是最终建成并持续创造价值的大厦</li>
+</ul>
+<p>很多企业已经拥有了砖瓦。</p>
+<p>接下来更重要的，是把这些砖瓦真正组织起来，形成能够长期支撑企业发展的数据能力体系。</p>
+<p>因为未来企业的竞争，不仅是产品的竞争、效率的竞争，更是数据能力的竞争。</p>
+<p>而数据治理，正是这场竞争的起点。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://taoyuyin.gitee.io/2026/05/t-data-governance-series-09/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2315,93 +2702,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://taoyuyin.gitee.io/2020/08/bulid-picgo-with-github/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="陶玉印">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="taoyuyin">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/08/bulid-picgo-with-github/" class="post-title-link" itemprop="url">利用 PicGo 和 GitHub 构建图床</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-19 21:46:10" itemprop="dateCreated datePublished" datetime="2020-08-19T21:46:10+08:00">2020-08-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-25 21:56:18" itemprop="dateModified" datetime="2020-09-25T21:56:18+08:00">2020-09-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="利用-PicGo-和-GitHub-构建图床"><a href="#利用-PicGo-和-GitHub-构建图床" class="headerlink" title="利用 PicGo 和 GitHub 构建图床"></a>利用 PicGo 和 GitHub 构建图床</h2><p>使用 Markdown 写作，需要有个图片上传的地方，可以利用 PicGo 和 GitHub 构建自己的图床。</p>
-<h2 id="创建-GitHub-仓库"><a href="#创建-GitHub-仓库" class="headerlink" title="创建 GitHub 仓库"></a>创建 GitHub 仓库</h2><p>我的 Repository name 用的 picgo2，点击 Create repository。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200819215805.png"></p>
-<h2 id="生成-GitHub-Token"><a href="#生成-GitHub-Token" class="headerlink" title="生成 GitHub Token"></a>生成 GitHub Token</h2><p>在 GitHub 生成一个 Token，以备在 PicGo 配置用<br>点击展开头像，依次点击 Settings、Developer settings、Personal access tokens<br>或者直接输入 <a target="_blank" rel="noopener" href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></p>
-<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200819220449.png"></p>
-<p>然后点击页面的 Generate new token 按钮<br>在 Note 处输入一个名字，我输入的是刚才创建的 Repository name<br>Select scopes 勾选 repo。<br>点击下面的 Generate token 按钮。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200819220449.png"></p>
-<p>Token 创建好了，页面暂时不要动或保存下 Token。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200819221418.png"></p>
-<h2 id="安装-PicGo"><a href="#安装-PicGo" class="headerlink" title="安装 PicGo"></a>安装 PicGo</h2><p>我使用的是2.3.0版本<br>PicGo 下载地址 <a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/PicGo/releases">https://github.com/Molunerfinn/PicGo/releases</a><br>Mac 下直接安装就好。</p>
-<h2 id="配置-PicGo"><a href="#配置-PicGo" class="headerlink" title="配置 PicGo"></a>配置 PicGo</h2><p>点击图床设置下的 GitHub 图床<br>依次输入<br>设定仓库名，taoyuyin/picgo2<br>设定分支名，我用的 master<br>设定Token，刚才创建的 Token<br>指定存储路径，我用的 pics/。注意需要带上斜杠，GitHub 会自动创建个目录。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200819221709.png"></p>
-<p>点击确定，一个基于 PicGo 和 GitHub 的图床就构建好了。</p>
-<h2 id="上传图片"><a href="#上传图片" class="headerlink" title="上传图片"></a>上传图片</h2><p>点击上传区，就可以上传图片了，选用 Markdown 模式，上传后生成的链接可以直接在 Markdown 里使用了。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2471,7 +2771,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
