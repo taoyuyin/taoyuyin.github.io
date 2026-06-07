@@ -1988,4 +1988,175 @@
 <p>而数据治理，正是这场竞争的起点。</p>
 ]]></content>
   </entry>
+  <entry>
+    <title>从报表到Agent：企业数据开发范式的二十年演进</title>
+    <url>/2026/06/t-data-dev-paradigm-01/</url>
+    <content><![CDATA[<p>过去二十年，企业数据领域发生过很多变化。</p>
+<p>数据库、数据仓库、大数据平台、数据治理、BI、数据中台、湖仓一体、ChatBI、Data Agent……</p>
+<p>新概念层出不穷，新技术不断涌现。</p>
+<p>但如果站在更高的视角来看，这二十年的变化，本质上是在解决同一个问题：</p>
+<blockquote>
+<p><strong>如何更快、更准确地获得答案。</strong></p>
+</blockquote>
+<p>今天很多人在讨论AI、Agent、ChatBI。</p>
+<p>有人说数据仓库会消失，有人说BI将被取代，还有人认为未来根本不需要数据开发工程师。</p>
+<p>这些观点听起来很有冲击力，但如果不了解企业数据体系的发展历程，就很容易得出片面的结论。</p>
+<p>因此，在讨论AI会带来什么变化之前，我们不妨先回顾一下企业数据开发范式过去二十年的演进历程。</p>
+<h2 id="第一阶段：数据库时代——直接从业务系统取数"><a href="#第一阶段：数据库时代——直接从业务系统取数" class="headerlink" title="第一阶段：数据库时代——直接从业务系统取数"></a>第一阶段：数据库时代——直接从业务系统取数</h2><p>大约在2000年前后，大多数企业的信息化建设刚刚起步。</p>
+<p>企业中的核心系统主要是：</p>
+<ul>
+<li>ERP</li>
+<li>财务系统</li>
+<li>进销存系统</li>
+<li>人事系统</li>
+</ul>
+<p>那时的数据分析需求并不复杂。</p>
+<p>业务人员提出问题：</p>
+<p>“这个月销售额是多少？”</p>
+<p>技术人员登录数据库，写一条SQL。</p>
+<p>很快就能得到结果。</p>
+<p>那时的数据开发范式可以简单概括为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">业务系统 &#x3D; 数据源 &#x3D; 分析系统</span><br></pre></td></tr></table></figure>
+
+<p>所有分析工作直接基于业务数据库完成。</p>
+<p>这种模式在企业规模较小时运行良好。</p>
+<p>但随着企业发展，问题逐渐出现。</p>
+<p>例如：</p>
+<ul>
+<li>ERP关注交易处理</li>
+<li>财务系统关注账务处理</li>
+<li>CRM关注客户管理</li>
+</ul>
+<p>每个系统的数据标准不同。</p>
+<p>每个系统的数据口径不同。</p>
+<p>每个系统都只关注自身业务。</p>
+<p>当企业希望回答：</p>
+<p>“某客户的销售额、利润和回款情况如何？”</p>
+<p>就需要跨多个系统进行关联分析。</p>
+<p>此时，数据库时代开始暴露出局限性。</p>
+<p>企业需要一种新的数据组织方式。</p>
+<p>数据仓库由此诞生。</p>
+<h2 id="第二阶段：数据仓库时代——让数据形成统一语言"><a href="#第二阶段：数据仓库时代——让数据形成统一语言" class="headerlink" title="第二阶段：数据仓库时代——让数据形成统一语言"></a>第二阶段：数据仓库时代——让数据形成统一语言</h2><p>从2005年前后开始，越来越多企业开始建设数据仓库。</p>
+<p>数据仓库的核心思想并不复杂：</p>
+<p>把分散在各业务系统中的数据统一汇集起来。</p>
+<p>通过清洗、转换、整合。</p>
+<p>形成统一的数据资产。</p>
+<p>此时，企业数据架构开始演变为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">业务系统 → 数据集成 → 数据仓库 → 数据应用</span><br></pre></td></tr></table></figure>
+
+<p>对于很多企业而言，这是一次巨大的进步。</p>
+<p>数据仓库解决了几个关键问题：</p>
+<h3 id="第一，统一数据口径。"><a href="#第一，统一数据口径。" class="headerlink" title="第一，统一数据口径。"></a>第一，统一数据口径。</h3><p>同一个指标不再出现多个版本。</p>
+<h3 id="第二，沉淀历史数据。"><a href="#第二，沉淀历史数据。" class="headerlink" title="第二，沉淀历史数据。"></a>第二，沉淀历史数据。</h3><p>业务系统可能只保留当前状态。</p>
+<p>数据仓库可以保留完整历史轨迹。</p>
+<h3 id="第三，提高分析效率。"><a href="#第三，提高分析效率。" class="headerlink" title="第三，提高分析效率。"></a>第三，提高分析效率。</h3><p>复杂分析不再直接访问业务数据库。</p>
+<h3 id="第四，实现跨系统分析。"><a href="#第四，实现跨系统分析。" class="headerlink" title="第四，实现跨系统分析。"></a>第四，实现跨系统分析。</h3><p>企业第一次能够从全局视角看待经营数据。</p>
+<p>也正是在这一时期，维度建模、星型模型、事实表、维度表等概念开始广泛普及。</p>
+<p>很多企业的数据团队开始形成：</p>
+<ul>
+<li>ETL开发工程师</li>
+<li>数据仓库工程师</li>
+<li>BI工程师</li>
+</ul>
+<p>等专业岗位。</p>
+<p>数据开发开始进入工程化时代。</p>
+<h2 id="第三阶段：BI时代——从数据到决策"><a href="#第三阶段：BI时代——从数据到决策" class="headerlink" title="第三阶段：BI时代——从数据到决策"></a>第三阶段：BI时代——从数据到决策</h2><p>如果说数据仓库解决的是“数据从哪里来”的问题。</p>
+<p>那么BI解决的是：</p>
+<blockquote>
+<p>“数据如何被使用”的问题。</p>
+</blockquote>
+<p>从2010年以后，越来越多企业开始建设：</p>
+<ul>
+<li>经营驾驶舱</li>
+<li>管理看板</li>
+<li>KPI体系</li>
+<li>数据分析平台</li>
+</ul>
+<p>FineBI、Tableau、Power BI等产品快速发展。</p>
+<p>企业开始尝试用数据驱动决策。</p>
+<p>此时的数据开发范式变成：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">业务系统</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">数据仓库</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">OLAP</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">BI</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">决策分析</span><br></pre></td></tr></table></figure>
+
+<p>这也是很多企业今天仍然在采用的主流架构。</p>
+<p>这一模式极大提升了企业的数据使用效率。</p>
+<p>但与此同时，一个新的问题开始出现。</p>
+<p>所有答案都需要提前准备。</p>
+<ul>
+<li>业务提出需求。</li>
+<li>数据团队开发ETL。</li>
+<li>开发指标。</li>
+<li>开发报表。</li>
+<li>测试上线。</li>
+</ul>
+<p>最终才能看到结果。</p>
+<p>很多企业都经历过这样的场景：</p>
+<p>业务部门提出一个分析需求。</p>
+<p>排期两周。</p>
+<p>开发一周。</p>
+<p>测试三天。</p>
+<p>上线一天。</p>
+<p>最后花费近一个月时间。</p>
+<p>而业务真正关心的问题，可能只需要一个答案。</p>
+<p>问题并不在于技术。</p>
+<p>而在于这种模式本质上属于：</p>
+<p><strong>先开发答案，再提出问题。</strong></p>
+<p>这也为下一轮变革埋下伏笔。</p>
+<h2 id="第四阶段：AI时代——从开发答案到生成答案"><a href="#第四阶段：AI时代——从开发答案到生成答案" class="headerlink" title="第四阶段：AI时代——从开发答案到生成答案"></a>第四阶段：AI时代——从开发答案到生成答案</h2><p>2022年以后，大模型开始快速发展。</p>
+<p>ChatGPT、Claude、DeepSeek等产品让自然语言交互成为现实。</p>
+<p>与此同时，企业数据领域也开始出现新的变化。</p>
+<p>ChatBI开始流行。</p>
+<p>智能问数开始普及。</p>
+<p>企业知识库快速增长。</p>
+<p>Data Agent不断涌现。</p>
+<p>过去的数据分析过程通常是：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">提出问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">提交需求</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发模型</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发报表</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">获得答案</span><br></pre></td></tr></table></figure>
+
+<p>而今天越来越多企业开始尝试：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">提出问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">Agent理解问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">自动检索数据</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">自动生成SQL</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">自动分析</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">获得答案</span><br></pre></td></tr></table></figure>
+
+<p>两种模式最大的区别在于：</p>
+<p>过去是开发答案。</p>
+<p>现在是生成答案。</p>
+<p>这是企业数据开发范式过去二十年来最重要的一次变化。</p>
+<h2 id="AI会取代数据仓库吗？"><a href="#AI会取代数据仓库吗？" class="headerlink" title="AI会取代数据仓库吗？"></a>AI会取代数据仓库吗？</h2><p>这是最近两年被问得最多的问题之一。</p>
+<p>我的观点很明确：</p>
+<p>不会。</p>
+<p>至少在可预见的未来不会。</p>
+<p>因为AI解决的是答案生成问题。</p>
+<p>而数据仓库解决的是数据组织问题。</p>
+<p>两者并不是替代关系。</p>
+<p>恰恰相反。</p>
+<p>Agent越强。</p>
+<p>越依赖高质量的数据基础。</p>
+<p>ChatBI越智能。</p>
+<p>越需要统一的数据口径。</p>
+<p>企业知识库越丰富。</p>
+<p>越需要高质量的数据治理。</p>
+<p>未来消失的不会是数据仓库。</p>
+<p>而是数据仓库作为最终消费终端的角色。</p>
+<p>它会逐渐退居幕后。</p>
+<p>成为Agent的数据底座。</p>
+<h2 id="下一代企业数据体系正在形成"><a href="#下一代企业数据体系正在形成" class="headerlink" title="下一代企业数据体系正在形成"></a>下一代企业数据体系正在形成</h2><p>回顾过去二十年。</p>
+<p>企业数据体系经历了四次重要演进：</p>
+<h3 id="数据库时代："><a href="#数据库时代：" class="headerlink" title="数据库时代："></a>数据库时代：</h3><p>解决数据存储问题。</p>
+<h3 id="数据仓库时代："><a href="#数据仓库时代：" class="headerlink" title="数据仓库时代："></a>数据仓库时代：</h3><p>解决数据整合问题。</p>
+<h3 id="BI时代："><a href="#BI时代：" class="headerlink" title="BI时代："></a>BI时代：</h3><p>解决数据消费问题。</p>
+<h3 id="AI时代："><a href="#AI时代：" class="headerlink" title="AI时代："></a>AI时代：</h3><p>解决答案生成问题。</p>
+<p>每一次演进，都不是推翻上一代体系。</p>
+<p>而是在上一代基础上的能力扩展。</p>
+<p>因此，我并不认为AI会终结企业数据体系。</p>
+<p>恰恰相反。</p>
+<p>AI正在推动企业数据体系进入一个新的阶段。</p>
+<p>未来五年。</p>
+<p>真正值得关注的问题不是：</p>
+<p>“数据仓库会不会消失？”</p>
+<p>而是：</p>
+<blockquote>
+<p>“企业如何构建能够支撑Agent的数据体系？”</p>
+</blockquote>
+<p>这也是本专栏接下来希望持续探讨的话题。</p>
+<p>下一篇，我们将从一个最基础的问题开始：</p>
+<p><strong>为什么企业需要数据仓库？</strong></p>
+]]></content>
+  </entry>
 </search>
