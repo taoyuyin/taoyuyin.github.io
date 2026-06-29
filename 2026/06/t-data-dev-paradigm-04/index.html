@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="fppm4jYJLq7zYsAnjUA03HIBZ-2FJrmsLCNs6ufcumc">
+  <meta name="msvalidate.01" content="7f6cc3cefb714c53bdee98be40f0dcea">
+  <meta name="baidu-site-verification" content="codeva-YKfvlNtzSH">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"itaoyuyin.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="BI为什么成功？ChatBI又解决了什么问题？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ChatBI来了，传统BI会消失吗？">
+<meta property="og:url" content="https://itaoyuyin.com/2026/06/t-data-dev-paradigm-04/index.html">
+<meta property="og:site_name" content="陶玉印的博客">
+<meta property="og:description" content="BI为什么成功？ChatBI又解决了什么问题？">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-06-30T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-06-29T05:57:59.179Z">
+<meta property="article:author" content="陶玉印">
+<meta property="article:tag" content="数据治理，数据管理， 数据平台， 数据仓库， 陶玉印">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://itaoyuyin.com/2026/06/t-data-dev-paradigm-04/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>ChatBI来了，传统BI会消失吗？ | 陶玉印的博客</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-176856665-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-176856665-1');
+      }
+    </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?6a50c5c210cb69091bddcc5ebd9bfffe";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">陶玉印的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">企业数据治理、数据仓库、数据质量与AI应用实践</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-awesome">
+
+    <a href="/awesome/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>Awesome</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+
+
+  <meta name="google-site-verification" content="fppm4jYJLq7zYsAnjUA03HIBZ-2FJrmsLCNs6ufcumc" /> 
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://itaoyuyin.com/2026/06/t-data-dev-paradigm-04/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="陶玉印">
+      <meta itemprop="description" content="陶玉印,15年数据治理与数据仓库实践者，涵盖数据治理、数据质量、数据仓库、主数据管理、制造业数字化、AI Agent、企业知识库等领域。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="陶玉印的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ChatBI来了，传统BI会消失吗？
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2026-06-30 10:00:00" itemprop="dateCreated datePublished" datetime="2026-06-30T10:00:00+08:00">2026-06-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2026-06-29 13:57:59" itemprop="dateModified" datetime="2026-06-29T13:57:59+08:00">2026-06-29</time>
+              </span>
+
+          
+            <div class="post-description">BI为什么成功？ChatBI又解决了什么问题？</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>2023年以来，几乎所有BI厂商都开始拥抱AI。</p>
+<p>有人推出智能问数。</p>
+<p>有人推出AI分析助手。</p>
+<p>有人推出数字员工。</p>
+<p>有人开始宣传Data Agent。</p>
+<p>一时间，”ChatBI”成为数据领域最热门的话题之一。</p>
+<p>与此同时，一个观点也开始频繁出现：</p>
+<blockquote>
+<p><strong>“BI要被AI取代了。”</strong></p>
+</blockquote>
+<p>甚至有人认为：</p>
+<ul>
+<li>以后不用开发报表了；</li>
+<li>以后不用写SQL了；</li>
+<li>以后不用BI平台了。</li>
+</ul>
+<p>那么，事实真的是这样吗？</p>
+<p>我的观点是：</p>
+<p><strong>ChatBI不会消灭BI，但一定会重新定义BI。</strong></p>
+<p>而要理解这一点，我们首先要弄清楚：</p>
+<p><strong>BI为什么成功？ChatBI又解决了什么问题？</strong></p>
+<hr>
+<h2 id="BI真正解决了什么？"><a href="#BI真正解决了什么？" class="headerlink" title="BI真正解决了什么？"></a>BI真正解决了什么？</h2><p>上一篇文章，我们谈到：</p>
+<p>BI的成功，并不仅仅因为它能够制作漂亮的图表。</p>
+<p>真正的价值在于：</p>
+<p><strong>让数据能够持续、稳定地服务企业经营。</strong></p>
+<p>例如：</p>
+<p>老板每天早上打开经营驾驶舱。</p>
+<p>第一眼看到：</p>
+<ul>
+<li>今日销售额</li>
+<li>本月利润</li>
+<li>库存周转率</li>
+<li>订单交付率</li>
+</ul>
+<p>这些数据每天都在更新。</p>
+<p>但展示方式基本保持稳定。</p>
+<p>为什么？</p>
+<p>因为：</p>
+<p>这些问题每天都会被问。</p>
+<p>这些指标每天都需要关注。</p>
+<p>BI本质上是在回答：</p>
+<blockquote>
+<p><strong>企业已经知道自己要问什么。</strong></p>
+</blockquote>
+<p>因此。</p>
+<p>BI最大的特点就是：</p>
+<p><strong>提前准备答案。</strong></p>
+<hr>
+<h2 id="BI最大的局限是什么？"><a href="#BI最大的局限是什么？" class="headerlink" title="BI最大的局限是什么？"></a>BI最大的局限是什么？</h2><p>问题恰恰也出在这里。</p>
+<p>现实企业中。</p>
+<p>真正有价值的问题。</p>
+<p>很多都是临时产生的。</p>
+<p>例如：</p>
+<p>老板突然问：</p>
+<blockquote>
+<p>华东地区利润下降最快的客户有哪些？</p>
+</blockquote>
+<p>继续追问：</p>
+<blockquote>
+<p>为什么下降？</p>
+</blockquote>
+<p>继续追问：</p>
+<blockquote>
+<p>与去年相比发生了什么变化？</p>
+</blockquote>
+<p>继续追问：</p>
+<blockquote>
+<p>有没有共同特点？</p>
+</blockquote>
+<p>继续追问：</p>
+<blockquote>
+<p>如果剔除春节因素呢？</p>
+</blockquote>
+<p>你会发现。</p>
+<p>传统BI越来越难回答。</p>
+<p>为什么？</p>
+<p>因为：</p>
+<p>这些问题没有提前设计。</p>
+<p>BI能够回答：</p>
+<p>已经设计好的问题。</p>
+<p>却很难回答：</p>
+<p>第一次出现的问题。</p>
+<p>于是。</p>
+<p>企业进入一种循环：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">提出需求。</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">数据团队排期。</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发模型。</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发报表。</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">上线。</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">获得答案。</span><br></pre></td></tr></table></figure>
+
+<p>很多企业。</p>
+<p>一个分析需求需要一周。</p>
+<p>复杂一点可能需要一个月。</p>
+<p>真正耗费时间的。</p>
+<p>并不是分析。</p>
+<p>而是：</p>
+<p><strong>开发答案。</strong></p>
+<hr>
+<h2 id="ChatBI到底改变了什么？"><a href="#ChatBI到底改变了什么？" class="headerlink" title="ChatBI到底改变了什么？"></a>ChatBI到底改变了什么？</h2><p>很多人认为：</p>
+<p>ChatBI最大的价值是：</p>
+<p>不用写SQL。</p>
+<p>其实不是。</p>
+<p>SQL只是表象。</p>
+<p>真正发生变化的是：</p>
+<p><strong>数据消费方式。</strong></p>
+<p>过去：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">业务提出问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">IT理解需求</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发SQL</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发ETL</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发报表</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">业务查看结果</span><br></pre></td></tr></table></figure>
+
+<p>现在：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">业务提出问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">AI理解问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">自动生成SQL</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">自动分析</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">返回答案</span><br></pre></td></tr></table></figure>
+
+<p>区别只有一句话：</p>
+<p>过去：</p>
+<blockquote>
+<p>人开发答案。</p>
+</blockquote>
+<p>现在：</p>
+<blockquote>
+<p>AI生成答案。</p>
+</blockquote>
+<p>这才是ChatBI真正带来的改变。</p>
+<hr>
+<h2 id="ChatBI为什么能够实现智能问数？"><a href="#ChatBI为什么能够实现智能问数？" class="headerlink" title="ChatBI为什么能够实现智能问数？"></a>ChatBI为什么能够实现智能问数？</h2><p>很多宣传材料都会告诉你：</p>
+<p>ChatBI依靠大模型。</p>
+<p>其实。</p>
+<p>真正的能力远不止大模型。</p>
+<p>一个成熟的ChatBI。</p>
+<p>至少需要四项能力。</p>
+<h3 id="第一：理解业务语言"><a href="#第一：理解业务语言" class="headerlink" title="第一：理解业务语言"></a>第一：理解业务语言</h3><p>例如：</p>
+<p>老板说：</p>
+<p>“今年销量怎么样？”</p>
+<p>AI必须知道：</p>
+<p>销量对应哪个指标。</p>
+<p>今年对应哪个时间范围。</p>
+<p>是否默认同比。</p>
+<p>是否按自然年。</p>
+<p>这些都不是模型知识。</p>
+<p>而是企业知识。</p>
+<hr>
+<h3 id="第二：理解数据模型"><a href="#第二：理解数据模型" class="headerlink" title="第二：理解数据模型"></a>第二：理解数据模型</h3><p>AI必须知道：</p>
+<p>销售事实表在哪里。</p>
+<p>客户维表在哪里。</p>
+<p>订单字段叫什么。</p>
+<p>哪些字段可以关联。</p>
+<p>否则。</p>
+<p>SQL根本无法生成。</p>
+<hr>
+<h3 id="第三：理解指标体系"><a href="#第三：理解指标体系" class="headerlink" title="第三：理解指标体系"></a>第三：理解指标体系</h3><p>例如：</p>
+<p>什么叫销售额？</p>
+<p>不同企业定义可能完全不同。</p>
+<p>是否含税？</p>
+<p>是否退货？</p>
+<p>是否取消订单？</p>
+<p>这些都需要统一定义。</p>
+<p>否则。</p>
+<p>AI回答的数字可能每次都不同。</p>
+<hr>
+<h3 id="第四：保证结果可信"><a href="#第四：保证结果可信" class="headerlink" title="第四：保证结果可信"></a>第四：保证结果可信</h3><p>生成SQL并不难。</p>
+<p>难的是：</p>
+<p>生成正确SQL。</p>
+<p>如果AI能够写SQL。</p>
+<p>却不能保证结果正确。</p>
+<p>那么。</p>
+<p>它很难真正进入企业核心业务。</p>
+<hr>
+<h2 id="ChatBI不是魔法"><a href="#ChatBI不是魔法" class="headerlink" title="ChatBI不是魔法"></a>ChatBI不是魔法</h2><p>最近两年。</p>
+<p>很多企业开始尝试ChatBI。</p>
+<p>效果却差异巨大。</p>
+<p>有的企业非常成功。</p>
+<p>有的企业用了几个月就放弃。</p>
+<p>原因是什么？</p>
+<p>很多时候。</p>
+<p>不是模型能力。</p>
+<p>而是数据基础。</p>
+<p>举一个简单例子。</p>
+<p>如果企业存在：</p>
+<p>三个销售额口径。</p>
+<p>五个客户名称。</p>
+<p>多个历史版本。</p>
+<p>大量缺失数据。</p>
+<p>AI应该相信谁？</p>
+<p>答案很简单。</p>
+<p>AI不会判断。</p>
+<p>AI只会放大。</p>
+<p>因此。</p>
+<p><strong>ChatBI的能力上限，取决于企业数据能力。</strong></p>
+<p>这里。</p>
+<p>我想提前抛出本专栏后面会重点讨论的一个观点：</p>
+<blockquote>
+<p><strong>AI时代，真正重要的不是模型，而是数据。</strong></p>
+</blockquote>
+<hr>
+<h2 id="那么，BI会不会消失？"><a href="#那么，BI会不会消失？" class="headerlink" title="那么，BI会不会消失？"></a>那么，BI会不会消失？</h2><p>我的答案依然是：</p>
+<p>不会。</p>
+<p>原因很简单。</p>
+<p>企业每天都有大量固定场景。</p>
+<p>例如：</p>
+<p>经营驾驶舱。</p>
+<p>领导看板。</p>
+<p>KPI监控。</p>
+<p>生产监控。</p>
+<p>供应链监控。</p>
+<p>这些内容：</p>
+<p>每天都要看。</p>
+<p>每天都一样。</p>
+<p>没有必要每天重新问AI。</p>
+<p>BI最大的优势。</p>
+<p>就是：</p>
+<p>持续展示。</p>
+<p>统一展示。</p>
+<p>稳定展示。</p>
+<p>因此。</p>
+<p>BI依然是：</p>
+<p>企业经营监控平台。</p>
+<p>而ChatBI。</p>
+<p>更适合：</p>
+<p>探索式分析。</p>
+<p>临时分析。</p>
+<p>智能问答。</p>
+<p>数据解释。</p>
+<p>未来。</p>
+<p>它们更可能形成这样的关系：</p>
+<p>传统BI负责：</p>
+<p>“告诉你发生了什么。”</p>
+<p>ChatBI负责：</p>
+<p>“告诉你为什么发生。”</p>
+<p>未来的Data Agent甚至会进一步回答：</p>
+<p>“下一步应该怎么做。”</p>
+<hr>
+<h2 id="AI真正改变的，不是BI，而是分析方式"><a href="#AI真正改变的，不是BI，而是分析方式" class="headerlink" title="AI真正改变的，不是BI，而是分析方式"></a>AI真正改变的，不是BI，而是分析方式</h2><p>如果用一句话总结。</p>
+<p>过去二十年。</p>
+<p>企业的数据分析过程是：</p>
+<p><strong>开发一个报表。</strong></p>
+<p>未来。</p>
+<p>企业越来越倾向于：</p>
+<p><strong>提出一个问题。</strong></p>
+<p>过去：</p>
+<p>人适应系统。</p>
+<p>未来：</p>
+<p>系统理解人。</p>
+<p>过去：</p>
+<p>数据工程师负责开发答案。</p>
+<p>未来：</p>
+<p>Agent负责生成答案。</p>
+<p>这是企业数据消费方式最大的变化。</p>
+<hr>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>最近几年。</p>
+<p>关于”BI是否会消失”的讨论很多。</p>
+<p>但我认为。</p>
+<p>真正值得讨论的问题不是：</p>
+<p>BI是否会被取代。</p>
+<p>而是：</p>
+<p>企业如何构建能够支撑AI的数据体系。</p>
+<p>因为。</p>
+<p>没有统一的数据模型。</p>
+<p>没有统一的指标体系。</p>
+<p>没有高质量的数据。</p>
+<p>ChatBI就只能是一场演示。</p>
+<p>而不是生产力。</p>
+<p>真正决定ChatBI价值的。</p>
+<p>从来不是大模型。</p>
+<blockquote>
+<p> <strong>而是企业的数据能力。</strong></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2026/06/t-data-dev-paradigm-03/" rel="prev" title="BI为什么成为企业数据消费的主流模式？">
+      <i class="fa fa-chevron-left"></i> BI为什么成为企业数据消费的主流模式？
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#BI%E7%9C%9F%E6%AD%A3%E8%A7%A3%E5%86%B3%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">BI真正解决了什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BI%E6%9C%80%E5%A4%A7%E7%9A%84%E5%B1%80%E9%99%90%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">BI最大的局限是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ChatBI%E5%88%B0%E5%BA%95%E6%94%B9%E5%8F%98%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">ChatBI到底改变了什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ChatBI%E4%B8%BA%E4%BB%80%E4%B9%88%E8%83%BD%E5%A4%9F%E5%AE%9E%E7%8E%B0%E6%99%BA%E8%83%BD%E9%97%AE%E6%95%B0%EF%BC%9F"><span class="nav-number">4.</span> <span class="nav-text">ChatBI为什么能够实现智能问数？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%EF%BC%9A%E7%90%86%E8%A7%A3%E4%B8%9A%E5%8A%A1%E8%AF%AD%E8%A8%80"><span class="nav-number">4.1.</span> <span class="nav-text">第一：理解业务语言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%EF%BC%9A%E7%90%86%E8%A7%A3%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B"><span class="nav-number">4.2.</span> <span class="nav-text">第二：理解数据模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%EF%BC%9A%E7%90%86%E8%A7%A3%E6%8C%87%E6%A0%87%E4%BD%93%E7%B3%BB"><span class="nav-number">4.3.</span> <span class="nav-text">第三：理解指标体系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%EF%BC%9A%E4%BF%9D%E8%AF%81%E7%BB%93%E6%9E%9C%E5%8F%AF%E4%BF%A1"><span class="nav-number">4.4.</span> <span class="nav-text">第四：保证结果可信</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ChatBI%E4%B8%8D%E6%98%AF%E9%AD%94%E6%B3%95"><span class="nav-number">5.</span> <span class="nav-text">ChatBI不是魔法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%82%A3%E4%B9%88%EF%BC%8CBI%E4%BC%9A%E4%B8%8D%E4%BC%9A%E6%B6%88%E5%A4%B1%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">那么，BI会不会消失？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AI%E7%9C%9F%E6%AD%A3%E6%94%B9%E5%8F%98%E7%9A%84%EF%BC%8C%E4%B8%8D%E6%98%AFBI%EF%BC%8C%E8%80%8C%E6%98%AF%E5%88%86%E6%9E%90%E6%96%B9%E5%BC%8F"><span class="nav-number">7.</span> <span class="nav-text">AI真正改变的，不是BI，而是分析方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="nav-number">8.</span> <span class="nav-text">写在最后</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">陶玉印</p>
+  <div class="site-description" itemprop="description">陶玉印,15年数据治理与数据仓库实践者，涵盖数据治理、数据质量、数据仓库、主数据管理、制造业数字化、AI Agent、企业知识库等领域。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:taoyuyin@gmail.com" title="E-Mail → mailto:taoyuyin@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/taoyuyin" title="Zhi → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;taoyuyin" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>Zhi</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">陶玉印</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

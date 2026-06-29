@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://itaoyuyin.com/2026/06/t-data-dev-paradigm-04/</loc>
+    
+    <lastmod>2026-06-29</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://itaoyuyin.com/2026/06/t-data-dev-paradigm-03/</loc>
     
     <lastmod>2026-06-22</lastmod>
@@ -130,7 +137,7 @@
 
   <url>
     <loc>https://itaoyuyin.com/</loc>
-    <lastmod>2026-06-23</lastmod>
+    <lastmod>2026-06-29</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -140,14 +147,14 @@
   
   <url>
     <loc>https://itaoyuyin.com/categories/%E6%8A%80%E6%9C%AF/</loc>
-    <lastmod>2026-06-23</lastmod>
+    <lastmod>2026-06-29</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://itaoyuyin.com/categories/%E6%95%B0%E6%8D%AE/</loc>
-    <lastmod>2026-06-23</lastmod>
+    <lastmod>2026-06-29</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
