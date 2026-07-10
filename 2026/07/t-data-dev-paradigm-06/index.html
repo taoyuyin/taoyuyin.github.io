@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="fppm4jYJLq7zYsAnjUA03HIBZ-2FJrmsLCNs6ufcumc">
+  <meta name="msvalidate.01" content="7f6cc3cefb714c53bdee98be40f0dcea">
+  <meta name="baidu-site-verification" content="codeva-YKfvlNtzSH">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"itaoyuyin.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Data Agent 代表的不只是一次产品升级，而是企业数据应用模式的一次转变。过去，企业建设的是一个&quot;数据平台&quot;。未来，企业更希望拥有一个能够持续利用数据创造价值的&quot;智能伙伴&quot;。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Data Agent是什么？为什么它代表下一代数据应用？">
+<meta property="og:url" content="https://itaoyuyin.com/2026/07/t-data-dev-paradigm-06/index.html">
+<meta property="og:site_name" content="陶玉印的博客">
+<meta property="og:description" content="Data Agent 代表的不只是一次产品升级，而是企业数据应用模式的一次转变。过去，企业建设的是一个&quot;数据平台&quot;。未来，企业更希望拥有一个能够持续利用数据创造价值的&quot;智能伙伴&quot;。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-07-09T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-07-10T09:20:38.160Z">
+<meta property="article:author" content="陶玉印">
+<meta property="article:tag" content="数据治理，数据管理， 数据平台， 数据仓库， 陶玉印">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://itaoyuyin.com/2026/07/t-data-dev-paradigm-06/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Data Agent是什么？为什么它代表下一代数据应用？ | 陶玉印的博客</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-176856665-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-176856665-1');
+      }
+    </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?6a50c5c210cb69091bddcc5ebd9bfffe";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">陶玉印的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">企业数据治理、数据仓库、数据质量、AI应用实践与研究</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-awesome">
+
+    <a href="/awesome/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>Awesome</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+
+
+  <meta name="google-site-verification" content="fppm4jYJLq7zYsAnjUA03HIBZ-2FJrmsLCNs6ufcumc" /> 
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://itaoyuyin.com/2026/07/t-data-dev-paradigm-06/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="陶玉印">
+      <meta itemprop="description" content="陶玉印,15年数据治理与数据仓库实践者，涵盖数据治理、数据质量、数据仓库、数据平台、主数据管理、制造业数字化等领域。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="陶玉印的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Data Agent是什么？为什么它代表下一代数据应用？
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2026-07-09 10:00:00" itemprop="dateCreated datePublished" datetime="2026-07-09T10:00:00+08:00">2026-07-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2026-07-10 17:20:38" itemprop="dateModified" datetime="2026-07-10T17:20:38+08:00">2026-07-10</time>
+              </span>
+
+          
+            <div class="post-description">Data Agent 代表的不只是一次产品升级，而是企业数据应用模式的一次转变。过去，企业建设的是一个"数据平台"。未来，企业更希望拥有一个能够持续利用数据创造价值的"智能伙伴"。</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Data-Agent是什么？为什么它代表下一代数据应用？"><a href="#Data-Agent是什么？为什么它代表下一代数据应用？" class="headerlink" title="Data Agent是什么？为什么它代表下一代数据应用？"></a>Data Agent是什么？为什么它代表下一代数据应用？</h1><p>最近一年，Data Agent 几乎成为所有数据平台和 AI 厂商共同关注的方向。</p>
+<p>无论是国内还是国外，从智能问数、AI 分析助手，到企业知识库，再到各种”数字员工”，越来越多的产品开始使用 Agent 来描述自己的能力。</p>
+<p>与此同时，一个新的概念也开始频繁出现：</p>
+<p><strong>Data Agent。</strong></p>
+<p>有人把它理解成 ChatBI 的升级版，有人认为它只是一个能够自动生成 SQL 的机器人，也有人将它与 RAG、MCP、工作流等技术混为一谈。</p>
+<p>事实上，这些理解都触及了 Data Agent 的一部分能力，却没有回答一个更重要的问题：</p>
+<p><strong>为什么在数据仓库、BI、ChatBI 已经比较成熟的今天，企业仍然需要 Data Agent？</strong></p>
+<p>我认为，要理解 Data Agent，首先需要理解企业数据应用的发展过程。</p>
+<h2 id="从”展示数据”到”理解数据”"><a href="#从”展示数据”到”理解数据”" class="headerlink" title="从”展示数据”到”理解数据”"></a>从”展示数据”到”理解数据”</h2><p>过去二十年，企业数据应用经历了三个非常明显的发展阶段。</p>
+<p>第一个阶段是报表时代。</p>
+<p>这一阶段，数据的主要价值是展示结果。</p>
+<p>每天早晨，管理者打开报表，查看昨天的销售额、库存、利润以及订单完成情况。报表回答的是”发生了什么”。</p>
+<p>第二个阶段是BI时代。</p>
+<p>BI 不仅能够展示数据，还能够帮助管理者按照不同维度进行分析，例如按区域、产品、客户或者时间进行钻取分析。相比静态报表，BI 大幅提升了企业的数据消费能力，但前提依然是分析路径需要提前设计。</p>
+<p>第三个阶段则是ChatBI。</p>
+<p>用户不再需要学习系统如何使用，而是可以直接提出问题，例如：</p>
+<p>“今年华东地区利润下降最快的客户是谁？”</p>
+<p>系统根据问题自动生成 SQL，并返回分析结果。</p>
+<p>相比 BI，ChatBI 最大的变化是交互方式由点击变成了对话。</p>
+<p>然而，无论是报表、BI 还是 ChatBI，它们本质上仍然围绕同一个目标：</p>
+<p><strong>回答用户提出的问题。</strong></p>
+<p>而 Data Agent，希望完成的事情已经不仅仅是回答问题。</p>
+<h2 id="Data-Agent-真正的变化，是开始完成任务"><a href="#Data-Agent-真正的变化，是开始完成任务" class="headerlink" title="Data Agent 真正的变化，是开始完成任务"></a>Data Agent 真正的变化，是开始完成任务</h2><p>假设企业负责人提出这样一个需求：</p>
+<p>“分析最近三个月利润下降的原因，并提出改进建议。”</p>
+<p>对于传统 BI 来说，它能够展示利润变化趋势。</p>
+<p>对于 ChatBI 来说，它能够回答利润下降了多少。</p>
+<p>但是，它们都很难继续完成后续工作。</p>
+<p>例如：</p>
+<p>利润下降主要来自哪些客户？</p>
+<p>哪些产品贡献最大？</p>
+<p>是否受到退货影响？</p>
+<p>是否存在库存积压？</p>
+<p>是否需要进一步分析供应链数据？</p>
+<p>是否可以形成分析报告？</p>
+<p>这些问题并不是独立存在的，而是一系列连续的分析任务。</p>
+<p>Data Agent 最大的特点，就是能够围绕一个目标，主动规划分析步骤，并根据分析结果不断调整后续动作，直到完成整个任务。</p>
+<p>也就是说，它不仅回答问题，更开始解决问题。</p>
+<p>这是它与传统BI最大的区别。</p>
+<h2 id="为什么今天才出现-Data-Agent？"><a href="#为什么今天才出现-Data-Agent？" class="headerlink" title="为什么今天才出现 Data Agent？"></a>为什么今天才出现 Data Agent？</h2><p>很多人认为，这是因为大模型足够强大了。</p>
+<p>这当然是一个重要原因。</p>
+<p>但我认为，还有另一个更加重要的原因。</p>
+<p>过去的数据平台，主要围绕”数据”构建。</p>
+<p>今天的数据平台，开始围绕”知识”构建。</p>
+<p>例如，一个成熟的数据平台不仅保存了订单、客户、库存等业务数据，还逐步沉淀了：</p>
+<ol>
+<li>指标定义。</li>
+<li>数据血缘。</li>
+<li>元数据。</li>
+<li>业务规则。</li>
+<li>知识文档。</li>
+<li>数据质量规则。</li>
+<li>组织权限。</li>
+</ol>
+<p>这些内容过去分散在不同系统中。</p>
+<p>AI 出现之后，它们第一次有机会被统一利用。</p>
+<p>换句话说，</p>
+<blockquote>
+<p>真正支撑 Data Agent 的，并不仅仅是大模型，更包含企业多年积累的数据资产和知识资产。</p>
+</blockquote>
+<p>没有这些基础，Agent很难真正理解企业。</p>
+<h2 id="一个优秀的-Data-Agent，需要理解什么？"><a href="#一个优秀的-Data-Agent，需要理解什么？" class="headerlink" title="一个优秀的 Data Agent，需要理解什么？"></a>一个优秀的 Data Agent，需要理解什么？</h2><p>很多演示中，我们看到 Agent 能够自动生成 SQL，于是误以为这就是 Data Agent 的核心能力。</p>
+<p>实际上，生成 SQL 只是最后一步。</p>
+<p>在真正进入企业场景之前，一个 Data Agent 至少需要理解四个层面的内容。</p>
+<h3 id="首先，它需要理解业务。"><a href="#首先，它需要理解业务。" class="headerlink" title="首先，它需要理解业务。"></a>首先，它需要理解业务。</h3><p>例如，企业所说的”销售额”到底采用哪一种口径，利润是否包含税费，新增客户如何定义。这些都属于业务语义，而不是数据库语法。</p>
+<h3 id="其次，它需要理解数据。"><a href="#其次，它需要理解数据。" class="headerlink" title="其次，它需要理解数据。"></a>其次，它需要理解数据。</h3><p>哪些表保存订单信息，哪些字段表示客户编号，不同系统之间如何建立关联，这些决定了它是否能够找到正确的数据来源。</p>
+<h3 id="第三，它需要理解知识。"><a href="#第三，它需要理解知识。" class="headerlink" title="第三，它需要理解知识。"></a>第三，它需要理解知识。</h3><p>例如，企业过去沉淀的大量分析报告、制度文件、经营规则以及行业经验，都可能成为 Agent 推理的重要依据。</p>
+<h3 id="最后，它还需要理解任务。"><a href="#最后，它还需要理解任务。" class="headerlink" title="最后，它还需要理解任务。"></a>最后，它还需要理解任务。</h3><p>很多时候，用户提出的是一个目标，而不是一个明确的问题。Agent 需要将目标拆解成多个步骤，并协调不同工具共同完成。</p>
+<p>因此，Data Agent 并不是一个”会写SQL”的工具，而是一个能够理解企业知识、规划任务流程并利用数据完成目标的智能体。</p>
+<h2 id="Data-Agent-为什么离不开数据仓库？"><a href="#Data-Agent-为什么离不开数据仓库？" class="headerlink" title="Data Agent 为什么离不开数据仓库？"></a>Data Agent 为什么离不开数据仓库？</h2><p>看到这里，也许有人会产生疑问：</p>
+<p>既然 Agent 如此智能，是不是意味着未来不再需要数据仓库？</p>
+<p>我的答案依然是否定的。</p>
+<p>事实上，Agent 越智能，对数据底座的要求反而越高。</p>
+<p>原因很简单。</p>
+<p>Agent 并不会创造事实。</p>
+<p>它只能消费事实。</p>
+<p>如果企业存在多个版本的销售额。</p>
+<p>如果客户名称在不同系统中不一致。</p>
+<p>如果历史数据缺失。</p>
+<p>如果数据质量存在严重问题。</p>
+<p>那么 Agent 只会比人更快地得到错误答案。</p>
+<p>过去，数据仓库服务于 BI。</p>
+<p>未来，数据仓库将更多地服务于 Agent。</p>
+<p>它的角色正在发生变化，但它作为企业统一数据底座的价值，并没有发生改变。</p>
+<h2 id="下一代数据应用，不再只是一个系统"><a href="#下一代数据应用，不再只是一个系统" class="headerlink" title="下一代数据应用，不再只是一个系统"></a>下一代数据应用，不再只是一个系统</h2><p>过去，我们理解的数据应用通常是一套系统。</p>
+<p>一个 BI 平台。</p>
+<p>一个报表平台。</p>
+<p>一个数据门户。</p>
+<p>用户进入系统，完成查询，再退出系统。</p>
+<p>而未来的数据应用，更可能是一位长期在线的智能助手。</p>
+<p>它能够:</p>
+<ul>
+<li>理解企业数据。</li>
+<li>理解业务语义。</li>
+<li>理解组织知识。</li>
+<li>理解管理目标。</li>
+</ul>
+<p>不仅能够回答问题，还能够持续完成任务，与业务人员协同工作。</p>
+<p>从这个意义上说，Data Agent 代表的不只是一次产品升级，而是企业数据应用模式的一次转变。</p>
+<p>过去，企业建设的是一个”数据平台”。</p>
+<p>未来，企业更希望拥有一个能够持续利用数据创造价值的”智能伙伴”。</p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>过去二十年，企业数据体系一直围绕”数据如何被消费”展开。</p>
+<p>从报表，到 BI，再到 ChatBI，每一次变化都让获取数据变得更加容易。</p>
+<p>而 Data Agent 所代表的新阶段，则开始思考另一个问题：</p>
+<p><strong>如何让数据主动参与工作，而不仅仅是等待人来查询。</strong></p>
+<p>这意味着，企业数据应用正在从”提供数据”走向”完成任务”，从”支持决策”走向”参与决策”。</p>
+<p>当然，这种能力并不是凭空产生的。</p>
+<p>它依赖于统一的数据模型、完善的数据治理、可靠的数据质量以及持续积累的企业知识。</p>
+<p>伴随着技术的发展与进步，Agent 站到了舞台中央，而真正支撑它的，是企业过去二十年建立起来的数据体系。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2026/07/t-data-dev-paradigm-05/" rel="prev" title="AI不会淘汰数据开发工程师，但会淘汰另一种数据开发方式">
+      <i class="fa fa-chevron-left"></i> AI不会淘汰数据开发工程师，但会淘汰另一种数据开发方式
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Data-Agent%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%83%E4%BB%A3%E8%A1%A8%E4%B8%8B%E4%B8%80%E4%BB%A3%E6%95%B0%E6%8D%AE%E5%BA%94%E7%94%A8%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">Data Agent是什么？为什么它代表下一代数据应用？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E2%80%9D%E5%B1%95%E7%A4%BA%E6%95%B0%E6%8D%AE%E2%80%9D%E5%88%B0%E2%80%9D%E7%90%86%E8%A7%A3%E6%95%B0%E6%8D%AE%E2%80%9D"><span class="nav-number">1.1.</span> <span class="nav-text">从”展示数据”到”理解数据”</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Data-Agent-%E7%9C%9F%E6%AD%A3%E7%9A%84%E5%8F%98%E5%8C%96%EF%BC%8C%E6%98%AF%E5%BC%80%E5%A7%8B%E5%AE%8C%E6%88%90%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.2.</span> <span class="nav-text">Data Agent 真正的变化，是开始完成任务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BB%8A%E5%A4%A9%E6%89%8D%E5%87%BA%E7%8E%B0-Data-Agent%EF%BC%9F"><span class="nav-number">1.3.</span> <span class="nav-text">为什么今天才出现 Data Agent？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E4%BC%98%E7%A7%80%E7%9A%84-Data-Agent%EF%BC%8C%E9%9C%80%E8%A6%81%E7%90%86%E8%A7%A3%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.4.</span> <span class="nav-text">一个优秀的 Data Agent，需要理解什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A6%96%E5%85%88%EF%BC%8C%E5%AE%83%E9%9C%80%E8%A6%81%E7%90%86%E8%A7%A3%E4%B8%9A%E5%8A%A1%E3%80%82"><span class="nav-number">1.4.1.</span> <span class="nav-text">首先，它需要理解业务。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E6%AC%A1%EF%BC%8C%E5%AE%83%E9%9C%80%E8%A6%81%E7%90%86%E8%A7%A3%E6%95%B0%E6%8D%AE%E3%80%82"><span class="nav-number">1.4.2.</span> <span class="nav-text">其次，它需要理解数据。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%EF%BC%8C%E5%AE%83%E9%9C%80%E8%A6%81%E7%90%86%E8%A7%A3%E7%9F%A5%E8%AF%86%E3%80%82"><span class="nav-number">1.4.3.</span> <span class="nav-text">第三，它需要理解知识。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%90%8E%EF%BC%8C%E5%AE%83%E8%BF%98%E9%9C%80%E8%A6%81%E7%90%86%E8%A7%A3%E4%BB%BB%E5%8A%A1%E3%80%82"><span class="nav-number">1.4.4.</span> <span class="nav-text">最后，它还需要理解任务。</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Data-Agent-%E4%B8%BA%E4%BB%80%E4%B9%88%E7%A6%BB%E4%B8%8D%E5%BC%80%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%EF%BC%9F"><span class="nav-number">1.5.</span> <span class="nav-text">Data Agent 为什么离不开数据仓库？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E4%B8%80%E4%BB%A3%E6%95%B0%E6%8D%AE%E5%BA%94%E7%94%A8%EF%BC%8C%E4%B8%8D%E5%86%8D%E5%8F%AA%E6%98%AF%E4%B8%80%E4%B8%AA%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.6.</span> <span class="nav-text">下一代数据应用，不再只是一个系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="nav-number">1.7.</span> <span class="nav-text">写在最后</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">陶玉印</p>
+  <div class="site-description" itemprop="description">陶玉印,15年数据治理与数据仓库实践者，涵盖数据治理、数据质量、数据仓库、数据平台、主数据管理、制造业数字化等领域。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:taoyuyin@gmail.com" title="E-Mail → mailto:taoyuyin@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/taoyuyin" title="Zhi → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;taoyuyin" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>Zhi</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">陶玉印</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
