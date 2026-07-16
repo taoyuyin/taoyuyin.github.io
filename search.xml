@@ -1,79 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>使用 Docker 在本地构建 Jupyter Notebook</title>
-    <url>/2020/08/build-jupyter-with-docker/</url>
-    <content><![CDATA[<h2 id="使用-Docker-在本地构建-Jupyter-Notebook"><a href="#使用-Docker-在本地构建-Jupyter-Notebook" class="headerlink" title="使用 Docker 在本地构建 Jupyter Notebook"></a>使用 Docker 在本地构建 Jupyter Notebook</h2><p>先看下 Jupyter 官方的介绍</p>
-<blockquote>
-<p>The Jupyter Notebook is an open-source web application that allows you to create and share documents that contain live code, equations, visualizations and narrative text. Uses include: data cleaning and transformation, numerical simulation, statistical modeling, data visualization, machine learning, and much more.</p>
-</blockquote>
-<p>一个很方便地使用 Python 做数据分析和数据科学的 Web 应用，赶快在本地构建一个用起来吧。</p>
-<h2 id="安装和使用-Docker"><a href="#安装和使用-Docker" class="headerlink" title="安装和使用 Docker"></a>安装和使用 Docker</h2><p>这篇文章的假设前提是你对 Docker 比较熟悉，或者至少安装了 Docker。<br>如果你不知道 Docker 是什么或者不知道怎么使用，需要先查阅和熟悉下 Docker 的资料和使用方法。</p>
-<h2 id="基于镜像-jupyter-scipy-notebook-再进行-build"><a href="#基于镜像-jupyter-scipy-notebook-再进行-build" class="headerlink" title="基于镜像 jupyter/scipy-notebook 再进行 build"></a>基于镜像 jupyter/scipy-notebook 再进行 build</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker search jupyter <span class="comment"># 从Docker Hub查找Jupyter镜像</span></span><br></pre></td></tr></table></figure>
-<p>发现已经有构建好的Jupyter镜像，我使用jupyter/scipy-notebook，发现没有 Hive 环境以及相关依赖，所以基于这个镜像进行了再次构建。</p>
-<h3 id="编写-requirements-txt-和-run-sh"><a href="#编写-requirements-txt-和-run-sh" class="headerlink" title="编写 requirements.txt 和 run.sh"></a>编写 requirements.txt 和 run.sh</h3><p>Python 链接 Hive 我用的是PyHive，需要安装相关的依赖。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cat requirements.txt</span><br><span class="line">PyHive==0.5.0</span><br><span class="line">thrift==0.10.0</span><br><span class="line">thriftpy==0.3.9</span><br><span class="line">sasl==0.2.1</span><br><span class="line">thrift-sasl==0.3.0</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cat run.sh</span><br><span class="line">tini -g -- start-notebook.sh <span class="comment"># 启动脚本</span></span><br></pre></td></tr></table></figure>
-
-
-<h3 id="编写-Dockerfile"><a href="#编写-Dockerfile" class="headerlink" title="编写 Dockerfile"></a>编写 Dockerfile</h3><p>Dockerfile 是一个文本文件，里面是指令和 shell 命令。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">FROM jupyter/scipy-notebook:b2562c469cdd    <span class="comment"># 基于一个Docker image</span></span><br><span class="line"></span><br><span class="line">USER root        <span class="comment"># 指定 root 。基础镜像以用户jovyan运行，执行 apt-get 报权限问题</span></span><br><span class="line">RUN apt-get update    <span class="comment"># RUN 后面写 shell 命令</span></span><br><span class="line">RUN apt-get install libsasl2-dev libsasl2-2 libsasl2-modules-gssapi-mit</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">USER jovyan        <span class="comment"># 切换回用户jovyan</span></span><br><span class="line">RUN mkdir code    <span class="comment"># 创建一个目录</span></span><br><span class="line">COPY ./ code    <span class="comment"># 复制指令，从上下文目录中复制文件或者目录到容器里指定路径。</span></span><br><span class="line">RUN pip install -r code/requirements.txt -i https://pypi.douban.com/simple/    <span class="comment"># 安装Python库</span></span><br><span class="line"></span><br><span class="line">RUN cp code/lib/hive.py /opt/conda/lib/python3.8/site-packages/pyhive/hive.py    <span class="comment"># 安装的库源码有语法兼容问题，这里我做了修改和替换</span></span><br><span class="line"></span><br><span class="line">CMD [<span class="string">&quot;/bin/bash&quot;</span>,<span class="string">&quot;code/run.sh&quot;</span>]        <span class="comment"># 在docker run 时运行 code/run.sh</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>最后当前目录包含如下的文件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ tree ./</span><br><span class="line">./</span><br><span class="line">├── Dockerfile</span><br><span class="line">├── lib</span><br><span class="line">│   └── hive.py</span><br><span class="line">├── requirements.txt</span><br><span class="line">├── run.sh</span><br></pre></td></tr></table></figure>
-
-<h3 id="docker-build"><a href="#docker-build" class="headerlink" title="docker build"></a>docker build</h3><p>开始构建镜像</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker build -t myrepo/jupyter -f Dockerfile . <span class="comment"># -t 镜像的名字 -f 指定要使用的Dockerfile路径</span></span><br></pre></td></tr></table></figure>
-
-<p>build 完成后可以看到镜像</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker images</span><br><span class="line">REPOSITORY                   TAG                     IMAGE ID            CREATED             SIZE</span><br><span class="line">myrepo/jupyter               latest                  c5520af88d36        50 minutes ago      2.71GB</span><br></pre></td></tr></table></figure>
-
-<h3 id="docker-run"><a href="#docker-run" class="headerlink" title="docker run"></a>docker run</h3><p>现在创建一个容器并运行了</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker run \</span><br><span class="line">--name myrepo-jupyter \        <span class="comment"># 给容器起个名字</span></span><br><span class="line">-p 8888:8888/tcp \        <span class="comment"># 端口映射</span></span><br><span class="line">-e GRANT_SUDO=yes \        <span class="comment"># 设置环境变量</span></span><br><span class="line">--user root j\            <span class="comment"># 以 root 执行</span></span><br><span class="line">myrepo/jupyter:latest    <span class="comment"># 刚才构建的镜像</span></span><br></pre></td></tr></table></figure>
-
-<p>运行起来后终端会输出一个带 token 的本地连接 <code>http://127.0.0.1:8888/?token=</code>，点击打开。</p>
-<h2 id="查看版本和测试功能"><a href="#查看版本和测试功能" class="headerlink" title="查看版本和测试功能"></a>查看版本和测试功能</h2><p>新建一个 Python 文件运行查看下版本</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;Python version &#x27;</span> + sys.version)</span><br><span class="line">print(<span class="string">&#x27;Pandas version &#x27;</span> + pd.__version__)</span><br><span class="line">print(<span class="string">&#x27;Matplotlib version &#x27;</span> + matplotlib.__version__)</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200822203424.png"></p>
-<p>可以写一个类似下面的简单脚本测试下 Hive 连接功能是否正常</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pyhive <span class="keyword">import</span> hive</span><br><span class="line"><span class="keyword">from</span> TCLIService.ttypes <span class="keyword">import</span> TOperationState</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">cursor = hive.connect(host=<span class="string">&#x27;&#x27;</span>,port=<span class="number">10000</span>,username=<span class="string">&#x27;x&#x27;</span>,password=<span class="string">&#x27;x&#x27;</span>,auth=<span class="string">&#x27;LDAP&#x27;</span>).cursor()</span><br><span class="line"></span><br><span class="line">hql=<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">select</span></span><br><span class="line"><span class="string">id,</span></span><br><span class="line"><span class="string">add_date</span></span><br><span class="line"><span class="string">from dwd.dwd_user_dim_user_base</span></span><br><span class="line"><span class="string">limit 1000</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">cursor.execute(hql)</span><br><span class="line">df = pd.DataFrame(cursor.fetchall(), columns = [<span class="string">&#x27;id&#x27;</span>,<span class="string">&#x27;add_date&#x27;</span>])</span><br><span class="line">df.head(<span class="number">20</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>好了，至此一个本地的 Jupyter 环境就部署好了。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="https://docs.docker.com/">docker docs</a></li>
-<li><a href="https://hub.docker.com/r/jupyter/scipy-notebook">scipy-notebook</a></li>
-<li><a href="https://github.com/jupyter/docker-stacks">docker-stack</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>利用 PicGo 和 GitHub 构建图床</title>
-    <url>/2020/08/bulid-picgo-with-github/</url>
-    <content><![CDATA[<h2 id="利用-PicGo-和-GitHub-构建图床"><a href="#利用-PicGo-和-GitHub-构建图床" class="headerlink" title="利用 PicGo 和 GitHub 构建图床"></a>利用 PicGo 和 GitHub 构建图床</h2><p>使用 Markdown 写作，需要有个图片上传的地方，可以利用 PicGo 和 GitHub 构建自己的图床。</p>
-<h2 id="创建-GitHub-仓库"><a href="#创建-GitHub-仓库" class="headerlink" title="创建 GitHub 仓库"></a>创建 GitHub 仓库</h2><p>我的 Repository name 用的 picgo2，点击 Create repository。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200819215805.png"></p>
-<h2 id="生成-GitHub-Token"><a href="#生成-GitHub-Token" class="headerlink" title="生成 GitHub Token"></a>生成 GitHub Token</h2><p>在 GitHub 生成一个 Token，以备在 PicGo 配置用<br>点击展开头像，依次点击 Settings、Developer settings、Personal access tokens<br>或者直接输入 <a href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></p>
-<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200819220449.png"></p>
-<p>然后点击页面的 Generate new token 按钮<br>在 Note 处输入一个名字，我输入的是刚才创建的 Repository name<br>Select scopes 勾选 repo。<br>点击下面的 Generate token 按钮。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200819220449.png"></p>
-<p>Token 创建好了，页面暂时不要动或保存下 Token。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200819221418.png"></p>
-<h2 id="安装-PicGo"><a href="#安装-PicGo" class="headerlink" title="安装 PicGo"></a>安装 PicGo</h2><p>我使用的是2.3.0版本<br>PicGo 下载地址 <a href="https://github.com/Molunerfinn/PicGo/releases">https://github.com/Molunerfinn/PicGo/releases</a><br>Mac 下直接安装就好。</p>
-<h2 id="配置-PicGo"><a href="#配置-PicGo" class="headerlink" title="配置 PicGo"></a>配置 PicGo</h2><p>点击图床设置下的 GitHub 图床<br>依次输入<br>设定仓库名，taoyuyin/picgo2<br>设定分支名，我用的 master<br>设定Token，刚才创建的 Token<br>指定存储路径，我用的 pics/。注意需要带上斜杠，GitHub 会自动创建个目录。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200819221709.png"></p>
-<p>点击确定，一个基于 PicGo 和 GitHub 的图床就构建好了。</p>
-<h2 id="上传图片"><a href="#上传图片" class="headerlink" title="上传图片"></a>上传图片</h2><p>点击上传区，就可以上传图片了，选用 Markdown 模式，上传后生成的链接可以直接在 Markdown 里使用了。</p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-  </entry>
-  <entry>
     <title>了解下中国税收</title>
     <url>/2020/09/d-china-taxation-overview/</url>
     <content><![CDATA[<h2 id="税收定义和特点"><a href="#税收定义和特点" class="headerlink" title="税收定义和特点"></a>税收定义和特点</h2><p>对于非财会的大多数人一般会关心个税，还有相当一部分人不用缴纳个税，会认为税跟自己没关系。<br>其实不然，消费即纳税，而且消费产生的增值税是我国税收的大项，只要在社会上生存，就跟税脱不开关系。<br>先看下税的定义和分类。</p>
@@ -374,6 +301,702 @@
       </categories>
   </entry>
   <entry>
+    <title>利用 PicGo 和 GitHub 构建图床</title>
+    <url>/2020/08/bulid-picgo-with-github/</url>
+    <content><![CDATA[<h2 id="利用-PicGo-和-GitHub-构建图床"><a href="#利用-PicGo-和-GitHub-构建图床" class="headerlink" title="利用 PicGo 和 GitHub 构建图床"></a>利用 PicGo 和 GitHub 构建图床</h2><p>使用 Markdown 写作，需要有个图片上传的地方，可以利用 PicGo 和 GitHub 构建自己的图床。</p>
+<h2 id="创建-GitHub-仓库"><a href="#创建-GitHub-仓库" class="headerlink" title="创建 GitHub 仓库"></a>创建 GitHub 仓库</h2><p>我的 Repository name 用的 picgo2，点击 Create repository。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200819215805.png"></p>
+<h2 id="生成-GitHub-Token"><a href="#生成-GitHub-Token" class="headerlink" title="生成 GitHub Token"></a>生成 GitHub Token</h2><p>在 GitHub 生成一个 Token，以备在 PicGo 配置用<br>点击展开头像，依次点击 Settings、Developer settings、Personal access tokens<br>或者直接输入 <a href="https://github.com/settings/tokens">https://github.com/settings/tokens</a></p>
+<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200819220449.png"></p>
+<p>然后点击页面的 Generate new token 按钮<br>在 Note 处输入一个名字，我输入的是刚才创建的 Repository name<br>Select scopes 勾选 repo。<br>点击下面的 Generate token 按钮。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200819220449.png"></p>
+<p>Token 创建好了，页面暂时不要动或保存下 Token。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200819221418.png"></p>
+<h2 id="安装-PicGo"><a href="#安装-PicGo" class="headerlink" title="安装 PicGo"></a>安装 PicGo</h2><p>我使用的是2.3.0版本<br>PicGo 下载地址 <a href="https://github.com/Molunerfinn/PicGo/releases">https://github.com/Molunerfinn/PicGo/releases</a><br>Mac 下直接安装就好。</p>
+<h2 id="配置-PicGo"><a href="#配置-PicGo" class="headerlink" title="配置 PicGo"></a>配置 PicGo</h2><p>点击图床设置下的 GitHub 图床<br>依次输入<br>设定仓库名，taoyuyin/picgo2<br>设定分支名，我用的 master<br>设定Token，刚才创建的 Token<br>指定存储路径，我用的 pics/。注意需要带上斜杠，GitHub 会自动创建个目录。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200819221709.png"></p>
+<p>点击确定，一个基于 PicGo 和 GitHub 的图床就构建好了。</p>
+<h2 id="上传图片"><a href="#上传图片" class="headerlink" title="上传图片"></a>上传图片</h2><p>点击上传区，就可以上传图片了，选用 Markdown 模式，上传后生成的链接可以直接在 Markdown 里使用了。</p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>从报表到Agent：企业数据开发范式的二十年演进</title>
+    <url>/2026/06/t-data-dev-paradigm-01/</url>
+    <content><![CDATA[<p>过去二十年，企业数据领域发生过很多变化。</p>
+<p>数据库、数据仓库、大数据平台、数据治理、BI、数据中台、湖仓一体、ChatBI、Data Agent……</p>
+<p>新概念层出不穷，新技术不断涌现。</p>
+<p>但如果站在更高的视角来看，这二十年的变化，本质上是在解决同一个问题：</p>
+<blockquote>
+<p><strong>如何更快、更准确地获得答案。</strong></p>
+</blockquote>
+<p>今天很多人在讨论AI、Agent、ChatBI。</p>
+<p>有人说数据仓库会消失，有人说BI将被取代，还有人认为未来根本不需要数据开发工程师。</p>
+<p>这些观点听起来很有冲击力，但如果不了解企业数据体系的发展历程，就很容易得出片面的结论。</p>
+<p>因此，在讨论AI会带来什么变化之前，我们不妨先回顾一下企业数据开发范式过去二十年的演进历程。</p>
+<h2 id="第一阶段：数据库时代——直接从业务系统取数"><a href="#第一阶段：数据库时代——直接从业务系统取数" class="headerlink" title="第一阶段：数据库时代——直接从业务系统取数"></a>第一阶段：数据库时代——直接从业务系统取数</h2><p>大约在2000年前后，大多数企业的信息化建设刚刚起步。</p>
+<p>企业中的核心系统主要是：</p>
+<ul>
+<li>ERP</li>
+<li>财务系统</li>
+<li>进销存系统</li>
+<li>人事系统</li>
+</ul>
+<p>那时的数据分析需求并不复杂。</p>
+<p>业务人员提出问题：</p>
+<p>“这个月销售额是多少？”</p>
+<p>技术人员登录数据库，写一条SQL。</p>
+<p>很快就能得到结果。</p>
+<p>那时的数据开发范式可以简单概括为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">业务系统 &#x3D; 数据源 &#x3D; 分析系统</span><br></pre></td></tr></table></figure>
+
+<p>所有分析工作直接基于业务数据库完成。</p>
+<p>这种模式在企业规模较小时运行良好。</p>
+<p>但随着企业发展，问题逐渐出现。</p>
+<p>例如：</p>
+<ul>
+<li>ERP关注交易处理</li>
+<li>财务系统关注账务处理</li>
+<li>CRM关注客户管理</li>
+</ul>
+<p>每个系统的数据标准不同。</p>
+<p>每个系统的数据口径不同。</p>
+<p>每个系统都只关注自身业务。</p>
+<p>当企业希望回答：</p>
+<p>“某客户的销售额、利润和回款情况如何？”</p>
+<p>就需要跨多个系统进行关联分析。</p>
+<p>此时，数据库时代开始暴露出局限性。</p>
+<p>企业需要一种新的数据组织方式。</p>
+<p>数据仓库由此诞生。</p>
+<h2 id="第二阶段：数据仓库时代——让数据形成统一语言"><a href="#第二阶段：数据仓库时代——让数据形成统一语言" class="headerlink" title="第二阶段：数据仓库时代——让数据形成统一语言"></a>第二阶段：数据仓库时代——让数据形成统一语言</h2><p>从2005年前后开始，越来越多企业开始建设数据仓库。</p>
+<p>数据仓库的核心思想并不复杂：</p>
+<p>把分散在各业务系统中的数据统一汇集起来。</p>
+<p>通过清洗、转换、整合。</p>
+<p>形成统一的数据资产。</p>
+<p>此时，企业数据架构开始演变为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">业务系统 → 数据集成 → 数据仓库 → 数据应用</span><br></pre></td></tr></table></figure>
+
+<p>对于很多企业而言，这是一次巨大的进步。</p>
+<p>数据仓库解决了几个关键问题：</p>
+<h3 id="第一，统一数据口径。"><a href="#第一，统一数据口径。" class="headerlink" title="第一，统一数据口径。"></a>第一，统一数据口径。</h3><p>同一个指标不再出现多个版本。</p>
+<h3 id="第二，沉淀历史数据。"><a href="#第二，沉淀历史数据。" class="headerlink" title="第二，沉淀历史数据。"></a>第二，沉淀历史数据。</h3><p>业务系统可能只保留当前状态。</p>
+<p>数据仓库可以保留完整历史轨迹。</p>
+<h3 id="第三，提高分析效率。"><a href="#第三，提高分析效率。" class="headerlink" title="第三，提高分析效率。"></a>第三，提高分析效率。</h3><p>复杂分析不再直接访问业务数据库。</p>
+<h3 id="第四，实现跨系统分析。"><a href="#第四，实现跨系统分析。" class="headerlink" title="第四，实现跨系统分析。"></a>第四，实现跨系统分析。</h3><p>企业第一次能够从全局视角看待经营数据。</p>
+<p>也正是在这一时期，维度建模、星型模型、事实表、维度表等概念开始广泛普及。</p>
+<p>很多企业的数据团队开始形成：</p>
+<ul>
+<li>ETL开发工程师</li>
+<li>数据仓库工程师</li>
+<li>BI工程师</li>
+</ul>
+<p>等专业岗位。</p>
+<p>数据开发开始进入工程化时代。</p>
+<h2 id="第三阶段：BI时代——从数据到决策"><a href="#第三阶段：BI时代——从数据到决策" class="headerlink" title="第三阶段：BI时代——从数据到决策"></a>第三阶段：BI时代——从数据到决策</h2><p>如果说数据仓库解决的是“数据从哪里来”的问题。</p>
+<p>那么BI解决的是：</p>
+<blockquote>
+<p>“数据如何被使用”的问题。</p>
+</blockquote>
+<p>从2010年以后，越来越多企业开始建设：</p>
+<ul>
+<li>经营驾驶舱</li>
+<li>管理看板</li>
+<li>KPI体系</li>
+<li>数据分析平台</li>
+</ul>
+<p>FineBI、Tableau、Power BI等产品快速发展。</p>
+<p>企业开始尝试用数据驱动决策。</p>
+<p>此时的数据开发范式变成：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">业务系统</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">数据仓库</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">OLAP</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">BI</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">决策分析</span><br></pre></td></tr></table></figure>
+
+<p>这也是很多企业今天仍然在采用的主流架构。</p>
+<p>这一模式极大提升了企业的数据使用效率。</p>
+<p>但与此同时，一个新的问题开始出现。</p>
+<p>所有答案都需要提前准备。</p>
+<ul>
+<li>业务提出需求。</li>
+<li>数据团队开发ETL。</li>
+<li>开发指标。</li>
+<li>开发报表。</li>
+<li>测试上线。</li>
+</ul>
+<p>最终才能看到结果。</p>
+<p>很多企业都经历过这样的场景：</p>
+<p>业务部门提出一个分析需求。</p>
+<p>排期两周。</p>
+<p>开发一周。</p>
+<p>测试三天。</p>
+<p>上线一天。</p>
+<p>最后花费近一个月时间。</p>
+<p>而业务真正关心的问题，可能只需要一个答案。</p>
+<p>问题并不在于技术。</p>
+<p>而在于这种模式本质上属于：</p>
+<p><strong>先开发答案，再提出问题。</strong></p>
+<p>这也为下一轮变革埋下伏笔。</p>
+<h2 id="第四阶段：AI时代——从开发答案到生成答案"><a href="#第四阶段：AI时代——从开发答案到生成答案" class="headerlink" title="第四阶段：AI时代——从开发答案到生成答案"></a>第四阶段：AI时代——从开发答案到生成答案</h2><p>2022年以后，大模型开始快速发展。</p>
+<p>ChatGPT、Claude、DeepSeek等产品让自然语言交互成为现实。</p>
+<p>与此同时，企业数据领域也开始出现新的变化。</p>
+<p>ChatBI开始流行。</p>
+<p>智能问数开始普及。</p>
+<p>企业知识库快速增长。</p>
+<p>Data Agent不断涌现。</p>
+<p>过去的数据分析过程通常是：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">提出问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">提交需求</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发模型</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发报表</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">获得答案</span><br></pre></td></tr></table></figure>
+
+<p>而今天越来越多企业开始尝试：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">提出问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">Agent理解问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">自动检索数据</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">自动生成SQL</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">自动分析</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">获得答案</span><br></pre></td></tr></table></figure>
+
+<p>两种模式最大的区别在于：</p>
+<p>过去是开发答案。</p>
+<p>现在是生成答案。</p>
+<p>这是企业数据开发范式过去二十年来最重要的一次变化。</p>
+<h2 id="AI会取代数据仓库吗？"><a href="#AI会取代数据仓库吗？" class="headerlink" title="AI会取代数据仓库吗？"></a>AI会取代数据仓库吗？</h2><p>这是最近两年被问得最多的问题之一。</p>
+<p>我的观点很明确：</p>
+<p>不会，至少在可预见的未来不会。</p>
+<p>因为AI解决的是答案生成问题，而数据仓库解决的是数据组织问题。两者并不是替代关系。</p>
+<p>Agent越强，越依赖高质量的数据基础。</p>
+<p>ChatBI越智能，越需要统一的数据口径。</p>
+<p>企业知识库越丰富，越需要高质量的数据治理。</p>
+<p>未来消失的不会是数据仓库，而是数据仓库作为最终消费终端的角色。</p>
+<p>它会逐渐退居幕后，成为Agent的数据底座。</p>
+<h2 id="下一代企业数据体系正在形成"><a href="#下一代企业数据体系正在形成" class="headerlink" title="下一代企业数据体系正在形成"></a>下一代企业数据体系正在形成</h2><p>回顾过去二十年。</p>
+<p>企业数据体系经历了四次重要演进：</p>
+<h3 id="数据库时代："><a href="#数据库时代：" class="headerlink" title="数据库时代："></a>数据库时代：</h3><p>解决数据存储问题。</p>
+<h3 id="数据仓库时代："><a href="#数据仓库时代：" class="headerlink" title="数据仓库时代："></a>数据仓库时代：</h3><p>解决数据整合问题。</p>
+<h3 id="BI时代："><a href="#BI时代：" class="headerlink" title="BI时代："></a>BI时代：</h3><p>解决数据消费问题。</p>
+<h3 id="AI时代："><a href="#AI时代：" class="headerlink" title="AI时代："></a>AI时代：</h3><p>解决答案生成问题。</p>
+<p>每一次演进，都不是推翻上一代体系。</p>
+<p>而是在上一代基础上的能力扩展。</p>
+<p>因此，我并不认为AI会终结企业数据体系。</p>
+<p>AI正在推动企业数据体系进入一个新的阶段。</p>
+<p>未来五年。</p>
+<p>真正值得关注的问题不是：</p>
+<p>“数据仓库会不会消失？”</p>
+<p>而是：</p>
+<blockquote>
+<p>“企业如何构建能够支撑Agent的数据体系？”</p>
+</blockquote>
+<p>这也是本专栏接下来希望持续探讨的话题。</p>
+<p>下一篇，我们将从一个最基础的问题开始：</p>
+<p><strong>为什么企业需要数据仓库？</strong></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>BI为什么成为企业数据消费的主流模式？</title>
+    <url>/2026/06/t-data-dev-paradigm-03/</url>
+    <content><![CDATA[<p>如果说数据仓库解决的是：</p>
+<blockquote>
+<p>数据从哪里来？</p>
+</blockquote>
+<p>那么BI（Business Intelligence，商业智能）解决的则是：</p>
+<blockquote>
+<p>数据如何被使用？</p>
+</blockquote>
+<p>今天我们已经习惯了各种经营驾驶舱、销售看板、库存分析报表、财务分析平台。</p>
+<p>很多企业每天打开电脑的第一件事，就是查看BI系统中的经营数据。</p>
+<p>以至于很多人认为：</p>
+<p>企业的数据应用本来就应该是这样。</p>
+<p>但实际上，在BI出现之前，企业获取数据的过程远比今天复杂。</p>
+<p>而BI之所以能够成为过去二十年企业数据消费的主流模式，本质上是因为它解决了一个关键问题：</p>
+<p><strong>如何让数据真正服务于管理决策。</strong></p>
+<h2 id="在BI出现之前，数据分析是一件奢侈的事情"><a href="#在BI出现之前，数据分析是一件奢侈的事情" class="headerlink" title="在BI出现之前，数据分析是一件奢侈的事情"></a>在BI出现之前，数据分析是一件奢侈的事情</h2><p>对于很多80后、90后的数据从业者来说。</p>
+<p>可能很难想象十几年前企业的数据分析场景。</p>
+<p>那时候：</p>
+<ul>
+<li>没有FineBI</li>
+<li>没有Power BI</li>
+<li>没有Tableau</li>
+<li>没有自助分析</li>
+</ul>
+<p>甚至很多企业连数据仓库都没有。</p>
+<p>如果老板想知道：</p>
+<p>“本月销售额同比增长多少？”</p>
+<p>通常需要经历这样的流程：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">业务提需求。</span><br><span class="line">↓</span><br><span class="line">IT写SQL。</span><br><span class="line">↓</span><br><span class="line">导出Excel。</span><br><span class="line">↓</span><br><span class="line">制作图表。</span><br><span class="line">↓</span><br><span class="line">发送邮件。</span><br><span class="line">↓</span><br><span class="line">领导查看。</span><br></pre></td></tr></table></figure>
+
+<p>一个简单问题。</p>
+<p>往往需要几天时间。</p>
+<p>如果领导继续追问：</p>
+<p>“华东区域情况如何？”</p>
+<p>那么整个过程重新开始。</p>
+<p>企业获取答案的成本极高。</p>
+<p>而且每个部门都在重复劳动。</p>
+<p>大量时间消耗在取数和整理数据上。</p>
+<p>而不是分析问题本身。</p>
+<h2 id="BI出现的本质：把数据变成可消费的产品"><a href="#BI出现的本质：把数据变成可消费的产品" class="headerlink" title="BI出现的本质：把数据变成可消费的产品"></a>BI出现的本质：把数据变成可消费的产品</h2><p>随着数据仓库建设逐渐成熟。</p>
+<p>企业开始思考一个问题：</p>
+<p>既然数据已经集中存储了。</p>
+<p>为什么每次分析还要重复开发？</p>
+<p>于是BI开始兴起。</p>
+<p>它最大的贡献是：</p>
+<p>把数据从技术资产变成业务资产。</p>
+<p>过去的数据使用方式：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">数据库</span><br><span class="line">↓</span><br><span class="line">SQL</span><br><span class="line">↓</span><br><span class="line">Excel</span><br><span class="line">↓</span><br><span class="line">分析</span><br></pre></td></tr></table></figure>
+
+<p>BI出现后：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">数据仓库</span><br><span class="line">↓</span><br><span class="line">OLAP</span><br><span class="line">↓</span><br><span class="line">BI平台</span><br><span class="line">↓</span><br><span class="line">业务人员</span><br></pre></td></tr></table></figure>
+
+<p>业务人员第一次可以直接接触数据。</p>
+<p>不需要懂SQL。</p>
+<p>不需要了解数据库结构。</p>
+<p>也不需要依赖IT部门。</p>
+<p>数据消费门槛被大幅降低。</p>
+<p>这是BI成功的根本原因。</p>
+<h2 id="BI为什么能够统治企业二十年？"><a href="#BI为什么能够统治企业二十年？" class="headerlink" title="BI为什么能够统治企业二十年？"></a>BI为什么能够统治企业二十年？</h2><p>过去二十年。</p>
+<p>企业数据技术不断变化。</p>
+<p>数据库在变。</p>
+<p>计算引擎在变。</p>
+<p>存储架构在变。</p>
+<p>但BI始终处于企业数据体系的核心位置。</p>
+<p>原因在于它满足了管理者最核心的需求。</p>
+<h3 id="第一：统一展示"><a href="#第一：统一展示" class="headerlink" title="第一：统一展示"></a>第一：统一展示</h3><p>企业管理最怕什么？</p>
+<p>同一个问题出现多个答案。</p>
+<p>例如：</p>
+<p>销售部门有自己的报表。</p>
+<p>财务部门有自己的报表。</p>
+<p>运营部门有自己的报表。</p>
+<p>大家看到的数字都不一样。</p>
+<p>BI通过统一的数据来源和统一的指标体系。</p>
+<p>让所有人看到同一份经营结果。</p>
+<p>从而建立共同认知。</p>
+<h3 id="第二：实时掌握经营情况"><a href="#第二：实时掌握经营情况" class="headerlink" title="第二：实时掌握经营情况"></a>第二：实时掌握经营情况</h3><p>过去管理层获取经营数据往往具有滞后性。</p>
+<p>月初才能看到上个月报表。</p>
+<p>季度结束才能看到季度分析。</p>
+<p>而BI让企业第一次实现：</p>
+<p>经营过程可视化。</p>
+<p>管理层随时可以了解：</p>
+<ul>
+<li>销售情况</li>
+<li>库存情况</li>
+<li>生产情况</li>
+<li>财务情况</li>
+</ul>
+<p>企业经营开始从经验驱动走向数据驱动。</p>
+<h3 id="第三：提升决策效率"><a href="#第三：提升决策效率" class="headerlink" title="第三：提升决策效率"></a>第三：提升决策效率</h3><p>过去很多决策依赖经验。</p>
+<p>现在越来越依赖数据。</p>
+<p>例如：</p>
+<p>哪个产品应该重点推广？</p>
+<p>哪个区域需要增加资源投入？</p>
+<p>哪些客户存在流失风险？</p>
+<p>BI让管理者能够基于数据做判断。</p>
+<p>虽然不能保证决策一定正确。</p>
+<p>但至少能够提高决策质量。</p>
+<h2 id="BI真正改变了什么？"><a href="#BI真正改变了什么？" class="headerlink" title="BI真正改变了什么？"></a>BI真正改变了什么？</h2><p>很多人认为：</p>
+<p>BI只是报表工具。</p>
+<p>其实远不止如此。</p>
+<p>BI最大的贡献在于：</p>
+<p><strong>让数据第一次进入企业管理流程。</strong></p>
+<p>过去：</p>
+<p>数据属于IT部门。</p>
+<p>现在：</p>
+<p>数据成为业务部门的重要资源。</p>
+<p>过去：</p>
+<p>分析是一项专业能力。</p>
+<p>现在：</p>
+<p>分析成为一种管理习惯。</p>
+<p>过去：</p>
+<p>企业依靠经验决策。</p>
+<p>现在：</p>
+<p>企业开始依靠数据决策。</p>
+<p>从这个意义上说。</p>
+<p>BI推动的不仅仅是技术进步。</p>
+<p>更是企业管理方式的变革。</p>
+<h2 id="BI的成功，也埋下了未来的问题"><a href="#BI的成功，也埋下了未来的问题" class="headerlink" title="BI的成功，也埋下了未来的问题"></a>BI的成功，也埋下了未来的问题</h2><p>任何一种成功模式。</p>
+<p>都会形成自己的局限性。</p>
+<p>BI也不例外。</p>
+<p>过去几年。</p>
+<p>我经常听到业务部门抱怨：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">“报表太多了。”</span><br><span class="line"></span><br><span class="line">“找不到自己想看的数据。”</span><br><span class="line"></span><br><span class="line">“新需求上线太慢。”</span><br><span class="line"></span><br><span class="line">“一个指标改动要等几周。”</span><br></pre></td></tr></table></figure>
+
+<p>这些问题本质上并不是BI工具的问题。</p>
+<p>而是BI模式本身的特点决定的。</p>
+<p>因为BI有一个天然前提：</p>
+<p><strong>所有答案都必须提前准备。</strong></p>
+<p>例如：</p>
+<p>老板想看销售分析。</p>
+<p>数据团队提前做好销售主题。</p>
+<p>老板想看库存分析。</p>
+<p>数据团队提前做好库存主题。</p>
+<p>老板想看利润分析。</p>
+<p>数据团队提前做好利润主题。</p>
+<p>也就是说：</p>
+<p>BI的核心逻辑是：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">预定义问题</span><br><span class="line">↓</span><br><span class="line">预开发答案</span><br><span class="line">↓</span><br><span class="line">展示结果</span><br></pre></td></tr></table></figure>
+
+<p>这种模式在问题相对稳定时非常高效。</p>
+<p>但当问题越来越复杂、越来越个性化时。</p>
+<p>问题就出现了。</p>
+<h2 id="一个典型案例"><a href="#一个典型案例" class="headerlink" title="一个典型案例"></a>一个典型案例</h2><p>假设老板突然问：</p>
+<p>“去年华东区域哪些客户利润下降最快？这些客户有哪些共同特征？”</p>
+<p>对于传统BI来说。</p>
+<p>可能需要：</p>
+<ul>
+<li>新增指标</li>
+<li>新增模型</li>
+<li>开发报表</li>
+<li>测试上线</li>
+</ul>
+<p>整个过程可能持续数天甚至数周。</p>
+<p>而老板真正需要的。</p>
+<p>其实只是一个答案。</p>
+<p>于是企业开始思考：</p>
+<p>有没有可能直接提出问题。</p>
+<p>而不是提前开发报表？</p>
+<p>有没有可能跳过复杂开发过程。</p>
+<p>直接获得分析结果？</p>
+<p>这正是ChatBI和Data Agent出现的背景。</p>
+<h2 id="BI会被AI取代吗？"><a href="#BI会被AI取代吗？" class="headerlink" title="BI会被AI取代吗？"></a>BI会被AI取代吗？</h2><p>这是最近最热门的话题之一。</p>
+<p>我的观点是：</p>
+<p>不会。</p>
+<p>至少短期内不会。</p>
+<p>因为BI和AI解决的是不同层面的问题。</p>
+<p>BI擅长：</p>
+<ul>
+<li>固定指标展示</li>
+<li>经营监控</li>
+<li>KPI跟踪</li>
+<li>统一经营视图</li>
+</ul>
+<p>而AI擅长：</p>
+<ul>
+<li>自然语言交互</li>
+<li>临时问题分析</li>
+<li>数据解释</li>
+<li>智能洞察</li>
+</ul>
+<p>未来很长一段时间。</p>
+<p>两者更可能是协同关系。</p>
+<p>而不是替代关系。</p>
+<p>企业每天仍然需要经营驾驶舱。</p>
+<p>仍然需要管理看板。</p>
+<p>仍然需要核心指标监控。</p>
+<p>这些都是BI最擅长的场景。</p>
+<p>但与此同时。</p>
+<p>越来越多探索性分析工作。</p>
+<p>将逐步由AI承担。</p>
+<h2 id="从BI到Agent：数据消费方式正在改变"><a href="#从BI到Agent：数据消费方式正在改变" class="headerlink" title="从BI到Agent：数据消费方式正在改变"></a>从BI到Agent：数据消费方式正在改变</h2><p>回顾过去二十年。</p>
+<p>企业数据体系的发展路径其实非常清晰。</p>
+<p>数据库时代：</p>
+<p>解决数据存储问题。</p>
+<p>数据仓库时代：</p>
+<p>解决数据整合问题。</p>
+<p>BI时代：</p>
+<p>解决数据消费问题。</p>
+<p>而今天。</p>
+<p>AI正在推动新的变化。</p>
+<p>过去：</p>
+<p>数据团队提前开发答案。</p>
+<p>现在：</p>
+<p>Agent开始动态生成答案。</p>
+<p>过去：</p>
+<p>人寻找数据。</p>
+<p>现在：</p>
+<p>数据开始响应人的问题。</p>
+<p>这或许正是企业数据消费模式下一次重要升级的开始。</p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>过去二十年。</p>
+<p>BI之所以能够成为企业数据消费的主流模式。</p>
+<p>并不是因为它能够画出漂亮图表。</p>
+<p>而是因为它让数据真正进入了企业经营管理过程。</p>
+<p>它第一次让企业能够持续、稳定、低成本地消费数据。</p>
+<p>但BI的成功也意味着一种新的局限：</p>
+<p>所有答案都必须提前准备。</p>
+<p>而AI正在尝试打破这一限制。</p>
+<p>未来企业真正需要的。</p>
+<p>可能不只是一个展示数据的系统。</p>
+<p>而是一个能够理解问题、分析问题、回答问题的数据助手。</p>
+<p>这也正是下一篇文章要讨论的话题：</p>
+<p><strong>《ChatBI来了，传统BI会消失吗？》</strong></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>为什么企业需要数据仓库？</title>
+    <url>/2026/06/t-data-dev-paradigm-02/</url>
+    <content><![CDATA[<p>在和一些年轻的数据工程师交流时，我发现一个有趣的现象。</p>
+<p>很多人每天都在开发ODS、DWD、DWS、ADS。</p>
+<p>熟悉Hive、Spark、Flink、ClickHouse。</p>
+<p>却很少认真思考过一个问题：</p>
+<p><strong>为什么企业需要数据仓库？</strong></p>
+<p>尤其是在AI快速发展的今天。</p>
+<p>越来越多的人开始提出类似的问题：</p>
+<ul>
+<li>有了湖仓一体，还需要数据仓库吗？</li>
+<li>有了ChatBI，还需要数据仓库吗？</li>
+<li>Agent能够自动生成SQL，还需要数据仓库吗？</li>
+</ul>
+<p>在回答这些问题之前，我们需要先回到数据仓库诞生的那个时代。</p>
+<p>因为只有理解它为什么出现，才能理解它为什么至今仍然存在。</p>
+<h2 id="企业最早并没有数据仓库"><a href="#企业最早并没有数据仓库" class="headerlink" title="企业最早并没有数据仓库"></a>企业最早并没有数据仓库</h2><p>今天很多企业的数据架构看起来似乎理所当然：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ERP → 数据仓库 → BI → 报表</span><br></pre></td></tr></table></figure>
+
+<p>但实际上，大多数企业最初并没有数据仓库。</p>
+<p>在信息化建设初期，企业通常只有几个核心业务系统：</p>
+<ul>
+<li>ERP</li>
+<li>财务系统</li>
+<li>CRM</li>
+<li>HR系统</li>
+</ul>
+<p>当管理层需要数据时，往往直接从业务系统查询。</p>
+<p>例如：</p>
+<p>销售总监问：</p>
+<p>“本月销售额是多少？”</p>
+<p>技术人员登录ERP数据库。</p>
+<p>执行一条SQL。</p>
+<p>得到结果。</p>
+<p>似乎没有任何问题。</p>
+<p>因为那时：</p>
+<ul>
+<li>数据量不大</li>
+<li>系统数量不多</li>
+<li>分析需求简单</li>
+</ul>
+<p>业务系统同时承担：</p>
+<ul>
+<li>交易处理</li>
+<li>数据存储</li>
+<li>数据分析</li>
+</ul>
+<p>三种职责。</p>
+<p>但随着企业规模扩大，问题开始逐渐暴露。</p>
+<h2 id="第一个问题：业务系统不是为分析而设计的"><a href="#第一个问题：业务系统不是为分析而设计的" class="headerlink" title="第一个问题：业务系统不是为分析而设计的"></a>第一个问题：业务系统不是为分析而设计的</h2><p>ERP最重要的任务是什么？</p>
+<p>是保证订单能够正常流转。</p>
+<p>CRM最重要的任务是什么？</p>
+<p>是保证客户管理流程正常运行。</p>
+<p>MES最重要的任务是什么？</p>
+<p>是保证生产过程可控。</p>
+<p>这些系统有一个共同特点：</p>
+<p>它们都属于OLTP系统（联机事务处理系统）。</p>
+<p>其核心目标是：</p>
+<ul>
+<li>快速写入</li>
+<li>快速更新</li>
+<li>高并发事务</li>
+</ul>
+<p>而数据分析恰恰相反。</p>
+<p>分析系统更关注：</p>
+<ul>
+<li>大量历史数据</li>
+<li>多表关联计算</li>
+<li>聚合统计分析</li>
+</ul>
+<p>例如：</p>
+<p>业务系统可能需要快速保存一笔订单。</p>
+<p>而分析系统则希望统计：</p>
+<p>过去三年各区域产品销售趋势。</p>
+<p>这是两种完全不同的工作模式。</p>
+<p>如果直接在ERP上执行复杂分析：</p>
+<p>轻则查询缓慢。</p>
+<p>重则影响业务运行。</p>
+<p>因此：</p>
+<blockquote>
+<p><strong>业务系统适合处理交易，不适合处理分析。</strong></p>
+</blockquote>
+<p>这是数据仓库存在的第一个原因。</p>
+<h2 id="第二个问题：企业的数据是分散的"><a href="#第二个问题：企业的数据是分散的" class="headerlink" title="第二个问题：企业的数据是分散的"></a>第二个问题：企业的数据是分散的</h2><p>很多企业管理层都喜欢问这样的问题：</p>
+<p>“哪个客户最赚钱？”</p>
+<p>看起来很简单。</p>
+<p>但实际计算往往涉及多个系统：</p>
+<p>销售额来自CRM。</p>
+<p>成本来自ERP。</p>
+<p>回款来自财务系统。</p>
+<p>物流费用来自供应链系统。</p>
+<p>如果没有统一的数据平台。</p>
+<p>每次分析都需要跨系统取数。</p>
+<p>不仅效率低。</p>
+<p>而且很容易出现口径不一致的问题。</p>
+<p>例如：</p>
+<p>销售部门说客户A贡献利润500万元。</p>
+<p>财务部门说只有350万元。</p>
+<p>双方都认为自己正确。</p>
+<p>问题出在哪里？</p>
+<p>不是数据错了。</p>
+<p>而是计算逻辑不同。</p>
+<p>企业真正需要的不是更多数据。</p>
+<blockquote>
+<p>而是统一的数据语言。</p>
+</blockquote>
+<p>这正是数据仓库解决的核心问题之一。</p>
+<h2 id="第三个问题：业务系统只关心现在"><a href="#第三个问题：业务系统只关心现在" class="headerlink" title="第三个问题：业务系统只关心现在"></a>第三个问题：业务系统只关心现在</h2><p>业务系统关注的是当前状态。</p>
+<p>例如ERP中的库存表。</p>
+<p>今天库存100件。</p>
+<p>明天库存80件。</p>
+<p>后天库存120件。</p>
+<p>ERP只需要记录当前库存。</p>
+<p>但管理层更关心：</p>
+<ul>
+<li>库存变化趋势</li>
+<li>历史库存水平</li>
+<li>周转率变化</li>
+</ul>
+<p>这些分析都需要历史数据。</p>
+<p>而历史数据往往不会长期保存在业务系统中。</p>
+<p>于是企业开始把业务数据持续同步出来。</p>
+<p>形成历史快照。</p>
+<p>构建分析主题。</p>
+<p>这也是数据仓库的重要价值。</p>
+<p>它不仅存储数据。</p>
+<blockquote>
+<p>更保存企业经营过程中的历史记忆。</p>
+</blockquote>
+<h2 id="第四个问题：企业需要统一指标"><a href="#第四个问题：企业需要统一指标" class="headerlink" title="第四个问题：企业需要统一指标"></a>第四个问题：企业需要统一指标</h2><p>很多企业都有一个经典现象。</p>
+<p>开会时讨论同一个指标。</p>
+<p>不同部门拿出不同数字。</p>
+<p>例如：</p>
+<p>“上个月销售额是多少？”</p>
+<p>销售部门：</p>
+<p>1.2亿元。</p>
+<p>财务部门：</p>
+<p>1.05亿元。</p>
+<p>运营部门：</p>
+<p>1.1亿元。</p>
+<p>数据部门：</p>
+<p>1.15亿元。</p>
+<p>每个人都能解释自己的计算逻辑。</p>
+<p>但最终没人知道哪个数字才是正确的。</p>
+<p>问题本质上不是数据问题。</p>
+<p>而是指标问题。</p>
+<p>数据仓库建设过程中。</p>
+<p>企业第一次开始系统化思考：</p>
+<ul>
+<li>什么是销售额？</li>
+<li>什么是利润？</li>
+<li>什么是客户数？</li>
+<li>什么是新增用户？</li>
+</ul>
+<p>通过统一口径。</p>
+<p>企业建立起共同的数据语言。</p>
+<p>从某种意义上说：</p>
+<blockquote>
+<p><strong>数据仓库最大的价值不是存储数据，而是统一认知。</strong></p>
+</blockquote>
+<h2 id="数据仓库真正解决了什么？"><a href="#数据仓库真正解决了什么？" class="headerlink" title="数据仓库真正解决了什么？"></a>数据仓库真正解决了什么？</h2><p>如果把前面的问题总结一下。</p>
+<p>数据仓库解决的并不是简单的数据存储问题。</p>
+<p>而是四个核心问题：</p>
+<h3 id="第一："><a href="#第一：" class="headerlink" title="第一："></a>第一：</h3><p>让业务系统专注交易处理。</p>
+<h3 id="第二："><a href="#第二：" class="headerlink" title="第二："></a>第二：</h3><p>打通企业数据孤岛。</p>
+<h3 id="第三："><a href="#第三：" class="headerlink" title="第三："></a>第三：</h3><p>沉淀历史数据资产。</p>
+<h3 id="第四："><a href="#第四：" class="headerlink" title="第四："></a>第四：</h3><p>统一企业指标体系。</p>
+<p>因此。</p>
+<p>数据仓库的本质不是一个数据库。</p>
+<blockquote>
+<p>而是一套数据组织方法。</p>
+</blockquote>
+<p>是一种让企业能够理解自身经营状况的基础设施。</p>
+<h2 id="AI时代，数据仓库为什么依然重要？"><a href="#AI时代，数据仓库为什么依然重要？" class="headerlink" title="AI时代，数据仓库为什么依然重要？"></a>AI时代，数据仓库为什么依然重要？</h2><p>最近两年。</p>
+<p>很多人开始讨论：</p>
+<p>ChatBI。</p>
+<p>Data Agent。</p>
+<p>自然语言问数。</p>
+<p>智能分析。</p>
+<p>似乎未来不再需要数据仓库。</p>
+<p>但实际上。</p>
+<p>这些新技术恰恰更加依赖数据仓库。</p>
+<p>我们可以思考一个简单问题：</p>
+<p>如果企业内部存在三个版本的销售额。</p>
+<p>Agent应该相信谁？</p>
+<p>如果客户名称在不同系统中不一致。</p>
+<p>Agent应该分析哪个客户？</p>
+<p>如果历史数据缺失。</p>
+<p>Agent如何完成趋势分析？</p>
+<p>如果数据质量存在问题。</p>
+<p>Agent如何保证回答正确？</p>
+<p>答案很简单。</p>
+<p>Agent不会自动创造事实。</p>
+<p>Agent只能利用已有事实。</p>
+<p>而数据仓库正是企业事实的组织者。</p>
+<p>过去：</p>
+<p>数据仓库服务BI。</p>
+<p>未来：</p>
+<p>数据仓库服务Agent。</p>
+<p>它的角色会变化。</p>
+<p>但其核心价值不会消失。</p>
+<h2 id="数据仓库最大的价值，其实是降低沟通成本"><a href="#数据仓库最大的价值，其实是降低沟通成本" class="headerlink" title="数据仓库最大的价值，其实是降低沟通成本"></a>数据仓库最大的价值，其实是降低沟通成本</h2><p>很多人认为数据仓库的价值在于技术。</p>
+<p>我越来越觉得不是。</p>
+<p>数据仓库最大的价值其实是：</p>
+<p>降低组织沟通成本。</p>
+<p>当企业拥有统一的数据口径时：</p>
+<p>销售和财务不再争论数字。</p>
+<p>业务和技术不再争论规则。</p>
+<p>管理层不再争论结果。</p>
+<p>大家能够把精力放在真正重要的问题上：</p>
+<p>为什么会这样？</p>
+<p>应该怎么办？</p>
+<p>而不是：</p>
+<p>数字到底哪个对？</p>
+<p>从这个角度看。</p>
+<p>数据仓库从来不是技术项目。</p>
+<blockquote>
+<p>而是企业管理能力建设的一部分。</p>
+</blockquote>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>过去二十年。</p>
+<p>数据仓库之所以能够成为企业数据体系的核心。</p>
+<p>并不是因为它拥有最先进的技术。</p>
+<p>而是因为它解决了企业最本质的问题：</p>
+<p>让企业能够用统一的语言理解自己的经营状况。</p>
+<p>AI不会改变这一点。</p>
+<p>ChatBI不会改变这一点。</p>
+<p>Data Agent也不会改变这一点。</p>
+<p>未来发生变化的。</p>
+<p>只是数据被消费的方式。</p>
+<p>而不会是数据被组织的逻辑。</p>
+<p>下一篇文章，我们继续讨论另一个关键问题：</p>
+<p><strong>BI为什么成为企业数据消费的主流模式？</strong></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>使用 Docker 在本地构建 Jupyter Notebook</title>
+    <url>/2020/08/build-jupyter-with-docker/</url>
+    <content><![CDATA[<h2 id="使用-Docker-在本地构建-Jupyter-Notebook"><a href="#使用-Docker-在本地构建-Jupyter-Notebook" class="headerlink" title="使用 Docker 在本地构建 Jupyter Notebook"></a>使用 Docker 在本地构建 Jupyter Notebook</h2><p>先看下 Jupyter 官方的介绍</p>
+<blockquote>
+<p>The Jupyter Notebook is an open-source web application that allows you to create and share documents that contain live code, equations, visualizations and narrative text. Uses include: data cleaning and transformation, numerical simulation, statistical modeling, data visualization, machine learning, and much more.</p>
+</blockquote>
+<p>一个很方便地使用 Python 做数据分析和数据科学的 Web 应用，赶快在本地构建一个用起来吧。</p>
+<h2 id="安装和使用-Docker"><a href="#安装和使用-Docker" class="headerlink" title="安装和使用 Docker"></a>安装和使用 Docker</h2><p>这篇文章的假设前提是你对 Docker 比较熟悉，或者至少安装了 Docker。<br>如果你不知道 Docker 是什么或者不知道怎么使用，需要先查阅和熟悉下 Docker 的资料和使用方法。</p>
+<h2 id="基于镜像-jupyter-scipy-notebook-再进行-build"><a href="#基于镜像-jupyter-scipy-notebook-再进行-build" class="headerlink" title="基于镜像 jupyter/scipy-notebook 再进行 build"></a>基于镜像 jupyter/scipy-notebook 再进行 build</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker search jupyter <span class="comment"># 从Docker Hub查找Jupyter镜像</span></span><br></pre></td></tr></table></figure>
+<p>发现已经有构建好的Jupyter镜像，我使用jupyter/scipy-notebook，发现没有 Hive 环境以及相关依赖，所以基于这个镜像进行了再次构建。</p>
+<h3 id="编写-requirements-txt-和-run-sh"><a href="#编写-requirements-txt-和-run-sh" class="headerlink" title="编写 requirements.txt 和 run.sh"></a>编写 requirements.txt 和 run.sh</h3><p>Python 链接 Hive 我用的是PyHive，需要安装相关的依赖。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cat requirements.txt</span><br><span class="line">PyHive==0.5.0</span><br><span class="line">thrift==0.10.0</span><br><span class="line">thriftpy==0.3.9</span><br><span class="line">sasl==0.2.1</span><br><span class="line">thrift-sasl==0.3.0</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cat run.sh</span><br><span class="line">tini -g -- start-notebook.sh <span class="comment"># 启动脚本</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="编写-Dockerfile"><a href="#编写-Dockerfile" class="headerlink" title="编写 Dockerfile"></a>编写 Dockerfile</h3><p>Dockerfile 是一个文本文件，里面是指令和 shell 命令。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">FROM jupyter/scipy-notebook:b2562c469cdd    <span class="comment"># 基于一个Docker image</span></span><br><span class="line"></span><br><span class="line">USER root        <span class="comment"># 指定 root 。基础镜像以用户jovyan运行，执行 apt-get 报权限问题</span></span><br><span class="line">RUN apt-get update    <span class="comment"># RUN 后面写 shell 命令</span></span><br><span class="line">RUN apt-get install libsasl2-dev libsasl2-2 libsasl2-modules-gssapi-mit</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">USER jovyan        <span class="comment"># 切换回用户jovyan</span></span><br><span class="line">RUN mkdir code    <span class="comment"># 创建一个目录</span></span><br><span class="line">COPY ./ code    <span class="comment"># 复制指令，从上下文目录中复制文件或者目录到容器里指定路径。</span></span><br><span class="line">RUN pip install -r code/requirements.txt -i https://pypi.douban.com/simple/    <span class="comment"># 安装Python库</span></span><br><span class="line"></span><br><span class="line">RUN cp code/lib/hive.py /opt/conda/lib/python3.8/site-packages/pyhive/hive.py    <span class="comment"># 安装的库源码有语法兼容问题，这里我做了修改和替换</span></span><br><span class="line"></span><br><span class="line">CMD [<span class="string">&quot;/bin/bash&quot;</span>,<span class="string">&quot;code/run.sh&quot;</span>]        <span class="comment"># 在docker run 时运行 code/run.sh</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>最后当前目录包含如下的文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ tree ./</span><br><span class="line">./</span><br><span class="line">├── Dockerfile</span><br><span class="line">├── lib</span><br><span class="line">│   └── hive.py</span><br><span class="line">├── requirements.txt</span><br><span class="line">├── run.sh</span><br></pre></td></tr></table></figure>
+
+<h3 id="docker-build"><a href="#docker-build" class="headerlink" title="docker build"></a>docker build</h3><p>开始构建镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker build -t myrepo/jupyter -f Dockerfile . <span class="comment"># -t 镜像的名字 -f 指定要使用的Dockerfile路径</span></span><br></pre></td></tr></table></figure>
+
+<p>build 完成后可以看到镜像</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker images</span><br><span class="line">REPOSITORY                   TAG                     IMAGE ID            CREATED             SIZE</span><br><span class="line">myrepo/jupyter               latest                  c5520af88d36        50 minutes ago      2.71GB</span><br></pre></td></tr></table></figure>
+
+<h3 id="docker-run"><a href="#docker-run" class="headerlink" title="docker run"></a>docker run</h3><p>现在创建一个容器并运行了</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker run \</span><br><span class="line">--name myrepo-jupyter \        <span class="comment"># 给容器起个名字</span></span><br><span class="line">-p 8888:8888/tcp \        <span class="comment"># 端口映射</span></span><br><span class="line">-e GRANT_SUDO=yes \        <span class="comment"># 设置环境变量</span></span><br><span class="line">--user root j\            <span class="comment"># 以 root 执行</span></span><br><span class="line">myrepo/jupyter:latest    <span class="comment"># 刚才构建的镜像</span></span><br></pre></td></tr></table></figure>
+
+<p>运行起来后终端会输出一个带 token 的本地连接 <code>http://127.0.0.1:8888/?token=</code>，点击打开。</p>
+<h2 id="查看版本和测试功能"><a href="#查看版本和测试功能" class="headerlink" title="查看版本和测试功能"></a>查看版本和测试功能</h2><p>新建一个 Python 文件运行查看下版本</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;Python version &#x27;</span> + sys.version)</span><br><span class="line">print(<span class="string">&#x27;Pandas version &#x27;</span> + pd.__version__)</span><br><span class="line">print(<span class="string">&#x27;Matplotlib version &#x27;</span> + matplotlib.__version__)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/taoyuyin/picgo/pics/20200822203424.png"></p>
+<p>可以写一个类似下面的简单脚本测试下 Hive 连接功能是否正常</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pyhive <span class="keyword">import</span> hive</span><br><span class="line"><span class="keyword">from</span> TCLIService.ttypes <span class="keyword">import</span> TOperationState</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">cursor = hive.connect(host=<span class="string">&#x27;&#x27;</span>,port=<span class="number">10000</span>,username=<span class="string">&#x27;x&#x27;</span>,password=<span class="string">&#x27;x&#x27;</span>,auth=<span class="string">&#x27;LDAP&#x27;</span>).cursor()</span><br><span class="line"></span><br><span class="line">hql=<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">select</span></span><br><span class="line"><span class="string">id,</span></span><br><span class="line"><span class="string">add_date</span></span><br><span class="line"><span class="string">from dwd.dwd_user_dim_user_base</span></span><br><span class="line"><span class="string">limit 1000</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">cursor.execute(hql)</span><br><span class="line">df = pd.DataFrame(cursor.fetchall(), columns = [<span class="string">&#x27;id&#x27;</span>,<span class="string">&#x27;add_date&#x27;</span>])</span><br><span class="line">df.head(<span class="number">20</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>好了，至此一个本地的 Jupyter 环境就部署好了。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://docs.docker.com/">docker docs</a></li>
+<li><a href="https://hub.docker.com/r/jupyter/scipy-notebook">scipy-notebook</a></li>
+<li><a href="https://github.com/jupyter/docker-stacks">docker-stack</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+  </entry>
+  <entry>
     <title>在 Linux 下通过 find 和 grep 查找包含指定字符串的文件</title>
     <url>/2020/08/grep-string-with-find/</url>
     <content><![CDATA[<h2 id="在-Linux-下通过-find-和-grep-查找包含指定字符串的文件"><a href="#在-Linux-下通过-find-和-grep-查找包含指定字符串的文件" class="headerlink" title="在 Linux 下通过 find 和 grep 查找包含指定字符串的文件"></a>在 Linux 下通过 find 和 grep 查找包含指定字符串的文件</h2><p>直接上示例，拿走即用</p>
@@ -401,81 +1024,598 @@
       </categories>
   </entry>
   <entry>
-    <title>数据管理知识体系-数据管理</title>
-    <url>/2020/10/t-dmbok-data-management/</url>
-    <content><![CDATA[<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><h3 id="数据管理"><a href="#数据管理" class="headerlink" title="数据管理"></a>数据管理</h3><p>wikipedia</p>
+    <title>ChatBI来了，传统BI会消失吗？</title>
+    <url>/2026/06/t-data-dev-paradigm-04/</url>
+    <content><![CDATA[<p>2023年以来，几乎所有BI厂商都开始拥抱AI。</p>
+<p>有人推出智能问数。</p>
+<p>有人推出AI分析助手。</p>
+<p>有人推出数字员工。</p>
+<p>有人开始宣传Data Agent。</p>
+<p>一时间，”ChatBI”成为数据领域最热门的话题之一。</p>
+<p>与此同时，一个观点也开始频繁出现：</p>
 <blockquote>
-<p>The concept of data management arose in the 1980s as technology moved from sequential processing (first punched cards, then magnetic tape) to random access storage. Since it was now possible to store a discrete fact and quickly access it using random access disk technology, those suggesting that data management was more important than business process management used arguments such as “a customer’s home address is stored in 75 (or some other large number) places in our computer systems.” However, during this period, random access processing was not competitively fast, so those suggesting “process management” was more important than “data management” used batch processing time as their primary argument. As application software evolved into real-time, interactive usage, it became obvious that both management processes were important. If the data was not well defined, the data would be mis-used in applications. If the process wasn’t well defined, it was impossible to meet user needs.</p>
+<p><strong>“BI要被AI取代了。”</strong></p>
 </blockquote>
-<p>从上面的定义可以看出，数据管理是针对数据或信息的活动或能力集合，为了交付、控制、保护并提升数据和信息资产的价值，在其整个生命周期中制定计划、制度、规程和实践活动，并执行和监督的过程。<br>从商业的角度看，通过对数据进行资产化管理，提升数据质量和数据效率，提升企业利用数据变现的能力。</p>
-<h3 id="数据资产"><a href="#数据资产" class="headerlink" title="数据资产"></a>数据资产</h3><p>资产的定义为</p>
+<p>甚至有人认为：</p>
+<ul>
+<li>以后不用开发报表了；</li>
+<li>以后不用写SQL了；</li>
+<li>以后不用BI平台了。</li>
+</ul>
+<p>那么，事实真的是这样吗？</p>
+<p>我的观点是：</p>
+<p><strong>ChatBI不会消灭BI，但一定会重新定义BI。</strong></p>
+<p>而要理解这一点，我们首先要弄清楚：</p>
+<p><strong>BI为什么成功？ChatBI又解决了什么问题？</strong></p>
+<hr>
+<h2 id="BI真正解决了什么？"><a href="#BI真正解决了什么？" class="headerlink" title="BI真正解决了什么？"></a>BI真正解决了什么？</h2><p>上一篇文章，我们谈到：</p>
+<p>BI的成功，并不仅仅因为它能够制作漂亮的图表。</p>
+<p>真正的价值在于：</p>
+<p><strong>让数据能够持续、稳定地服务企业经营。</strong></p>
+<p>例如：</p>
+<p>老板每天早上打开经营驾驶舱。</p>
+<p>第一眼看到：</p>
+<ul>
+<li>今日销售额</li>
+<li>本月利润</li>
+<li>库存周转率</li>
+<li>订单交付率</li>
+</ul>
+<p>这些数据每天都在更新。</p>
+<p>但展示方式基本保持稳定。</p>
+<p>为什么？</p>
+<p>因为：</p>
+<p>这些问题每天都会被问。</p>
+<p>这些指标每天都需要关注。</p>
+<p>BI本质上是在回答：</p>
 <blockquote>
-<p>资产是指由企业过去的交易或事项形成的、由企业拥有或者控制的、预期会给企业带来经济利益的资源。</p>
+<p><strong>企业已经知道自己要问什么。</strong></p>
 </blockquote>
-<p>数据作为一种特殊的资产形式，企业和组织可以依靠数据资产做出更高效的决定，运用数据理解客户，创造出新的产品和服务，并通过削减成本和控制风险的手段来提高运营效率，通过数据产生价值，以达到把数据做为资产进行直接或间接变现。</p>
-<h2 id="数据管理目标"><a href="#数据管理目标" class="headerlink" title="数据管理目标"></a>数据管理目标</h2><ul>
-<li>理解并支撑企业及其利益相关方的信息需求得到满足</li>
-<li>获取、存储、保护数据和确保数据资产的完整性。</li>
-<li>确保数据和信息的质量。</li>
-<li>确保利益相关方的数据隐私和保密性。</li>
-<li>防止数据和信息未经授权或被不当访问、操作及使用。</li>
-<li>确保数据能有效地服务于企业增值的目标。</li>
-</ul>
-<h2 id="数据管理原则"><a href="#数据管理原则" class="headerlink" title="数据管理原则"></a>数据管理原则</h2><ul>
-<li>数据是有独特属性的资产</li>
-<li>数据的价值可以用经济术语来表示</li>
-<li>管理数据意味着对数据的质量管理</li>
-<li>管理数据需要元数据</li>
-<li>数据管理需要规划</li>
-<li>数据管理须驱动信息技术决策</li>
-<li>数据管理是跨职能的工作</li>
-<li>数据管理需要企业级视角</li>
-<li>数据管理需要多角度思考</li>
-<li>数据管理需要全生命周期的管理</li>
-<li>数据管理需要纳入与数据相关的风险</li>
-<li>有效的数据管理需要领导层承担责任</li>
-</ul>
-<h2 id="数据管理框架"><a href="#数据管理框架" class="headerlink" title="数据管理框架"></a>数据管理框架</h2><h3 id="DAMA-DMBOK-框架"><a href="#DAMA-DMBOK-框架" class="headerlink" title="DAMA-DMBOK 框架"></a>DAMA-DMBOK 框架</h3><ul>
-<li>数据架构（Data Architecture）</li>
-<li>数据建模和设计（Data Modeling and Design）</li>
-<li>数据存储和操作（Data Storage and Operations）</li>
-<li>数据安全（Data Security）</li>
-<li>数据集成和互操作（Data Integration and Interoperability）</li>
-<li>文件和内容管理（Document and Content Management）</li>
-<li>参考数据和主数据（Reference and Master Data）</li>
-<li>数据仓库和商务智能（Data Warehousing and Business Intelligece）</li>
-<li>元数据（Metadata）</li>
-<li>数据质量（Data Quality）</li>
-</ul>
-<h3 id="DMBOK-金字塔"><a href="#DMBOK-金字塔" class="headerlink" title="DMBOK 金字塔"></a>DMBOK 金字塔</h3><p>第一阶段：构建数据库功能和应用</p>
-<ul>
-<li>数据存储和操作</li>
-<li>数据安全</li>
-<li>数据建模和设计</li>
-<li>数据集成和互操作</li>
-</ul>
-<p>第二阶段：保障数据质量</p>
-<ul>
-<li>数据架构</li>
-<li>数据质量</li>
-<li>元数据</li>
-</ul>
-<p>第三阶段：为数据管理活动提供体系性支持</p>
-<ul>
-<li>数据仓库和商务智能</li>
-<li>参考数据和主数据</li>
-<li>文件和内容管理</li>
-</ul>
-<p>第四阶段：利用数据管理好处，提升分析能力</p>
-<ul>
-<li>大数据分析</li>
-<li>数据挖掘</li>
-<li>高级实践</li>
-</ul>
+<p>因此。</p>
+<p>BI最大的特点就是：</p>
+<p><strong>提前准备答案。</strong></p>
+<hr>
+<h2 id="BI最大的局限是什么？"><a href="#BI最大的局限是什么？" class="headerlink" title="BI最大的局限是什么？"></a>BI最大的局限是什么？</h2><p>问题恰恰也出在这里。</p>
+<p>现实企业中。</p>
+<p>真正有价值的问题。</p>
+<p>很多都是临时产生的。</p>
+<p>例如：</p>
+<p>老板突然问：</p>
+<blockquote>
+<p>华东地区利润下降最快的客户有哪些？</p>
+</blockquote>
+<p>继续追问：</p>
+<blockquote>
+<p>为什么下降？</p>
+</blockquote>
+<p>继续追问：</p>
+<blockquote>
+<p>与去年相比发生了什么变化？</p>
+</blockquote>
+<p>继续追问：</p>
+<blockquote>
+<p>有没有共同特点？</p>
+</blockquote>
+<p>继续追问：</p>
+<blockquote>
+<p>如果剔除春节因素呢？</p>
+</blockquote>
+<p>你会发现。</p>
+<p>传统BI越来越难回答。</p>
+<p>为什么？</p>
+<p>因为：</p>
+<p>这些问题没有提前设计。</p>
+<p>BI能够回答：</p>
+<p>已经设计好的问题。</p>
+<p>却很难回答：</p>
+<p>第一次出现的问题。</p>
+<p>于是。</p>
+<p>企业进入一种循环：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">提出需求。</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">数据团队排期。</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发模型。</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发报表。</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">上线。</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">获得答案。</span><br></pre></td></tr></table></figure>
+
+<p>很多企业。</p>
+<p>一个分析需求需要一周。</p>
+<p>复杂一点可能需要一个月。</p>
+<p>真正耗费时间的。</p>
+<p>并不是分析。</p>
+<p>而是：</p>
+<p><strong>开发答案。</strong></p>
+<hr>
+<h2 id="ChatBI到底改变了什么？"><a href="#ChatBI到底改变了什么？" class="headerlink" title="ChatBI到底改变了什么？"></a>ChatBI到底改变了什么？</h2><p>很多人认为：</p>
+<p>ChatBI最大的价值是：</p>
+<p>不用写SQL。</p>
+<p>其实不是。</p>
+<p>SQL只是表象。</p>
+<p>真正发生变化的是：</p>
+<p><strong>数据消费方式。</strong></p>
+<p>过去：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">业务提出问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">IT理解需求</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发SQL</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发ETL</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发报表</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">业务查看结果</span><br></pre></td></tr></table></figure>
+
+<p>现在：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">业务提出问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">AI理解问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">自动生成SQL</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">自动分析</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">返回答案</span><br></pre></td></tr></table></figure>
+
+<p>区别只有一句话：</p>
+<p>过去：</p>
+<blockquote>
+<p>人开发答案。</p>
+</blockquote>
+<p>现在：</p>
+<blockquote>
+<p>AI生成答案。</p>
+</blockquote>
+<p>这才是ChatBI真正带来的改变。</p>
+<hr>
+<h2 id="ChatBI为什么能够实现智能问数？"><a href="#ChatBI为什么能够实现智能问数？" class="headerlink" title="ChatBI为什么能够实现智能问数？"></a>ChatBI为什么能够实现智能问数？</h2><p>很多宣传材料都会告诉你：</p>
+<p>ChatBI依靠大模型。</p>
+<p>其实。</p>
+<p>真正的能力远不止大模型。</p>
+<p>一个成熟的ChatBI。</p>
+<p>至少需要四项能力。</p>
+<h3 id="第一：理解业务语言"><a href="#第一：理解业务语言" class="headerlink" title="第一：理解业务语言"></a>第一：理解业务语言</h3><p>例如：</p>
+<p>老板说：</p>
+<p>“今年销量怎么样？”</p>
+<p>AI必须知道：</p>
+<p>销量对应哪个指标。</p>
+<p>今年对应哪个时间范围。</p>
+<p>是否默认同比。</p>
+<p>是否按自然年。</p>
+<p>这些都不是模型知识。</p>
+<p>而是企业知识。</p>
+<hr>
+<h3 id="第二：理解数据模型"><a href="#第二：理解数据模型" class="headerlink" title="第二：理解数据模型"></a>第二：理解数据模型</h3><p>AI必须知道：</p>
+<p>销售事实表在哪里。</p>
+<p>客户维表在哪里。</p>
+<p>订单字段叫什么。</p>
+<p>哪些字段可以关联。</p>
+<p>否则。</p>
+<p>SQL根本无法生成。</p>
+<hr>
+<h3 id="第三：理解指标体系"><a href="#第三：理解指标体系" class="headerlink" title="第三：理解指标体系"></a>第三：理解指标体系</h3><p>例如：</p>
+<p>什么叫销售额？</p>
+<p>不同企业定义可能完全不同。</p>
+<p>是否含税？</p>
+<p>是否退货？</p>
+<p>是否取消订单？</p>
+<p>这些都需要统一定义。</p>
+<p>否则。</p>
+<p>AI回答的数字可能每次都不同。</p>
+<hr>
+<h3 id="第四：保证结果可信"><a href="#第四：保证结果可信" class="headerlink" title="第四：保证结果可信"></a>第四：保证结果可信</h3><p>生成SQL并不难。</p>
+<p>难的是：</p>
+<p>生成正确SQL。</p>
+<p>如果AI能够写SQL。</p>
+<p>却不能保证结果正确。</p>
+<p>那么。</p>
+<p>它很难真正进入企业核心业务。</p>
+<hr>
+<h2 id="ChatBI不是魔法"><a href="#ChatBI不是魔法" class="headerlink" title="ChatBI不是魔法"></a>ChatBI不是魔法</h2><p>最近两年。</p>
+<p>很多企业开始尝试ChatBI。</p>
+<p>效果却差异巨大。</p>
+<p>有的企业非常成功。</p>
+<p>有的企业用了几个月就放弃。</p>
+<p>原因是什么？</p>
+<p>很多时候。</p>
+<p>不是模型能力。</p>
+<p>而是数据基础。</p>
+<p>举一个简单例子。</p>
+<p>如果企业存在：</p>
+<p>三个销售额口径。</p>
+<p>五个客户名称。</p>
+<p>多个历史版本。</p>
+<p>大量缺失数据。</p>
+<p>AI应该相信谁？</p>
+<p>答案很简单。</p>
+<p>AI不会判断。</p>
+<p>AI只会放大。</p>
+<p>因此。</p>
+<p><strong>ChatBI的能力上限，取决于企业数据能力。</strong></p>
+<p>这里。</p>
+<p>我想提前抛出本专栏后面会重点讨论的一个观点：</p>
+<blockquote>
+<p><strong>AI时代，真正重要的不是模型，而是数据。</strong></p>
+</blockquote>
+<hr>
+<h2 id="那么，BI会不会消失？"><a href="#那么，BI会不会消失？" class="headerlink" title="那么，BI会不会消失？"></a>那么，BI会不会消失？</h2><p>我的答案依然是：</p>
+<p>不会。</p>
+<p>原因很简单。</p>
+<p>企业每天都有大量固定场景。</p>
+<p>例如：</p>
+<p>经营驾驶舱。</p>
+<p>领导看板。</p>
+<p>KPI监控。</p>
+<p>生产监控。</p>
+<p>供应链监控。</p>
+<p>这些内容：</p>
+<p>每天都要看。</p>
+<p>每天都一样。</p>
+<p>没有必要每天重新问AI。</p>
+<p>BI最大的优势。</p>
+<p>就是：</p>
+<p>持续展示。</p>
+<p>统一展示。</p>
+<p>稳定展示。</p>
+<p>因此。</p>
+<p>BI依然是：</p>
+<p>企业经营监控平台。</p>
+<p>而ChatBI。</p>
+<p>更适合：</p>
+<p>探索式分析。</p>
+<p>临时分析。</p>
+<p>智能问答。</p>
+<p>数据解释。</p>
+<p>未来。</p>
+<p>它们更可能形成这样的关系：</p>
+<p>传统BI负责：</p>
+<p>“告诉你发生了什么。”</p>
+<p>ChatBI负责：</p>
+<p>“告诉你为什么发生。”</p>
+<p>未来的Data Agent甚至会进一步回答：</p>
+<p>“下一步应该怎么做。”</p>
+<hr>
+<h2 id="AI真正改变的，不是BI，而是分析方式"><a href="#AI真正改变的，不是BI，而是分析方式" class="headerlink" title="AI真正改变的，不是BI，而是分析方式"></a>AI真正改变的，不是BI，而是分析方式</h2><p>如果用一句话总结。</p>
+<p>过去二十年。</p>
+<p>企业的数据分析过程是：</p>
+<p><strong>开发一个报表。</strong></p>
+<p>未来。</p>
+<p>企业越来越倾向于：</p>
+<p><strong>提出一个问题。</strong></p>
+<p>过去：</p>
+<p>人适应系统。</p>
+<p>未来：</p>
+<p>系统理解人。</p>
+<p>过去：</p>
+<p>数据工程师负责开发答案。</p>
+<p>未来：</p>
+<p>Agent负责生成答案。</p>
+<p>这是企业数据消费方式最大的变化。</p>
+<hr>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>最近几年。</p>
+<p>关于”BI是否会消失”的讨论很多。</p>
+<p>但我认为。</p>
+<p>真正值得讨论的问题不是：</p>
+<p>BI是否会被取代。</p>
+<p>而是：</p>
+<p>企业如何构建能够支撑AI的数据体系。</p>
+<p>因为。</p>
+<p>没有统一的数据模型。</p>
+<p>没有统一的指标体系。</p>
+<p>没有高质量的数据。</p>
+<p>ChatBI就只能是一场演示。</p>
+<p>而不是生产力。</p>
+<p>真正决定ChatBI价值的。</p>
+<p>从来不是大模型。</p>
+<blockquote>
+<p> <strong>而是企业的数据能力。</strong></p>
+</blockquote>
 ]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
+  </entry>
+  <entry>
+    <title>从开发答案到生成答案：AI 为什么会重构整个企业数据体系？</title>
+    <url>/2026/07/t-data-dev-paradigm-07/</url>
+    <content><![CDATA[<p>如果要用一句话概括过去二十年企业数据体系的发展，我更愿意这样描述：</p>
+<p><strong>企业数据体系的发展史，本质上是一部不断降低“获取答案成本”的历史。</strong></p>
+<p>从数据库到数据仓库，从 BI 到 ChatBI，再到今天的 Data Agent，技术形态不断变化，但企业真正追求的目标始终没有改变——如何更快、更准确、更低成本地获得经营问题的答案。</p>
+<p>过去，我们一直在优化数据。</p>
+<p>今天，我们开始重新思考答案。</p>
+<p>这看似只是表达方式的变化，却意味着企业数据体系正在发生一次比数据库、数据仓库甚至大数据平台更加深刻的变革。</p>
+<h2 id="一个长期被忽略的问题"><a href="#一个长期被忽略的问题" class="headerlink" title="一个长期被忽略的问题"></a>一个长期被忽略的问题</h2><p>很多企业在建设数据平台时，都会把注意力放在技术架构上。</p>
+<p>选择什么数据库？</p>
+<p>采用什么计算引擎？</p>
+<p>使用 Hive 还是 Spark？</p>
+<p>建设数据湖还是 Lakehouse？</p>
+<p>这些问题当然重要。</p>
+<p>但如果站在企业经营的角度来看，它们其实都属于手段，而不是目的。</p>
+<p>企业建设数据平台，从来不是为了拥有更多的数据。</p>
+<p>企业真正需要的是：</p>
+<p><strong>能够快速得到经营问题的答案。</strong></p>
+<p>例如：</p>
+<p>为什么利润下降了？</p>
+<p>哪些客户正在流失？</p>
+<p>哪些产品值得继续投入？</p>
+<p>库存为什么持续增加？</p>
+<p>这些问题，才是企业真正关心的问题。</p>
+<p>因此，我们不妨换一个视角重新理解过去二十年的数据体系。</p>
+<p>数据仓库也好，BI 也好，数据治理也好，它们真正解决的，其实都是同一个问题：</p>
+<p>如何更高效地生产答案。</p>
+<h2 id="为什么传统数据体系一定要“开发答案”？"><a href="#为什么传统数据体系一定要“开发答案”？" class="headerlink" title="为什么传统数据体系一定要“开发答案”？"></a>为什么传统数据体系一定要“开发答案”？</h2><p>在上一篇文章中，我们讨论了 Data Agent 开始具备完成任务的能力。</p>
+<p>那么，在 Agent 出现之前，企业是如何获得答案的？</p>
+<p>答案其实非常熟悉。</p>
+<p>业务部门提出需求。</p>
+<p>数据团队分析需求。</p>
+<p>开发 ETL。</p>
+<p>建设数据模型。</p>
+<p>开发指标。</p>
+<p>开发报表。</p>
+<p>最后，业务查看结果。</p>
+<p>整个过程几乎所有企业都经历过。</p>
+<p>如果用一句话概括传统数据开发模式，那就是：</p>
+<p><strong>先开发答案，再等待问题出现。</strong></p>
+<p>为什么会形成这样的模式？</p>
+<p>因为过去的软件系统几乎都是”预定义”的。</p>
+<p>报表需要提前设计。</p>
+<p>指标需要提前计算。</p>
+<p>分析主题需要提前建设。</p>
+<p>甚至用户能够点击哪些按钮，也需要提前开发。</p>
+<p>这种模式有一个非常明显的特点：</p>
+<p>企业需要预测未来会提出哪些问题，然后提前准备好对应的答案。</p>
+<p>因此，数据团队真正开发的，并不是 SQL，也不是报表，而是一套能够回答未来问题的答案体系。</p>
+<p>过去二十年，数据仓库和BI之所以能够成功，很大程度上正是因为这种模式满足了企业当时的管理需求。</p>
+<h2 id="为什么今天开始变了？"><a href="#为什么今天开始变了？" class="headerlink" title="为什么今天开始变了？"></a>为什么今天开始变了？</h2><p>过去几年，大模型的发展让很多人第一次意识到一件事情：</p>
+<p>也许，并不是所有答案都需要提前准备。</p>
+<p>例如，当管理者提出：</p>
+<p>“分析一下华东地区利润下降最快的客户，并说明主要原因。”</p>
+<p>传统模式下，数据团队通常需要新增分析主题、新增指标、新增报表，经过开发、测试和上线之后，才能得到最终结果。</p>
+<p>而今天，一个具备企业知识和数据能力的 Agent，已经能够自动理解问题、规划分析步骤、生成 SQL，并最终形成分析结论。</p>
+<p>请注意，这里真正发生变化的，并不是 SQL 生成。</p>
+<p>而是答案的生产方式。</p>
+<p>过去，答案来自开发。</p>
+<p>今天，答案开始来自生成。</p>
+<p>这是 AI 带来的第一层变化。</p>
+<h2 id="从“预定义答案”到“动态生成答案”"><a href="#从“预定义答案”到“动态生成答案”" class="headerlink" title="从“预定义答案”到“动态生成答案”"></a>从“预定义答案”到“动态生成答案”</h2><p>如果进一步观察，会发现传统 BI 和 Data Agent 之间最大的区别，并不是交互方式。</p>
+<p>很多人认为，过去点击报表，现在通过聊天窗口输入问题，这就是 AI 时代最大的变化。</p>
+<p>实际上，这只是用户体验的变化。</p>
+<p>真正的变化发生在系统内部。</p>
+<p>过去的数据体系采用的是一种”预定义答案”模式。</p>
+<p>数据团队需要提前定义业务指标，提前设计分析主题，提前开发报表。当用户提出问题时，系统实际上只是展示已经准备好的结果。</p>
+<p>这种模式非常适合固定场景。</p>
+<p>例如经营驾驶舱、月度报表、KPI 监控。</p>
+<p>因为这些问题每天都会出现。</p>
+<p>但它也存在天然局限。</p>
+<p>企业真正有价值的问题，往往具有临时性和探索性。</p>
+<p>管理者今天关心利润。</p>
+<p>明天可能关心库存。</p>
+<p>后天可能又开始分析客户结构。</p>
+<p>这些问题无法全部提前设计。</p>
+<p>于是，AI 带来了另一种可能。</p>
+<p>系统不再提前准备所有答案，而是在用户提出问题之后，根据企业数据、业务规则以及知识体系，动态生成最合适的分析结果。</p>
+<p>从预定义答案，到动态生成答案，这不仅仅是技术升级，更是企业数据消费模式的一次范式转换。</p>
+<h2 id="企业真正需要的，不是更多报表，而是更低的答案成本"><a href="#企业真正需要的，不是更多报表，而是更低的答案成本" class="headerlink" title="企业真正需要的，不是更多报表，而是更低的答案成本"></a>企业真正需要的，不是更多报表，而是更低的答案成本</h2><p>如果我们重新审视企业过去二十年的数据建设，会发现一个有趣的规律。</p>
+<p>数据库解决的是数据存储成本。</p>
+<p>数据仓库解决的是数据整合成本。</p>
+<p>BI 解决的是数据消费成本。</p>
+<p>而 AI 正在解决另一个长期存在却容易被忽略的问题：</p>
+<p>答案生产成本。</p>
+<p>过去，一个新的分析需求，可能需要几天甚至几周。</p>
+<p>未来，同样的问题，也许几分钟就能够完成。</p>
+<p>这里节省的，不仅仅是开发时间。</p>
+<p>更重要的是，企业开始拥有快速验证假设的能力。</p>
+<p>过去，管理者往往因为获取答案成本太高，而放弃很多探索性问题。</p>
+<p>未来，由于提问几乎没有成本，企业的数据分析方式也会随之改变。</p>
+<p>从这个意义上说，AI 带来的不仅是效率提升，更可能改变企业决策的方式。</p>
+<h2 id="这是否意味着数据仓库不重要了？"><a href="#这是否意味着数据仓库不重要了？" class="headerlink" title="这是否意味着数据仓库不重要了？"></a>这是否意味着数据仓库不重要了？</h2><p>很多人在看到这里时，都会产生一个疑问。</p>
+<p>既然 AI 能够动态生成答案，那么是不是意味着数据仓库、BI 甚至 ETL 都会逐渐失去价值？</p>
+<p>我的答案依然是否定的。</p>
+<p>因为生成答案，并不意味着创造事实。</p>
+<p>AI 能够生成分析过程。</p>
+<p>却不能生成真实数据。</p>
+<p>能够生成 SQL。</p>
+<p>却不能生成统一口径。</p>
+<p>能够生成报告。</p>
+<p>却不能生成可信事实。</p>
+<p>未来，Agent 生成答案的能力越强，对企业数据底座的要求反而越高。</p>
+<p>统一的数据模型。</p>
+<p>完善的数据治理。</p>
+<p>可靠的数据质量。</p>
+<p>标准化的业务语义。</p>
+<p>这些能力不会因为 AI 而削弱，而会成为 AI 时代最重要的基础设施。</p>
+<p>过去，数据仓库服务 BI。</p>
+<p>未来，数据仓库将服务 Agent。</p>
+<p>角色发生了变化，但价值没有改变。</p>
+<h2 id="企业数据体系正在进入新的阶段"><a href="#企业数据体系正在进入新的阶段" class="headerlink" title="企业数据体系正在进入新的阶段"></a>企业数据体系正在进入新的阶段</h2><p>过去二十年，企业数据体系一直围绕”数据如何流动”进行建设。</p>
+<p>数据同步。</p>
+<p>数据加工。</p>
+<p>数据建模。</p>
+<p>数据存储。</p>
+<p>数据展示。</p>
+<p>整个流程强调的是数据从一个系统流向另一个系统。</p>
+<p>而今天，企业开始更加关注另一件事情：</p>
+<p>知识如何沉淀。</p>
+<p>语义如何表达。</p>
+<p>答案如何生成。</p>
+<p>换句话说，企业数据体系正在从”数据驱动”逐渐走向”知识驱动”。</p>
+<p>数据依然重要，但数据已经不再是终点。</p>
+<p>真正的目标，是让企业积累的数据能够持续转化为知识，并最终帮助企业持续获得高质量的答案。</p>
+<p>这，或许才是 Data Agent 真正代表的未来。</p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>过去，我们一直认为，企业数据开发的目标是建设一个越来越完善的数据平台。</p>
+<p>今天，我越来越觉得，这种理解已经不够完整。</p>
+<p>未来的数据平台，不只是数据流转的平台，也不仅仅是报表分析的平台。</p>
+<p>它更应该成为企业知识持续积累、持续理解、持续创造价值的平台。</p>
+<p>如果说过去二十年的关键词是<strong>开发答案</strong>，那么未来十年的关键词，很可能就是<strong>生成答案</strong>。</p>
+<p>而这一变化，并不会终结数据仓库、BI 和数据治理。</p>
+<p>相反，它们将共同构成 AI 时代企业数据体系的新底座。</p>
+<p>因此，我更愿意把今天的 AI 理解为一次新的起点，而不是传统数据体系的终点。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>AI不会淘汰数据开发工程师，但会淘汰另一种数据开发方式</title>
+    <url>/2026/07/t-data-dev-paradigm-05/</url>
+    <content><![CDATA[<p>过去二十年，企业数据平台的发展经历了数据库、数据仓库、BI、大数据平台、数据治理等多个阶段。虽然底层技术不断演进，从传统数据库到Hadoop生态，再到今天的湖仓一体，但对于大多数企业而言，数据开发的基本范式却始终没有发生根本性的变化。</p>
+<p>业务系统产生数据，数据通过ETL或ELT同步到数据平台，经过清洗、转换、建模、汇总之后，再提供给BI系统、报表平台或者业务应用使用。几乎所有的数据平台，无论采用的是Oracle、Hive、Spark还是Lakehouse，本质上都遵循着这一套流程。</p>
+<p>然而，大模型的出现，第一次开始对这一范式提出挑战。</p>
+<p>最近一年，无论是各大数据平台厂商，还是AI创业公司，都在推出面向数据开发的AI能力。从自然语言生成SQL，到自动编写ETL脚本，从AI辅助建模，到自动生成数据文档，再到能够理解业务语义的Data Agent，AI已经不再只是帮助数据分析人员提高效率，而是开始进入数据开发本身。</p>
+<p>于是，一个问题开始被频繁讨论：</p>
+<p><strong>数据开发工程师会不会被AI取代？</strong></p>
+<p>我的观点是，AI确实会改变数据开发，但它改变的并不是数据开发这个职业，而是传统的数据开发方式。</p>
+<h2 id="ETL为什么能够成为企业数据平台的核心"><a href="#ETL为什么能够成为企业数据平台的核心" class="headerlink" title="ETL为什么能够成为企业数据平台的核心"></a>ETL为什么能够成为企业数据平台的核心</h2><p>在讨论AI之前，我们首先需要理解，为什么ETL能够在企业数据平台中占据如此重要的位置。</p>
+<p>ETL（Extract、Transform、Load）从来都不是一个简单的数据同步过程，它承担的是连接业务系统与数据平台之间的桥梁作用。</p>
+<p>一家中大型企业通常拥有ERP、CRM、MES、WMS、SRM、OA等多个业务系统。每个系统的数据模型、编码规则、业务口径都存在差异。如果直接将这些数据用于分析，不仅难以关联，而且很容易产生大量口径不一致的问题。</p>
+<p>例如，一个看似简单的”组织架构”概念，在不同系统中的定义就可能完全不同。OA中的组织架构可能是人力的组织架构，ERP中的组织架构可能是财务的组织架构。如果没有统一的数据转换和建模过程，即使拥有再先进的分析工具，也无法得到可信的分析结果。</p>
+<p>因此，ETL真正承担的，并不是”搬运数据”的工作，而是帮助企业完成数据标准化、业务规则沉淀以及统一数据口径。这也是为什么数据仓库建设过程中，大量时间实际上花费在数据清洗、字段映射和业务规则确认上，而真正编写SQL代码只是整个过程中的最后一步。</p>
+<p>过去二十年，无数企业的数据平台正是依靠这样的方式逐步建立起来的。</p>
+<h2 id="AI首先改变的，是ETL的开发方式"><a href="#AI首先改变的，是ETL的开发方式" class="headerlink" title="AI首先改变的，是ETL的开发方式"></a>AI首先改变的，是ETL的开发方式</h2><p>如果观察最近一年AI在数据开发领域的应用，可以发现一个非常明显的特点：AI最先进入的，并不是数据架构设计，而是开发过程。</p>
+<p>过去，一个新的ETL任务通常需要经历需求分析、表结构阅读、字段理解、SQL开发、测试验证、上线部署等多个步骤。整个过程中，大量工作实际上属于重复性的编码劳动。</p>
+<p>例如，当需要将订单表与客户表进行关联统计时，开发人员往往需要先了解两个表之间的关联关系，再编写SQL完成数据转换。如果需要增加一个新的统计维度，又需要重新修改SQL并进行测试。</p>
+<p>而今天，这部分工作已经开始发生变化。</p>
+<p>越来越多的AI开发工具能够根据自然语言描述自动生成SQL，也能够解释已有SQL的逻辑，甚至能够根据数据血缘关系推荐关联字段，帮助开发人员快速完成初稿。对于一些结构相对固定的数据同步任务，AI已经能够生成相当高质量的ETL代码。</p>
+<p>换句话说，AI首先替代的是重复性的编码过程，而不是数据开发本身。</p>
+<p>这一点，与软件开发领域正在发生的变化高度相似。GitHub Copilot、Codex 等工具能够帮助程序员编写代码，却并没有减少系统设计的重要性。数据开发同样如此，SQL生成越来越容易，但真正困难的问题依然存在。</p>
+<h2 id="数据开发真正困难的，从来不是SQL"><a href="#数据开发真正困难的，从来不是SQL" class="headerlink" title="数据开发真正困难的，从来不是SQL"></a>数据开发真正困难的，从来不是SQL</h2><p>很多企业第一次接触AI生成SQL时，都会产生一种错觉：既然AI能够写SQL，那么数据开发工程师是不是就没有价值了？</p>
+<p>事实上，这是将数据开发简单理解为”写SQL”所产生的误解。</p>
+<p>真正的数据开发工作，远远不止SQL。</p>
+<p>举一个非常常见的例子。</p>
+<p>业务部门提出一个需求：”统计新增客户数量。”</p>
+<p>对于AI来说，这句话可以很容易转换成SQL语句。</p>
+<p>但真正的问题在于，什么叫”新增客户”？</p>
+<p>是第一次注册的客户？</p>
+<p>还是第一次下单的客户？</p>
+<p>是否需要剔除测试账号？</p>
+<p>历史客户重新激活是否算新增？</p>
+<p>这些问题，没有任何一个能够通过大模型自动推理出来。</p>
+<p>因为它们不是技术问题，而是业务规则。</p>
+<p>类似的问题几乎存在于企业所有核心指标之中。</p>
+<p>销售额是否包含退货订单？</p>
+<p>利润是否包含税费？</p>
+<p>库存是否按照自然日统计？</p>
+<p>客户生命周期如何划分？</p>
+<p>这些定义往往需要经过业务部门、财务部门和数据团队长期讨论之后才能形成统一标准。</p>
+<p>SQL只是业务规则的一种表达方式，而不是业务规则本身。</p>
+<p>因此，即使未来AI能够自动完成SQL开发，也无法替代企业对于业务知识的理解和沉淀。</p>
+<h2 id="AI时代，数据工程师需要重新定义自己的价值"><a href="#AI时代，数据工程师需要重新定义自己的价值" class="headerlink" title="AI时代，数据工程师需要重新定义自己的价值"></a>AI时代，数据工程师需要重新定义自己的价值</h2><p>如果说过去的数据开发工程师，更像是一名代码生产者，那么未来的数据工程师，更应该成为企业数据体系的设计者。</p>
+<p>这种变化已经开始出现。</p>
+<p>越来越多企业开始关注数据语义层（Semantic Layer）、统一指标体系、元数据管理、数据质量管理以及知识图谱建设。这些工作的共同特点是，它们关注的不再是代码本身，而是企业数据如何被理解、如何被组织以及如何被复用。</p>
+<p>对于未来的Data Agent而言，它是否能够正确回答业务问题，并不取决于SQL写得是否优雅，而取决于企业是否已经建立起统一的数据语言。</p>
+<p>因此，未来数据工程师需要投入更多精力思考的问题可能是：</p>
+<ul>
+<li>企业的数据模型是否能够准确表达业务？</li>
+<li>不同部门之间的数据口径是否一致？</li>
+<li>元数据是否完整？</li>
+<li>指标体系是否统一？</li>
+<li>数据质量是否能够支撑AI分析？</li>
+</ul>
+<p>这些问题，才是真正决定AI应用效果的关键因素。</p>
+<h2 id="AI不会削弱数据质量的重要性，反而会放大它的价值"><a href="#AI不会削弱数据质量的重要性，反而会放大它的价值" class="headerlink" title="AI不会削弱数据质量的重要性，反而会放大它的价值"></a>AI不会削弱数据质量的重要性，反而会放大它的价值</h2><p>过去，在BI时代，一份错误的数据通常意味着一张错误的报表。</p>
+<p>虽然会影响业务分析，但由于报表具有固定格式和固定使用者，问题往往能够较快发现并修正。</p>
+<p>而AI时代的情况完全不同。</p>
+<p>越来越多企业开始建设知识库、智能问数平台和Data Agent。AI不再只是展示数据，而是直接参与分析、解释甚至决策建议。</p>
+<p>如果底层数据存在错误，那么错误将不仅出现在某一张报表中，而可能通过Agent快速传播到更多业务场景。</p>
+<p>错误的数据口径可能导致AI持续输出错误答案。</p>
+<p>缺失的元数据可能导致AI生成错误SQL。</p>
+<p>低质量的数据可能导致模型形成错误推理。</p>
+<p>换句话说，AI并不会自动提高数据质量，它只会更高效地消费数据，并更快速地放大数据质量问题。</p>
+<p>这也是为什么我越来越认为，未来企业数据团队最重要的竞争力，不是开发速度，而是数据质量。</p>
+<p>作为《数据质量管理实践手册》中文版联合译者，在翻译这本书的过程中，我其中一个最大的感受是：<strong>数据质量不单单是一个技术问题，更是企业管理能力的体现。</strong> 当AI开始成为企业的重要生产工具之后，这句话的重要性将进一步凸显。未来，我也会用专门几篇文章，结合企业实践，系统讨论AI时代的数据质量体系应该如何建设。</p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>回顾过去二十年的企业数据平台建设，我们会发现，每一次技术变革都没有消灭上一代技术，而是在重新定义它的价值。</p>
+<p>数据库没有因为数据仓库而消失。</p>
+<p>数据仓库没有因为BI而消失。</p>
+<p>BI也不会因为ChatBI而消失。</p>
+<p>同样，ETL不会因为AI而消失。</p>
+<p>真正发生变化的是，数据开发正在从以代码为中心，逐渐走向以知识为中心；数据工程师的核心竞争力，也将从编写SQL，逐渐转向理解业务、组织数据和管理知识。</p>
+<p>未来的数据平台，不再只是数据流转的平台，更是企业知识不断沉淀和持续演进的平台。</p>
+<p>而Data Agent，正是建立在这一基础之上的下一代数据消费模式。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>Data Agent是什么？为什么它代表下一代数据应用？</title>
+    <url>/2026/07/t-data-dev-paradigm-06/</url>
+    <content><![CDATA[<h1 id="Data-Agent是什么？为什么它代表下一代数据应用？"><a href="#Data-Agent是什么？为什么它代表下一代数据应用？" class="headerlink" title="Data Agent是什么？为什么它代表下一代数据应用？"></a>Data Agent是什么？为什么它代表下一代数据应用？</h1><p>最近一年，Data Agent 几乎成为所有数据平台和 AI 厂商共同关注的方向。</p>
+<p>无论是国内还是国外，从智能问数、AI 分析助手，到企业知识库，再到各种”数字员工”，越来越多的产品开始使用 Agent 来描述自己的能力。</p>
+<p>与此同时，一个新的概念也开始频繁出现：</p>
+<p><strong>Data Agent。</strong></p>
+<p>有人把它理解成 ChatBI 的升级版，有人认为它只是一个能够自动生成 SQL 的机器人，也有人将它与 RAG、MCP、工作流等技术混为一谈。</p>
+<p>事实上，这些理解都触及了 Data Agent 的一部分能力，却没有回答一个更重要的问题：</p>
+<p><strong>为什么在数据仓库、BI、ChatBI 已经比较成熟的今天，企业仍然需要 Data Agent？</strong></p>
+<p>我认为，要理解 Data Agent，首先需要理解企业数据应用的发展过程。</p>
+<h2 id="从”展示数据”到”理解数据”"><a href="#从”展示数据”到”理解数据”" class="headerlink" title="从”展示数据”到”理解数据”"></a>从”展示数据”到”理解数据”</h2><p>过去二十年，企业数据应用经历了三个非常明显的发展阶段。</p>
+<p>第一个阶段是报表时代。</p>
+<p>这一阶段，数据的主要价值是展示结果。</p>
+<p>每天早晨，管理者打开报表，查看昨天的销售额、库存、利润以及订单完成情况。报表回答的是”发生了什么”。</p>
+<p>第二个阶段是BI时代。</p>
+<p>BI 不仅能够展示数据，还能够帮助管理者按照不同维度进行分析，例如按区域、产品、客户或者时间进行钻取分析。相比静态报表，BI 大幅提升了企业的数据消费能力，但前提依然是分析路径需要提前设计。</p>
+<p>第三个阶段则是ChatBI。</p>
+<p>用户不再需要学习系统如何使用，而是可以直接提出问题，例如：</p>
+<p>“今年华东地区利润下降最快的客户是谁？”</p>
+<p>系统根据问题自动生成 SQL，并返回分析结果。</p>
+<p>相比 BI，ChatBI 最大的变化是交互方式由点击变成了对话。</p>
+<p>然而，无论是报表、BI 还是 ChatBI，它们本质上仍然围绕同一个目标：</p>
+<p><strong>回答用户提出的问题。</strong></p>
+<p>而 Data Agent，希望完成的事情已经不仅仅是回答问题。</p>
+<h2 id="Data-Agent-真正的变化，是开始完成任务"><a href="#Data-Agent-真正的变化，是开始完成任务" class="headerlink" title="Data Agent 真正的变化，是开始完成任务"></a>Data Agent 真正的变化，是开始完成任务</h2><p>假设企业负责人提出这样一个需求：</p>
+<p>“分析最近三个月利润下降的原因，并提出改进建议。”</p>
+<p>对于传统 BI 来说，它能够展示利润变化趋势。</p>
+<p>对于 ChatBI 来说，它能够回答利润下降了多少。</p>
+<p>但是，它们都很难继续完成后续工作。</p>
+<p>例如：</p>
+<p>利润下降主要来自哪些客户？</p>
+<p>哪些产品贡献最大？</p>
+<p>是否受到退货影响？</p>
+<p>是否存在库存积压？</p>
+<p>是否需要进一步分析供应链数据？</p>
+<p>是否可以形成分析报告？</p>
+<p>这些问题并不是独立存在的，而是一系列连续的分析任务。</p>
+<p>Data Agent 最大的特点，就是能够围绕一个目标，主动规划分析步骤，并根据分析结果不断调整后续动作，直到完成整个任务。</p>
+<p>也就是说，它不仅回答问题，更开始解决问题。</p>
+<p>这是它与传统BI最大的区别。</p>
+<h2 id="为什么今天才出现-Data-Agent？"><a href="#为什么今天才出现-Data-Agent？" class="headerlink" title="为什么今天才出现 Data Agent？"></a>为什么今天才出现 Data Agent？</h2><p>很多人认为，这是因为大模型足够强大了。</p>
+<p>这当然是一个重要原因。</p>
+<p>但我认为，还有另一个更加重要的原因。</p>
+<p>过去的数据平台，主要围绕”数据”构建。</p>
+<p>今天的数据平台，开始围绕”知识”构建。</p>
+<p>例如，一个成熟的数据平台不仅保存了订单、客户、库存等业务数据，还逐步沉淀了：</p>
+<ol>
+<li>指标定义。</li>
+<li>数据血缘。</li>
+<li>元数据。</li>
+<li>业务规则。</li>
+<li>知识文档。</li>
+<li>数据质量规则。</li>
+<li>组织权限。</li>
+</ol>
+<p>这些内容过去分散在不同系统中。</p>
+<p>AI 出现之后，它们第一次有机会被统一利用。</p>
+<p>换句话说，</p>
+<blockquote>
+<p>真正支撑 Data Agent 的，并不仅仅是大模型，更包含企业多年积累的数据资产和知识资产。</p>
+</blockquote>
+<p>没有这些基础，Agent很难真正理解企业。</p>
+<h2 id="一个优秀的-Data-Agent，需要理解什么？"><a href="#一个优秀的-Data-Agent，需要理解什么？" class="headerlink" title="一个优秀的 Data Agent，需要理解什么？"></a>一个优秀的 Data Agent，需要理解什么？</h2><p>很多演示中，我们看到 Agent 能够自动生成 SQL，于是误以为这就是 Data Agent 的核心能力。</p>
+<p>实际上，生成 SQL 只是最后一步。</p>
+<p>在真正进入企业场景之前，一个 Data Agent 至少需要理解四个层面的内容。</p>
+<h3 id="首先，它需要理解业务。"><a href="#首先，它需要理解业务。" class="headerlink" title="首先，它需要理解业务。"></a>首先，它需要理解业务。</h3><p>例如，企业所说的”销售额”到底采用哪一种口径，利润是否包含税费，新增客户如何定义。这些都属于业务语义，而不是数据库语法。</p>
+<h3 id="其次，它需要理解数据。"><a href="#其次，它需要理解数据。" class="headerlink" title="其次，它需要理解数据。"></a>其次，它需要理解数据。</h3><p>哪些表保存订单信息，哪些字段表示客户编号，不同系统之间如何建立关联，这些决定了它是否能够找到正确的数据来源。</p>
+<h3 id="第三，它需要理解知识。"><a href="#第三，它需要理解知识。" class="headerlink" title="第三，它需要理解知识。"></a>第三，它需要理解知识。</h3><p>例如，企业过去沉淀的大量分析报告、制度文件、经营规则以及行业经验，都可能成为 Agent 推理的重要依据。</p>
+<h3 id="最后，它还需要理解任务。"><a href="#最后，它还需要理解任务。" class="headerlink" title="最后，它还需要理解任务。"></a>最后，它还需要理解任务。</h3><p>很多时候，用户提出的是一个目标，而不是一个明确的问题。Agent 需要将目标拆解成多个步骤，并协调不同工具共同完成。</p>
+<p>因此，Data Agent 并不是一个”会写SQL”的工具，而是一个能够理解企业知识、规划任务流程并利用数据完成目标的智能体。</p>
+<h2 id="Data-Agent-为什么离不开数据仓库？"><a href="#Data-Agent-为什么离不开数据仓库？" class="headerlink" title="Data Agent 为什么离不开数据仓库？"></a>Data Agent 为什么离不开数据仓库？</h2><p>看到这里，也许有人会产生疑问：</p>
+<p>既然 Agent 如此智能，是不是意味着未来不再需要数据仓库？</p>
+<p>我的答案依然是否定的。</p>
+<p>事实上，Agent 越智能，对数据底座的要求反而越高。</p>
+<p>原因很简单。</p>
+<p>Agent 并不会创造事实。</p>
+<p>它只能消费事实。</p>
+<p>如果企业存在多个版本的销售额。</p>
+<p>如果客户名称在不同系统中不一致。</p>
+<p>如果历史数据缺失。</p>
+<p>如果数据质量存在严重问题。</p>
+<p>那么 Agent 只会比人更快地得到错误答案。</p>
+<p>过去，数据仓库服务于 BI。</p>
+<p>未来，数据仓库将更多地服务于 Agent。</p>
+<p>它的角色正在发生变化，但它作为企业统一数据底座的价值，并没有发生改变。</p>
+<h2 id="下一代数据应用，不再只是一个系统"><a href="#下一代数据应用，不再只是一个系统" class="headerlink" title="下一代数据应用，不再只是一个系统"></a>下一代数据应用，不再只是一个系统</h2><p>过去，我们理解的数据应用通常是一套系统。</p>
+<p>一个 BI 平台。</p>
+<p>一个报表平台。</p>
+<p>一个数据门户。</p>
+<p>用户进入系统，完成查询，再退出系统。</p>
+<p>而未来的数据应用，更可能是一位长期在线的智能助手。</p>
+<p>它能够:</p>
+<ul>
+<li>理解企业数据。</li>
+<li>理解业务语义。</li>
+<li>理解组织知识。</li>
+<li>理解管理目标。</li>
+</ul>
+<p>不仅能够回答问题，还能够持续完成任务，与业务人员协同工作。</p>
+<p>从这个意义上说，Data Agent 代表的不只是一次产品升级，而是企业数据应用模式的一次转变。</p>
+<p>过去，企业建设的是一个”数据平台”。</p>
+<p>未来，企业更希望拥有一个能够持续利用数据创造价值的”智能伙伴”。</p>
+<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>过去二十年，企业数据体系一直围绕”数据如何被消费”展开。</p>
+<p>从报表，到 BI，再到 ChatBI，每一次变化都让获取数据变得更加容易。</p>
+<p>而 Data Agent 所代表的新阶段，则开始思考另一个问题：</p>
+<p><strong>如何让数据主动参与工作，而不仅仅是等待人来查询。</strong></p>
+<p>这意味着，企业数据应用正在从”提供数据”走向”完成任务”，从”支持决策”走向”参与决策”。</p>
+<p>当然，这种能力并不是凭空产生的。</p>
+<p>它依赖于统一的数据模型、完善的数据治理、可靠的数据质量以及持续积累的企业知识。</p>
+<p>伴随着技术的发展与进步，Agent 站到了舞台中央，而真正支撑它的，是企业过去二十年建立起来的数据体系。</p>
+]]></content>
   </entry>
   <entry>
     <title>什么是“真正的数据治理体系”？</title>
@@ -1989,1220 +3129,80 @@
 ]]></content>
   </entry>
   <entry>
-    <title>从报表到Agent：企业数据开发范式的二十年演进</title>
-    <url>/2026/06/t-data-dev-paradigm-01/</url>
-    <content><![CDATA[<p>过去二十年，企业数据领域发生过很多变化。</p>
-<p>数据库、数据仓库、大数据平台、数据治理、BI、数据中台、湖仓一体、ChatBI、Data Agent……</p>
-<p>新概念层出不穷，新技术不断涌现。</p>
-<p>但如果站在更高的视角来看，这二十年的变化，本质上是在解决同一个问题：</p>
+    <title>数据管理知识体系-数据管理</title>
+    <url>/2020/10/t-dmbok-data-management/</url>
+    <content><![CDATA[<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><h3 id="数据管理"><a href="#数据管理" class="headerlink" title="数据管理"></a>数据管理</h3><p>wikipedia</p>
 <blockquote>
-<p><strong>如何更快、更准确地获得答案。</strong></p>
+<p>The concept of data management arose in the 1980s as technology moved from sequential processing (first punched cards, then magnetic tape) to random access storage. Since it was now possible to store a discrete fact and quickly access it using random access disk technology, those suggesting that data management was more important than business process management used arguments such as “a customer’s home address is stored in 75 (or some other large number) places in our computer systems.” However, during this period, random access processing was not competitively fast, so those suggesting “process management” was more important than “data management” used batch processing time as their primary argument. As application software evolved into real-time, interactive usage, it became obvious that both management processes were important. If the data was not well defined, the data would be mis-used in applications. If the process wasn’t well defined, it was impossible to meet user needs.</p>
 </blockquote>
-<p>今天很多人在讨论AI、Agent、ChatBI。</p>
-<p>有人说数据仓库会消失，有人说BI将被取代，还有人认为未来根本不需要数据开发工程师。</p>
-<p>这些观点听起来很有冲击力，但如果不了解企业数据体系的发展历程，就很容易得出片面的结论。</p>
-<p>因此，在讨论AI会带来什么变化之前，我们不妨先回顾一下企业数据开发范式过去二十年的演进历程。</p>
-<h2 id="第一阶段：数据库时代——直接从业务系统取数"><a href="#第一阶段：数据库时代——直接从业务系统取数" class="headerlink" title="第一阶段：数据库时代——直接从业务系统取数"></a>第一阶段：数据库时代——直接从业务系统取数</h2><p>大约在2000年前后，大多数企业的信息化建设刚刚起步。</p>
-<p>企业中的核心系统主要是：</p>
-<ul>
-<li>ERP</li>
-<li>财务系统</li>
-<li>进销存系统</li>
-<li>人事系统</li>
-</ul>
-<p>那时的数据分析需求并不复杂。</p>
-<p>业务人员提出问题：</p>
-<p>“这个月销售额是多少？”</p>
-<p>技术人员登录数据库，写一条SQL。</p>
-<p>很快就能得到结果。</p>
-<p>那时的数据开发范式可以简单概括为：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">业务系统 &#x3D; 数据源 &#x3D; 分析系统</span><br></pre></td></tr></table></figure>
-
-<p>所有分析工作直接基于业务数据库完成。</p>
-<p>这种模式在企业规模较小时运行良好。</p>
-<p>但随着企业发展，问题逐渐出现。</p>
-<p>例如：</p>
-<ul>
-<li>ERP关注交易处理</li>
-<li>财务系统关注账务处理</li>
-<li>CRM关注客户管理</li>
-</ul>
-<p>每个系统的数据标准不同。</p>
-<p>每个系统的数据口径不同。</p>
-<p>每个系统都只关注自身业务。</p>
-<p>当企业希望回答：</p>
-<p>“某客户的销售额、利润和回款情况如何？”</p>
-<p>就需要跨多个系统进行关联分析。</p>
-<p>此时，数据库时代开始暴露出局限性。</p>
-<p>企业需要一种新的数据组织方式。</p>
-<p>数据仓库由此诞生。</p>
-<h2 id="第二阶段：数据仓库时代——让数据形成统一语言"><a href="#第二阶段：数据仓库时代——让数据形成统一语言" class="headerlink" title="第二阶段：数据仓库时代——让数据形成统一语言"></a>第二阶段：数据仓库时代——让数据形成统一语言</h2><p>从2005年前后开始，越来越多企业开始建设数据仓库。</p>
-<p>数据仓库的核心思想并不复杂：</p>
-<p>把分散在各业务系统中的数据统一汇集起来。</p>
-<p>通过清洗、转换、整合。</p>
-<p>形成统一的数据资产。</p>
-<p>此时，企业数据架构开始演变为：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">业务系统 → 数据集成 → 数据仓库 → 数据应用</span><br></pre></td></tr></table></figure>
-
-<p>对于很多企业而言，这是一次巨大的进步。</p>
-<p>数据仓库解决了几个关键问题：</p>
-<h3 id="第一，统一数据口径。"><a href="#第一，统一数据口径。" class="headerlink" title="第一，统一数据口径。"></a>第一，统一数据口径。</h3><p>同一个指标不再出现多个版本。</p>
-<h3 id="第二，沉淀历史数据。"><a href="#第二，沉淀历史数据。" class="headerlink" title="第二，沉淀历史数据。"></a>第二，沉淀历史数据。</h3><p>业务系统可能只保留当前状态。</p>
-<p>数据仓库可以保留完整历史轨迹。</p>
-<h3 id="第三，提高分析效率。"><a href="#第三，提高分析效率。" class="headerlink" title="第三，提高分析效率。"></a>第三，提高分析效率。</h3><p>复杂分析不再直接访问业务数据库。</p>
-<h3 id="第四，实现跨系统分析。"><a href="#第四，实现跨系统分析。" class="headerlink" title="第四，实现跨系统分析。"></a>第四，实现跨系统分析。</h3><p>企业第一次能够从全局视角看待经营数据。</p>
-<p>也正是在这一时期，维度建模、星型模型、事实表、维度表等概念开始广泛普及。</p>
-<p>很多企业的数据团队开始形成：</p>
-<ul>
-<li>ETL开发工程师</li>
-<li>数据仓库工程师</li>
-<li>BI工程师</li>
-</ul>
-<p>等专业岗位。</p>
-<p>数据开发开始进入工程化时代。</p>
-<h2 id="第三阶段：BI时代——从数据到决策"><a href="#第三阶段：BI时代——从数据到决策" class="headerlink" title="第三阶段：BI时代——从数据到决策"></a>第三阶段：BI时代——从数据到决策</h2><p>如果说数据仓库解决的是“数据从哪里来”的问题。</p>
-<p>那么BI解决的是：</p>
+<p>从上面的定义可以看出，数据管理是针对数据或信息的活动或能力集合，为了交付、控制、保护并提升数据和信息资产的价值，在其整个生命周期中制定计划、制度、规程和实践活动，并执行和监督的过程。<br>从商业的角度看，通过对数据进行资产化管理，提升数据质量和数据效率，提升企业利用数据变现的能力。</p>
+<h3 id="数据资产"><a href="#数据资产" class="headerlink" title="数据资产"></a>数据资产</h3><p>资产的定义为</p>
 <blockquote>
-<p>“数据如何被使用”的问题。</p>
+<p>资产是指由企业过去的交易或事项形成的、由企业拥有或者控制的、预期会给企业带来经济利益的资源。</p>
 </blockquote>
-<p>从2010年以后，越来越多企业开始建设：</p>
-<ul>
-<li>经营驾驶舱</li>
-<li>管理看板</li>
-<li>KPI体系</li>
-<li>数据分析平台</li>
+<p>数据作为一种特殊的资产形式，企业和组织可以依靠数据资产做出更高效的决定，运用数据理解客户，创造出新的产品和服务，并通过削减成本和控制风险的手段来提高运营效率，通过数据产生价值，以达到把数据做为资产进行直接或间接变现。</p>
+<h2 id="数据管理目标"><a href="#数据管理目标" class="headerlink" title="数据管理目标"></a>数据管理目标</h2><ul>
+<li>理解并支撑企业及其利益相关方的信息需求得到满足</li>
+<li>获取、存储、保护数据和确保数据资产的完整性。</li>
+<li>确保数据和信息的质量。</li>
+<li>确保利益相关方的数据隐私和保密性。</li>
+<li>防止数据和信息未经授权或被不当访问、操作及使用。</li>
+<li>确保数据能有效地服务于企业增值的目标。</li>
 </ul>
-<p>FineBI、Tableau、Power BI等产品快速发展。</p>
-<p>企业开始尝试用数据驱动决策。</p>
-<p>此时的数据开发范式变成：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">业务系统</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">数据仓库</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">OLAP</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">BI</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">决策分析</span><br></pre></td></tr></table></figure>
-
-<p>这也是很多企业今天仍然在采用的主流架构。</p>
-<p>这一模式极大提升了企业的数据使用效率。</p>
-<p>但与此同时，一个新的问题开始出现。</p>
-<p>所有答案都需要提前准备。</p>
-<ul>
-<li>业务提出需求。</li>
-<li>数据团队开发ETL。</li>
-<li>开发指标。</li>
-<li>开发报表。</li>
-<li>测试上线。</li>
+<h2 id="数据管理原则"><a href="#数据管理原则" class="headerlink" title="数据管理原则"></a>数据管理原则</h2><ul>
+<li>数据是有独特属性的资产</li>
+<li>数据的价值可以用经济术语来表示</li>
+<li>管理数据意味着对数据的质量管理</li>
+<li>管理数据需要元数据</li>
+<li>数据管理需要规划</li>
+<li>数据管理须驱动信息技术决策</li>
+<li>数据管理是跨职能的工作</li>
+<li>数据管理需要企业级视角</li>
+<li>数据管理需要多角度思考</li>
+<li>数据管理需要全生命周期的管理</li>
+<li>数据管理需要纳入与数据相关的风险</li>
+<li>有效的数据管理需要领导层承担责任</li>
 </ul>
-<p>最终才能看到结果。</p>
-<p>很多企业都经历过这样的场景：</p>
-<p>业务部门提出一个分析需求。</p>
-<p>排期两周。</p>
-<p>开发一周。</p>
-<p>测试三天。</p>
-<p>上线一天。</p>
-<p>最后花费近一个月时间。</p>
-<p>而业务真正关心的问题，可能只需要一个答案。</p>
-<p>问题并不在于技术。</p>
-<p>而在于这种模式本质上属于：</p>
-<p><strong>先开发答案，再提出问题。</strong></p>
-<p>这也为下一轮变革埋下伏笔。</p>
-<h2 id="第四阶段：AI时代——从开发答案到生成答案"><a href="#第四阶段：AI时代——从开发答案到生成答案" class="headerlink" title="第四阶段：AI时代——从开发答案到生成答案"></a>第四阶段：AI时代——从开发答案到生成答案</h2><p>2022年以后，大模型开始快速发展。</p>
-<p>ChatGPT、Claude、DeepSeek等产品让自然语言交互成为现实。</p>
-<p>与此同时，企业数据领域也开始出现新的变化。</p>
-<p>ChatBI开始流行。</p>
-<p>智能问数开始普及。</p>
-<p>企业知识库快速增长。</p>
-<p>Data Agent不断涌现。</p>
-<p>过去的数据分析过程通常是：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">提出问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">提交需求</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发模型</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发报表</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">获得答案</span><br></pre></td></tr></table></figure>
-
-<p>而今天越来越多企业开始尝试：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">提出问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">Agent理解问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">自动检索数据</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">自动生成SQL</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">自动分析</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">获得答案</span><br></pre></td></tr></table></figure>
-
-<p>两种模式最大的区别在于：</p>
-<p>过去是开发答案。</p>
-<p>现在是生成答案。</p>
-<p>这是企业数据开发范式过去二十年来最重要的一次变化。</p>
-<h2 id="AI会取代数据仓库吗？"><a href="#AI会取代数据仓库吗？" class="headerlink" title="AI会取代数据仓库吗？"></a>AI会取代数据仓库吗？</h2><p>这是最近两年被问得最多的问题之一。</p>
-<p>我的观点很明确：</p>
-<p>不会，至少在可预见的未来不会。</p>
-<p>因为AI解决的是答案生成问题，而数据仓库解决的是数据组织问题。两者并不是替代关系。</p>
-<p>Agent越强，越依赖高质量的数据基础。</p>
-<p>ChatBI越智能，越需要统一的数据口径。</p>
-<p>企业知识库越丰富，越需要高质量的数据治理。</p>
-<p>未来消失的不会是数据仓库，而是数据仓库作为最终消费终端的角色。</p>
-<p>它会逐渐退居幕后，成为Agent的数据底座。</p>
-<h2 id="下一代企业数据体系正在形成"><a href="#下一代企业数据体系正在形成" class="headerlink" title="下一代企业数据体系正在形成"></a>下一代企业数据体系正在形成</h2><p>回顾过去二十年。</p>
-<p>企业数据体系经历了四次重要演进：</p>
-<h3 id="数据库时代："><a href="#数据库时代：" class="headerlink" title="数据库时代："></a>数据库时代：</h3><p>解决数据存储问题。</p>
-<h3 id="数据仓库时代："><a href="#数据仓库时代：" class="headerlink" title="数据仓库时代："></a>数据仓库时代：</h3><p>解决数据整合问题。</p>
-<h3 id="BI时代："><a href="#BI时代：" class="headerlink" title="BI时代："></a>BI时代：</h3><p>解决数据消费问题。</p>
-<h3 id="AI时代："><a href="#AI时代：" class="headerlink" title="AI时代："></a>AI时代：</h3><p>解决答案生成问题。</p>
-<p>每一次演进，都不是推翻上一代体系。</p>
-<p>而是在上一代基础上的能力扩展。</p>
-<p>因此，我并不认为AI会终结企业数据体系。</p>
-<p>AI正在推动企业数据体系进入一个新的阶段。</p>
-<p>未来五年。</p>
-<p>真正值得关注的问题不是：</p>
-<p>“数据仓库会不会消失？”</p>
-<p>而是：</p>
-<blockquote>
-<p>“企业如何构建能够支撑Agent的数据体系？”</p>
-</blockquote>
-<p>这也是本专栏接下来希望持续探讨的话题。</p>
-<p>下一篇，我们将从一个最基础的问题开始：</p>
-<p><strong>为什么企业需要数据仓库？</strong></p>
+<h2 id="数据管理框架"><a href="#数据管理框架" class="headerlink" title="数据管理框架"></a>数据管理框架</h2><h3 id="DAMA-DMBOK-框架"><a href="#DAMA-DMBOK-框架" class="headerlink" title="DAMA-DMBOK 框架"></a>DAMA-DMBOK 框架</h3><ul>
+<li>数据架构（Data Architecture）</li>
+<li>数据建模和设计（Data Modeling and Design）</li>
+<li>数据存储和操作（Data Storage and Operations）</li>
+<li>数据安全（Data Security）</li>
+<li>数据集成和互操作（Data Integration and Interoperability）</li>
+<li>文件和内容管理（Document and Content Management）</li>
+<li>参考数据和主数据（Reference and Master Data）</li>
+<li>数据仓库和商务智能（Data Warehousing and Business Intelligece）</li>
+<li>元数据（Metadata）</li>
+<li>数据质量（Data Quality）</li>
+</ul>
+<h3 id="DMBOK-金字塔"><a href="#DMBOK-金字塔" class="headerlink" title="DMBOK 金字塔"></a>DMBOK 金字塔</h3><p>第一阶段：构建数据库功能和应用</p>
+<ul>
+<li>数据存储和操作</li>
+<li>数据安全</li>
+<li>数据建模和设计</li>
+<li>数据集成和互操作</li>
+</ul>
+<p>第二阶段：保障数据质量</p>
+<ul>
+<li>数据架构</li>
+<li>数据质量</li>
+<li>元数据</li>
+</ul>
+<p>第三阶段：为数据管理活动提供体系性支持</p>
+<ul>
+<li>数据仓库和商务智能</li>
+<li>参考数据和主数据</li>
+<li>文件和内容管理</li>
+</ul>
+<p>第四阶段：利用数据管理好处，提升分析能力</p>
+<ul>
+<li>大数据分析</li>
+<li>数据挖掘</li>
+<li>高级实践</li>
+</ul>
 ]]></content>
-  </entry>
-  <entry>
-    <title>为什么企业需要数据仓库？</title>
-    <url>/2026/06/t-data-dev-paradigm-02/</url>
-    <content><![CDATA[<p>在和一些年轻的数据工程师交流时，我发现一个有趣的现象。</p>
-<p>很多人每天都在开发ODS、DWD、DWS、ADS。</p>
-<p>熟悉Hive、Spark、Flink、ClickHouse。</p>
-<p>却很少认真思考过一个问题：</p>
-<p><strong>为什么企业需要数据仓库？</strong></p>
-<p>尤其是在AI快速发展的今天。</p>
-<p>越来越多的人开始提出类似的问题：</p>
-<ul>
-<li>有了湖仓一体，还需要数据仓库吗？</li>
-<li>有了ChatBI，还需要数据仓库吗？</li>
-<li>Agent能够自动生成SQL，还需要数据仓库吗？</li>
-</ul>
-<p>在回答这些问题之前，我们需要先回到数据仓库诞生的那个时代。</p>
-<p>因为只有理解它为什么出现，才能理解它为什么至今仍然存在。</p>
-<h2 id="企业最早并没有数据仓库"><a href="#企业最早并没有数据仓库" class="headerlink" title="企业最早并没有数据仓库"></a>企业最早并没有数据仓库</h2><p>今天很多企业的数据架构看起来似乎理所当然：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ERP → 数据仓库 → BI → 报表</span><br></pre></td></tr></table></figure>
-
-<p>但实际上，大多数企业最初并没有数据仓库。</p>
-<p>在信息化建设初期，企业通常只有几个核心业务系统：</p>
-<ul>
-<li>ERP</li>
-<li>财务系统</li>
-<li>CRM</li>
-<li>HR系统</li>
-</ul>
-<p>当管理层需要数据时，往往直接从业务系统查询。</p>
-<p>例如：</p>
-<p>销售总监问：</p>
-<p>“本月销售额是多少？”</p>
-<p>技术人员登录ERP数据库。</p>
-<p>执行一条SQL。</p>
-<p>得到结果。</p>
-<p>似乎没有任何问题。</p>
-<p>因为那时：</p>
-<ul>
-<li>数据量不大</li>
-<li>系统数量不多</li>
-<li>分析需求简单</li>
-</ul>
-<p>业务系统同时承担：</p>
-<ul>
-<li>交易处理</li>
-<li>数据存储</li>
-<li>数据分析</li>
-</ul>
-<p>三种职责。</p>
-<p>但随着企业规模扩大，问题开始逐渐暴露。</p>
-<h2 id="第一个问题：业务系统不是为分析而设计的"><a href="#第一个问题：业务系统不是为分析而设计的" class="headerlink" title="第一个问题：业务系统不是为分析而设计的"></a>第一个问题：业务系统不是为分析而设计的</h2><p>ERP最重要的任务是什么？</p>
-<p>是保证订单能够正常流转。</p>
-<p>CRM最重要的任务是什么？</p>
-<p>是保证客户管理流程正常运行。</p>
-<p>MES最重要的任务是什么？</p>
-<p>是保证生产过程可控。</p>
-<p>这些系统有一个共同特点：</p>
-<p>它们都属于OLTP系统（联机事务处理系统）。</p>
-<p>其核心目标是：</p>
-<ul>
-<li>快速写入</li>
-<li>快速更新</li>
-<li>高并发事务</li>
-</ul>
-<p>而数据分析恰恰相反。</p>
-<p>分析系统更关注：</p>
-<ul>
-<li>大量历史数据</li>
-<li>多表关联计算</li>
-<li>聚合统计分析</li>
-</ul>
-<p>例如：</p>
-<p>业务系统可能需要快速保存一笔订单。</p>
-<p>而分析系统则希望统计：</p>
-<p>过去三年各区域产品销售趋势。</p>
-<p>这是两种完全不同的工作模式。</p>
-<p>如果直接在ERP上执行复杂分析：</p>
-<p>轻则查询缓慢。</p>
-<p>重则影响业务运行。</p>
-<p>因此：</p>
-<blockquote>
-<p><strong>业务系统适合处理交易，不适合处理分析。</strong></p>
-</blockquote>
-<p>这是数据仓库存在的第一个原因。</p>
-<h2 id="第二个问题：企业的数据是分散的"><a href="#第二个问题：企业的数据是分散的" class="headerlink" title="第二个问题：企业的数据是分散的"></a>第二个问题：企业的数据是分散的</h2><p>很多企业管理层都喜欢问这样的问题：</p>
-<p>“哪个客户最赚钱？”</p>
-<p>看起来很简单。</p>
-<p>但实际计算往往涉及多个系统：</p>
-<p>销售额来自CRM。</p>
-<p>成本来自ERP。</p>
-<p>回款来自财务系统。</p>
-<p>物流费用来自供应链系统。</p>
-<p>如果没有统一的数据平台。</p>
-<p>每次分析都需要跨系统取数。</p>
-<p>不仅效率低。</p>
-<p>而且很容易出现口径不一致的问题。</p>
-<p>例如：</p>
-<p>销售部门说客户A贡献利润500万元。</p>
-<p>财务部门说只有350万元。</p>
-<p>双方都认为自己正确。</p>
-<p>问题出在哪里？</p>
-<p>不是数据错了。</p>
-<p>而是计算逻辑不同。</p>
-<p>企业真正需要的不是更多数据。</p>
-<blockquote>
-<p>而是统一的数据语言。</p>
-</blockquote>
-<p>这正是数据仓库解决的核心问题之一。</p>
-<h2 id="第三个问题：业务系统只关心现在"><a href="#第三个问题：业务系统只关心现在" class="headerlink" title="第三个问题：业务系统只关心现在"></a>第三个问题：业务系统只关心现在</h2><p>业务系统关注的是当前状态。</p>
-<p>例如ERP中的库存表。</p>
-<p>今天库存100件。</p>
-<p>明天库存80件。</p>
-<p>后天库存120件。</p>
-<p>ERP只需要记录当前库存。</p>
-<p>但管理层更关心：</p>
-<ul>
-<li>库存变化趋势</li>
-<li>历史库存水平</li>
-<li>周转率变化</li>
-</ul>
-<p>这些分析都需要历史数据。</p>
-<p>而历史数据往往不会长期保存在业务系统中。</p>
-<p>于是企业开始把业务数据持续同步出来。</p>
-<p>形成历史快照。</p>
-<p>构建分析主题。</p>
-<p>这也是数据仓库的重要价值。</p>
-<p>它不仅存储数据。</p>
-<blockquote>
-<p>更保存企业经营过程中的历史记忆。</p>
-</blockquote>
-<h2 id="第四个问题：企业需要统一指标"><a href="#第四个问题：企业需要统一指标" class="headerlink" title="第四个问题：企业需要统一指标"></a>第四个问题：企业需要统一指标</h2><p>很多企业都有一个经典现象。</p>
-<p>开会时讨论同一个指标。</p>
-<p>不同部门拿出不同数字。</p>
-<p>例如：</p>
-<p>“上个月销售额是多少？”</p>
-<p>销售部门：</p>
-<p>1.2亿元。</p>
-<p>财务部门：</p>
-<p>1.05亿元。</p>
-<p>运营部门：</p>
-<p>1.1亿元。</p>
-<p>数据部门：</p>
-<p>1.15亿元。</p>
-<p>每个人都能解释自己的计算逻辑。</p>
-<p>但最终没人知道哪个数字才是正确的。</p>
-<p>问题本质上不是数据问题。</p>
-<p>而是指标问题。</p>
-<p>数据仓库建设过程中。</p>
-<p>企业第一次开始系统化思考：</p>
-<ul>
-<li>什么是销售额？</li>
-<li>什么是利润？</li>
-<li>什么是客户数？</li>
-<li>什么是新增用户？</li>
-</ul>
-<p>通过统一口径。</p>
-<p>企业建立起共同的数据语言。</p>
-<p>从某种意义上说：</p>
-<blockquote>
-<p><strong>数据仓库最大的价值不是存储数据，而是统一认知。</strong></p>
-</blockquote>
-<h2 id="数据仓库真正解决了什么？"><a href="#数据仓库真正解决了什么？" class="headerlink" title="数据仓库真正解决了什么？"></a>数据仓库真正解决了什么？</h2><p>如果把前面的问题总结一下。</p>
-<p>数据仓库解决的并不是简单的数据存储问题。</p>
-<p>而是四个核心问题：</p>
-<h3 id="第一："><a href="#第一：" class="headerlink" title="第一："></a>第一：</h3><p>让业务系统专注交易处理。</p>
-<h3 id="第二："><a href="#第二：" class="headerlink" title="第二："></a>第二：</h3><p>打通企业数据孤岛。</p>
-<h3 id="第三："><a href="#第三：" class="headerlink" title="第三："></a>第三：</h3><p>沉淀历史数据资产。</p>
-<h3 id="第四："><a href="#第四：" class="headerlink" title="第四："></a>第四：</h3><p>统一企业指标体系。</p>
-<p>因此。</p>
-<p>数据仓库的本质不是一个数据库。</p>
-<blockquote>
-<p>而是一套数据组织方法。</p>
-</blockquote>
-<p>是一种让企业能够理解自身经营状况的基础设施。</p>
-<h2 id="AI时代，数据仓库为什么依然重要？"><a href="#AI时代，数据仓库为什么依然重要？" class="headerlink" title="AI时代，数据仓库为什么依然重要？"></a>AI时代，数据仓库为什么依然重要？</h2><p>最近两年。</p>
-<p>很多人开始讨论：</p>
-<p>ChatBI。</p>
-<p>Data Agent。</p>
-<p>自然语言问数。</p>
-<p>智能分析。</p>
-<p>似乎未来不再需要数据仓库。</p>
-<p>但实际上。</p>
-<p>这些新技术恰恰更加依赖数据仓库。</p>
-<p>我们可以思考一个简单问题：</p>
-<p>如果企业内部存在三个版本的销售额。</p>
-<p>Agent应该相信谁？</p>
-<p>如果客户名称在不同系统中不一致。</p>
-<p>Agent应该分析哪个客户？</p>
-<p>如果历史数据缺失。</p>
-<p>Agent如何完成趋势分析？</p>
-<p>如果数据质量存在问题。</p>
-<p>Agent如何保证回答正确？</p>
-<p>答案很简单。</p>
-<p>Agent不会自动创造事实。</p>
-<p>Agent只能利用已有事实。</p>
-<p>而数据仓库正是企业事实的组织者。</p>
-<p>过去：</p>
-<p>数据仓库服务BI。</p>
-<p>未来：</p>
-<p>数据仓库服务Agent。</p>
-<p>它的角色会变化。</p>
-<p>但其核心价值不会消失。</p>
-<h2 id="数据仓库最大的价值，其实是降低沟通成本"><a href="#数据仓库最大的价值，其实是降低沟通成本" class="headerlink" title="数据仓库最大的价值，其实是降低沟通成本"></a>数据仓库最大的价值，其实是降低沟通成本</h2><p>很多人认为数据仓库的价值在于技术。</p>
-<p>我越来越觉得不是。</p>
-<p>数据仓库最大的价值其实是：</p>
-<p>降低组织沟通成本。</p>
-<p>当企业拥有统一的数据口径时：</p>
-<p>销售和财务不再争论数字。</p>
-<p>业务和技术不再争论规则。</p>
-<p>管理层不再争论结果。</p>
-<p>大家能够把精力放在真正重要的问题上：</p>
-<p>为什么会这样？</p>
-<p>应该怎么办？</p>
-<p>而不是：</p>
-<p>数字到底哪个对？</p>
-<p>从这个角度看。</p>
-<p>数据仓库从来不是技术项目。</p>
-<blockquote>
-<p>而是企业管理能力建设的一部分。</p>
-</blockquote>
-<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>过去二十年。</p>
-<p>数据仓库之所以能够成为企业数据体系的核心。</p>
-<p>并不是因为它拥有最先进的技术。</p>
-<p>而是因为它解决了企业最本质的问题：</p>
-<p>让企业能够用统一的语言理解自己的经营状况。</p>
-<p>AI不会改变这一点。</p>
-<p>ChatBI不会改变这一点。</p>
-<p>Data Agent也不会改变这一点。</p>
-<p>未来发生变化的。</p>
-<p>只是数据被消费的方式。</p>
-<p>而不会是数据被组织的逻辑。</p>
-<p>下一篇文章，我们继续讨论另一个关键问题：</p>
-<p><strong>BI为什么成为企业数据消费的主流模式？</strong></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>BI为什么成为企业数据消费的主流模式？</title>
-    <url>/2026/06/t-data-dev-paradigm-03/</url>
-    <content><![CDATA[<p>如果说数据仓库解决的是：</p>
-<blockquote>
-<p>数据从哪里来？</p>
-</blockquote>
-<p>那么BI（Business Intelligence，商业智能）解决的则是：</p>
-<blockquote>
-<p>数据如何被使用？</p>
-</blockquote>
-<p>今天我们已经习惯了各种经营驾驶舱、销售看板、库存分析报表、财务分析平台。</p>
-<p>很多企业每天打开电脑的第一件事，就是查看BI系统中的经营数据。</p>
-<p>以至于很多人认为：</p>
-<p>企业的数据应用本来就应该是这样。</p>
-<p>但实际上，在BI出现之前，企业获取数据的过程远比今天复杂。</p>
-<p>而BI之所以能够成为过去二十年企业数据消费的主流模式，本质上是因为它解决了一个关键问题：</p>
-<p><strong>如何让数据真正服务于管理决策。</strong></p>
-<h2 id="在BI出现之前，数据分析是一件奢侈的事情"><a href="#在BI出现之前，数据分析是一件奢侈的事情" class="headerlink" title="在BI出现之前，数据分析是一件奢侈的事情"></a>在BI出现之前，数据分析是一件奢侈的事情</h2><p>对于很多80后、90后的数据从业者来说。</p>
-<p>可能很难想象十几年前企业的数据分析场景。</p>
-<p>那时候：</p>
-<ul>
-<li>没有FineBI</li>
-<li>没有Power BI</li>
-<li>没有Tableau</li>
-<li>没有自助分析</li>
-</ul>
-<p>甚至很多企业连数据仓库都没有。</p>
-<p>如果老板想知道：</p>
-<p>“本月销售额同比增长多少？”</p>
-<p>通常需要经历这样的流程：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">业务提需求。</span><br><span class="line">↓</span><br><span class="line">IT写SQL。</span><br><span class="line">↓</span><br><span class="line">导出Excel。</span><br><span class="line">↓</span><br><span class="line">制作图表。</span><br><span class="line">↓</span><br><span class="line">发送邮件。</span><br><span class="line">↓</span><br><span class="line">领导查看。</span><br></pre></td></tr></table></figure>
-
-<p>一个简单问题。</p>
-<p>往往需要几天时间。</p>
-<p>如果领导继续追问：</p>
-<p>“华东区域情况如何？”</p>
-<p>那么整个过程重新开始。</p>
-<p>企业获取答案的成本极高。</p>
-<p>而且每个部门都在重复劳动。</p>
-<p>大量时间消耗在取数和整理数据上。</p>
-<p>而不是分析问题本身。</p>
-<h2 id="BI出现的本质：把数据变成可消费的产品"><a href="#BI出现的本质：把数据变成可消费的产品" class="headerlink" title="BI出现的本质：把数据变成可消费的产品"></a>BI出现的本质：把数据变成可消费的产品</h2><p>随着数据仓库建设逐渐成熟。</p>
-<p>企业开始思考一个问题：</p>
-<p>既然数据已经集中存储了。</p>
-<p>为什么每次分析还要重复开发？</p>
-<p>于是BI开始兴起。</p>
-<p>它最大的贡献是：</p>
-<p>把数据从技术资产变成业务资产。</p>
-<p>过去的数据使用方式：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">数据库</span><br><span class="line">↓</span><br><span class="line">SQL</span><br><span class="line">↓</span><br><span class="line">Excel</span><br><span class="line">↓</span><br><span class="line">分析</span><br></pre></td></tr></table></figure>
-
-<p>BI出现后：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">数据仓库</span><br><span class="line">↓</span><br><span class="line">OLAP</span><br><span class="line">↓</span><br><span class="line">BI平台</span><br><span class="line">↓</span><br><span class="line">业务人员</span><br></pre></td></tr></table></figure>
-
-<p>业务人员第一次可以直接接触数据。</p>
-<p>不需要懂SQL。</p>
-<p>不需要了解数据库结构。</p>
-<p>也不需要依赖IT部门。</p>
-<p>数据消费门槛被大幅降低。</p>
-<p>这是BI成功的根本原因。</p>
-<h2 id="BI为什么能够统治企业二十年？"><a href="#BI为什么能够统治企业二十年？" class="headerlink" title="BI为什么能够统治企业二十年？"></a>BI为什么能够统治企业二十年？</h2><p>过去二十年。</p>
-<p>企业数据技术不断变化。</p>
-<p>数据库在变。</p>
-<p>计算引擎在变。</p>
-<p>存储架构在变。</p>
-<p>但BI始终处于企业数据体系的核心位置。</p>
-<p>原因在于它满足了管理者最核心的需求。</p>
-<h3 id="第一：统一展示"><a href="#第一：统一展示" class="headerlink" title="第一：统一展示"></a>第一：统一展示</h3><p>企业管理最怕什么？</p>
-<p>同一个问题出现多个答案。</p>
-<p>例如：</p>
-<p>销售部门有自己的报表。</p>
-<p>财务部门有自己的报表。</p>
-<p>运营部门有自己的报表。</p>
-<p>大家看到的数字都不一样。</p>
-<p>BI通过统一的数据来源和统一的指标体系。</p>
-<p>让所有人看到同一份经营结果。</p>
-<p>从而建立共同认知。</p>
-<h3 id="第二：实时掌握经营情况"><a href="#第二：实时掌握经营情况" class="headerlink" title="第二：实时掌握经营情况"></a>第二：实时掌握经营情况</h3><p>过去管理层获取经营数据往往具有滞后性。</p>
-<p>月初才能看到上个月报表。</p>
-<p>季度结束才能看到季度分析。</p>
-<p>而BI让企业第一次实现：</p>
-<p>经营过程可视化。</p>
-<p>管理层随时可以了解：</p>
-<ul>
-<li>销售情况</li>
-<li>库存情况</li>
-<li>生产情况</li>
-<li>财务情况</li>
-</ul>
-<p>企业经营开始从经验驱动走向数据驱动。</p>
-<h3 id="第三：提升决策效率"><a href="#第三：提升决策效率" class="headerlink" title="第三：提升决策效率"></a>第三：提升决策效率</h3><p>过去很多决策依赖经验。</p>
-<p>现在越来越依赖数据。</p>
-<p>例如：</p>
-<p>哪个产品应该重点推广？</p>
-<p>哪个区域需要增加资源投入？</p>
-<p>哪些客户存在流失风险？</p>
-<p>BI让管理者能够基于数据做判断。</p>
-<p>虽然不能保证决策一定正确。</p>
-<p>但至少能够提高决策质量。</p>
-<h2 id="BI真正改变了什么？"><a href="#BI真正改变了什么？" class="headerlink" title="BI真正改变了什么？"></a>BI真正改变了什么？</h2><p>很多人认为：</p>
-<p>BI只是报表工具。</p>
-<p>其实远不止如此。</p>
-<p>BI最大的贡献在于：</p>
-<p><strong>让数据第一次进入企业管理流程。</strong></p>
-<p>过去：</p>
-<p>数据属于IT部门。</p>
-<p>现在：</p>
-<p>数据成为业务部门的重要资源。</p>
-<p>过去：</p>
-<p>分析是一项专业能力。</p>
-<p>现在：</p>
-<p>分析成为一种管理习惯。</p>
-<p>过去：</p>
-<p>企业依靠经验决策。</p>
-<p>现在：</p>
-<p>企业开始依靠数据决策。</p>
-<p>从这个意义上说。</p>
-<p>BI推动的不仅仅是技术进步。</p>
-<p>更是企业管理方式的变革。</p>
-<h2 id="BI的成功，也埋下了未来的问题"><a href="#BI的成功，也埋下了未来的问题" class="headerlink" title="BI的成功，也埋下了未来的问题"></a>BI的成功，也埋下了未来的问题</h2><p>任何一种成功模式。</p>
-<p>都会形成自己的局限性。</p>
-<p>BI也不例外。</p>
-<p>过去几年。</p>
-<p>我经常听到业务部门抱怨：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">“报表太多了。”</span><br><span class="line"></span><br><span class="line">“找不到自己想看的数据。”</span><br><span class="line"></span><br><span class="line">“新需求上线太慢。”</span><br><span class="line"></span><br><span class="line">“一个指标改动要等几周。”</span><br></pre></td></tr></table></figure>
-
-<p>这些问题本质上并不是BI工具的问题。</p>
-<p>而是BI模式本身的特点决定的。</p>
-<p>因为BI有一个天然前提：</p>
-<p><strong>所有答案都必须提前准备。</strong></p>
-<p>例如：</p>
-<p>老板想看销售分析。</p>
-<p>数据团队提前做好销售主题。</p>
-<p>老板想看库存分析。</p>
-<p>数据团队提前做好库存主题。</p>
-<p>老板想看利润分析。</p>
-<p>数据团队提前做好利润主题。</p>
-<p>也就是说：</p>
-<p>BI的核心逻辑是：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">预定义问题</span><br><span class="line">↓</span><br><span class="line">预开发答案</span><br><span class="line">↓</span><br><span class="line">展示结果</span><br></pre></td></tr></table></figure>
-
-<p>这种模式在问题相对稳定时非常高效。</p>
-<p>但当问题越来越复杂、越来越个性化时。</p>
-<p>问题就出现了。</p>
-<h2 id="一个典型案例"><a href="#一个典型案例" class="headerlink" title="一个典型案例"></a>一个典型案例</h2><p>假设老板突然问：</p>
-<p>“去年华东区域哪些客户利润下降最快？这些客户有哪些共同特征？”</p>
-<p>对于传统BI来说。</p>
-<p>可能需要：</p>
-<ul>
-<li>新增指标</li>
-<li>新增模型</li>
-<li>开发报表</li>
-<li>测试上线</li>
-</ul>
-<p>整个过程可能持续数天甚至数周。</p>
-<p>而老板真正需要的。</p>
-<p>其实只是一个答案。</p>
-<p>于是企业开始思考：</p>
-<p>有没有可能直接提出问题。</p>
-<p>而不是提前开发报表？</p>
-<p>有没有可能跳过复杂开发过程。</p>
-<p>直接获得分析结果？</p>
-<p>这正是ChatBI和Data Agent出现的背景。</p>
-<h2 id="BI会被AI取代吗？"><a href="#BI会被AI取代吗？" class="headerlink" title="BI会被AI取代吗？"></a>BI会被AI取代吗？</h2><p>这是最近最热门的话题之一。</p>
-<p>我的观点是：</p>
-<p>不会。</p>
-<p>至少短期内不会。</p>
-<p>因为BI和AI解决的是不同层面的问题。</p>
-<p>BI擅长：</p>
-<ul>
-<li>固定指标展示</li>
-<li>经营监控</li>
-<li>KPI跟踪</li>
-<li>统一经营视图</li>
-</ul>
-<p>而AI擅长：</p>
-<ul>
-<li>自然语言交互</li>
-<li>临时问题分析</li>
-<li>数据解释</li>
-<li>智能洞察</li>
-</ul>
-<p>未来很长一段时间。</p>
-<p>两者更可能是协同关系。</p>
-<p>而不是替代关系。</p>
-<p>企业每天仍然需要经营驾驶舱。</p>
-<p>仍然需要管理看板。</p>
-<p>仍然需要核心指标监控。</p>
-<p>这些都是BI最擅长的场景。</p>
-<p>但与此同时。</p>
-<p>越来越多探索性分析工作。</p>
-<p>将逐步由AI承担。</p>
-<h2 id="从BI到Agent：数据消费方式正在改变"><a href="#从BI到Agent：数据消费方式正在改变" class="headerlink" title="从BI到Agent：数据消费方式正在改变"></a>从BI到Agent：数据消费方式正在改变</h2><p>回顾过去二十年。</p>
-<p>企业数据体系的发展路径其实非常清晰。</p>
-<p>数据库时代：</p>
-<p>解决数据存储问题。</p>
-<p>数据仓库时代：</p>
-<p>解决数据整合问题。</p>
-<p>BI时代：</p>
-<p>解决数据消费问题。</p>
-<p>而今天。</p>
-<p>AI正在推动新的变化。</p>
-<p>过去：</p>
-<p>数据团队提前开发答案。</p>
-<p>现在：</p>
-<p>Agent开始动态生成答案。</p>
-<p>过去：</p>
-<p>人寻找数据。</p>
-<p>现在：</p>
-<p>数据开始响应人的问题。</p>
-<p>这或许正是企业数据消费模式下一次重要升级的开始。</p>
-<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>过去二十年。</p>
-<p>BI之所以能够成为企业数据消费的主流模式。</p>
-<p>并不是因为它能够画出漂亮图表。</p>
-<p>而是因为它让数据真正进入了企业经营管理过程。</p>
-<p>它第一次让企业能够持续、稳定、低成本地消费数据。</p>
-<p>但BI的成功也意味着一种新的局限：</p>
-<p>所有答案都必须提前准备。</p>
-<p>而AI正在尝试打破这一限制。</p>
-<p>未来企业真正需要的。</p>
-<p>可能不只是一个展示数据的系统。</p>
-<p>而是一个能够理解问题、分析问题、回答问题的数据助手。</p>
-<p>这也正是下一篇文章要讨论的话题：</p>
-<p><strong>《ChatBI来了，传统BI会消失吗？》</strong></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>ChatBI来了，传统BI会消失吗？</title>
-    <url>/2026/06/t-data-dev-paradigm-04/</url>
-    <content><![CDATA[<p>2023年以来，几乎所有BI厂商都开始拥抱AI。</p>
-<p>有人推出智能问数。</p>
-<p>有人推出AI分析助手。</p>
-<p>有人推出数字员工。</p>
-<p>有人开始宣传Data Agent。</p>
-<p>一时间，”ChatBI”成为数据领域最热门的话题之一。</p>
-<p>与此同时，一个观点也开始频繁出现：</p>
-<blockquote>
-<p><strong>“BI要被AI取代了。”</strong></p>
-</blockquote>
-<p>甚至有人认为：</p>
-<ul>
-<li>以后不用开发报表了；</li>
-<li>以后不用写SQL了；</li>
-<li>以后不用BI平台了。</li>
-</ul>
-<p>那么，事实真的是这样吗？</p>
-<p>我的观点是：</p>
-<p><strong>ChatBI不会消灭BI，但一定会重新定义BI。</strong></p>
-<p>而要理解这一点，我们首先要弄清楚：</p>
-<p><strong>BI为什么成功？ChatBI又解决了什么问题？</strong></p>
-<hr>
-<h2 id="BI真正解决了什么？"><a href="#BI真正解决了什么？" class="headerlink" title="BI真正解决了什么？"></a>BI真正解决了什么？</h2><p>上一篇文章，我们谈到：</p>
-<p>BI的成功，并不仅仅因为它能够制作漂亮的图表。</p>
-<p>真正的价值在于：</p>
-<p><strong>让数据能够持续、稳定地服务企业经营。</strong></p>
-<p>例如：</p>
-<p>老板每天早上打开经营驾驶舱。</p>
-<p>第一眼看到：</p>
-<ul>
-<li>今日销售额</li>
-<li>本月利润</li>
-<li>库存周转率</li>
-<li>订单交付率</li>
-</ul>
-<p>这些数据每天都在更新。</p>
-<p>但展示方式基本保持稳定。</p>
-<p>为什么？</p>
-<p>因为：</p>
-<p>这些问题每天都会被问。</p>
-<p>这些指标每天都需要关注。</p>
-<p>BI本质上是在回答：</p>
-<blockquote>
-<p><strong>企业已经知道自己要问什么。</strong></p>
-</blockquote>
-<p>因此。</p>
-<p>BI最大的特点就是：</p>
-<p><strong>提前准备答案。</strong></p>
-<hr>
-<h2 id="BI最大的局限是什么？"><a href="#BI最大的局限是什么？" class="headerlink" title="BI最大的局限是什么？"></a>BI最大的局限是什么？</h2><p>问题恰恰也出在这里。</p>
-<p>现实企业中。</p>
-<p>真正有价值的问题。</p>
-<p>很多都是临时产生的。</p>
-<p>例如：</p>
-<p>老板突然问：</p>
-<blockquote>
-<p>华东地区利润下降最快的客户有哪些？</p>
-</blockquote>
-<p>继续追问：</p>
-<blockquote>
-<p>为什么下降？</p>
-</blockquote>
-<p>继续追问：</p>
-<blockquote>
-<p>与去年相比发生了什么变化？</p>
-</blockquote>
-<p>继续追问：</p>
-<blockquote>
-<p>有没有共同特点？</p>
-</blockquote>
-<p>继续追问：</p>
-<blockquote>
-<p>如果剔除春节因素呢？</p>
-</blockquote>
-<p>你会发现。</p>
-<p>传统BI越来越难回答。</p>
-<p>为什么？</p>
-<p>因为：</p>
-<p>这些问题没有提前设计。</p>
-<p>BI能够回答：</p>
-<p>已经设计好的问题。</p>
-<p>却很难回答：</p>
-<p>第一次出现的问题。</p>
-<p>于是。</p>
-<p>企业进入一种循环：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">提出需求。</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">数据团队排期。</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发模型。</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发报表。</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">上线。</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">获得答案。</span><br></pre></td></tr></table></figure>
-
-<p>很多企业。</p>
-<p>一个分析需求需要一周。</p>
-<p>复杂一点可能需要一个月。</p>
-<p>真正耗费时间的。</p>
-<p>并不是分析。</p>
-<p>而是：</p>
-<p><strong>开发答案。</strong></p>
-<hr>
-<h2 id="ChatBI到底改变了什么？"><a href="#ChatBI到底改变了什么？" class="headerlink" title="ChatBI到底改变了什么？"></a>ChatBI到底改变了什么？</h2><p>很多人认为：</p>
-<p>ChatBI最大的价值是：</p>
-<p>不用写SQL。</p>
-<p>其实不是。</p>
-<p>SQL只是表象。</p>
-<p>真正发生变化的是：</p>
-<p><strong>数据消费方式。</strong></p>
-<p>过去：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">业务提出问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">IT理解需求</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发SQL</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发ETL</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发报表</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">业务查看结果</span><br></pre></td></tr></table></figure>
-
-<p>现在：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">业务提出问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">AI理解问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">自动生成SQL</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">自动分析</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">返回答案</span><br></pre></td></tr></table></figure>
-
-<p>区别只有一句话：</p>
-<p>过去：</p>
-<blockquote>
-<p>人开发答案。</p>
-</blockquote>
-<p>现在：</p>
-<blockquote>
-<p>AI生成答案。</p>
-</blockquote>
-<p>这才是ChatBI真正带来的改变。</p>
-<hr>
-<h2 id="ChatBI为什么能够实现智能问数？"><a href="#ChatBI为什么能够实现智能问数？" class="headerlink" title="ChatBI为什么能够实现智能问数？"></a>ChatBI为什么能够实现智能问数？</h2><p>很多宣传材料都会告诉你：</p>
-<p>ChatBI依靠大模型。</p>
-<p>其实。</p>
-<p>真正的能力远不止大模型。</p>
-<p>一个成熟的ChatBI。</p>
-<p>至少需要四项能力。</p>
-<h3 id="第一：理解业务语言"><a href="#第一：理解业务语言" class="headerlink" title="第一：理解业务语言"></a>第一：理解业务语言</h3><p>例如：</p>
-<p>老板说：</p>
-<p>“今年销量怎么样？”</p>
-<p>AI必须知道：</p>
-<p>销量对应哪个指标。</p>
-<p>今年对应哪个时间范围。</p>
-<p>是否默认同比。</p>
-<p>是否按自然年。</p>
-<p>这些都不是模型知识。</p>
-<p>而是企业知识。</p>
-<hr>
-<h3 id="第二：理解数据模型"><a href="#第二：理解数据模型" class="headerlink" title="第二：理解数据模型"></a>第二：理解数据模型</h3><p>AI必须知道：</p>
-<p>销售事实表在哪里。</p>
-<p>客户维表在哪里。</p>
-<p>订单字段叫什么。</p>
-<p>哪些字段可以关联。</p>
-<p>否则。</p>
-<p>SQL根本无法生成。</p>
-<hr>
-<h3 id="第三：理解指标体系"><a href="#第三：理解指标体系" class="headerlink" title="第三：理解指标体系"></a>第三：理解指标体系</h3><p>例如：</p>
-<p>什么叫销售额？</p>
-<p>不同企业定义可能完全不同。</p>
-<p>是否含税？</p>
-<p>是否退货？</p>
-<p>是否取消订单？</p>
-<p>这些都需要统一定义。</p>
-<p>否则。</p>
-<p>AI回答的数字可能每次都不同。</p>
-<hr>
-<h3 id="第四：保证结果可信"><a href="#第四：保证结果可信" class="headerlink" title="第四：保证结果可信"></a>第四：保证结果可信</h3><p>生成SQL并不难。</p>
-<p>难的是：</p>
-<p>生成正确SQL。</p>
-<p>如果AI能够写SQL。</p>
-<p>却不能保证结果正确。</p>
-<p>那么。</p>
-<p>它很难真正进入企业核心业务。</p>
-<hr>
-<h2 id="ChatBI不是魔法"><a href="#ChatBI不是魔法" class="headerlink" title="ChatBI不是魔法"></a>ChatBI不是魔法</h2><p>最近两年。</p>
-<p>很多企业开始尝试ChatBI。</p>
-<p>效果却差异巨大。</p>
-<p>有的企业非常成功。</p>
-<p>有的企业用了几个月就放弃。</p>
-<p>原因是什么？</p>
-<p>很多时候。</p>
-<p>不是模型能力。</p>
-<p>而是数据基础。</p>
-<p>举一个简单例子。</p>
-<p>如果企业存在：</p>
-<p>三个销售额口径。</p>
-<p>五个客户名称。</p>
-<p>多个历史版本。</p>
-<p>大量缺失数据。</p>
-<p>AI应该相信谁？</p>
-<p>答案很简单。</p>
-<p>AI不会判断。</p>
-<p>AI只会放大。</p>
-<p>因此。</p>
-<p><strong>ChatBI的能力上限，取决于企业数据能力。</strong></p>
-<p>这里。</p>
-<p>我想提前抛出本专栏后面会重点讨论的一个观点：</p>
-<blockquote>
-<p><strong>AI时代，真正重要的不是模型，而是数据。</strong></p>
-</blockquote>
-<hr>
-<h2 id="那么，BI会不会消失？"><a href="#那么，BI会不会消失？" class="headerlink" title="那么，BI会不会消失？"></a>那么，BI会不会消失？</h2><p>我的答案依然是：</p>
-<p>不会。</p>
-<p>原因很简单。</p>
-<p>企业每天都有大量固定场景。</p>
-<p>例如：</p>
-<p>经营驾驶舱。</p>
-<p>领导看板。</p>
-<p>KPI监控。</p>
-<p>生产监控。</p>
-<p>供应链监控。</p>
-<p>这些内容：</p>
-<p>每天都要看。</p>
-<p>每天都一样。</p>
-<p>没有必要每天重新问AI。</p>
-<p>BI最大的优势。</p>
-<p>就是：</p>
-<p>持续展示。</p>
-<p>统一展示。</p>
-<p>稳定展示。</p>
-<p>因此。</p>
-<p>BI依然是：</p>
-<p>企业经营监控平台。</p>
-<p>而ChatBI。</p>
-<p>更适合：</p>
-<p>探索式分析。</p>
-<p>临时分析。</p>
-<p>智能问答。</p>
-<p>数据解释。</p>
-<p>未来。</p>
-<p>它们更可能形成这样的关系：</p>
-<p>传统BI负责：</p>
-<p>“告诉你发生了什么。”</p>
-<p>ChatBI负责：</p>
-<p>“告诉你为什么发生。”</p>
-<p>未来的Data Agent甚至会进一步回答：</p>
-<p>“下一步应该怎么做。”</p>
-<hr>
-<h2 id="AI真正改变的，不是BI，而是分析方式"><a href="#AI真正改变的，不是BI，而是分析方式" class="headerlink" title="AI真正改变的，不是BI，而是分析方式"></a>AI真正改变的，不是BI，而是分析方式</h2><p>如果用一句话总结。</p>
-<p>过去二十年。</p>
-<p>企业的数据分析过程是：</p>
-<p><strong>开发一个报表。</strong></p>
-<p>未来。</p>
-<p>企业越来越倾向于：</p>
-<p><strong>提出一个问题。</strong></p>
-<p>过去：</p>
-<p>人适应系统。</p>
-<p>未来：</p>
-<p>系统理解人。</p>
-<p>过去：</p>
-<p>数据工程师负责开发答案。</p>
-<p>未来：</p>
-<p>Agent负责生成答案。</p>
-<p>这是企业数据消费方式最大的变化。</p>
-<hr>
-<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>最近几年。</p>
-<p>关于”BI是否会消失”的讨论很多。</p>
-<p>但我认为。</p>
-<p>真正值得讨论的问题不是：</p>
-<p>BI是否会被取代。</p>
-<p>而是：</p>
-<p>企业如何构建能够支撑AI的数据体系。</p>
-<p>因为。</p>
-<p>没有统一的数据模型。</p>
-<p>没有统一的指标体系。</p>
-<p>没有高质量的数据。</p>
-<p>ChatBI就只能是一场演示。</p>
-<p>而不是生产力。</p>
-<p>真正决定ChatBI价值的。</p>
-<p>从来不是大模型。</p>
-<blockquote>
-<p> <strong>而是企业的数据能力。</strong></p>
-</blockquote>
-]]></content>
-  </entry>
-  <entry>
-    <title>AI不会淘汰数据开发工程师，但会淘汰另一种数据开发方式</title>
-    <url>/2026/07/t-data-dev-paradigm-05/</url>
-    <content><![CDATA[<p>过去二十年，企业数据平台的发展经历了数据库、数据仓库、BI、大数据平台、数据治理等多个阶段。虽然底层技术不断演进，从传统数据库到Hadoop生态，再到今天的湖仓一体，但对于大多数企业而言，数据开发的基本范式却始终没有发生根本性的变化。</p>
-<p>业务系统产生数据，数据通过ETL或ELT同步到数据平台，经过清洗、转换、建模、汇总之后，再提供给BI系统、报表平台或者业务应用使用。几乎所有的数据平台，无论采用的是Oracle、Hive、Spark还是Lakehouse，本质上都遵循着这一套流程。</p>
-<p>然而，大模型的出现，第一次开始对这一范式提出挑战。</p>
-<p>最近一年，无论是各大数据平台厂商，还是AI创业公司，都在推出面向数据开发的AI能力。从自然语言生成SQL，到自动编写ETL脚本，从AI辅助建模，到自动生成数据文档，再到能够理解业务语义的Data Agent，AI已经不再只是帮助数据分析人员提高效率，而是开始进入数据开发本身。</p>
-<p>于是，一个问题开始被频繁讨论：</p>
-<p><strong>数据开发工程师会不会被AI取代？</strong></p>
-<p>我的观点是，AI确实会改变数据开发，但它改变的并不是数据开发这个职业，而是传统的数据开发方式。</p>
-<h2 id="ETL为什么能够成为企业数据平台的核心"><a href="#ETL为什么能够成为企业数据平台的核心" class="headerlink" title="ETL为什么能够成为企业数据平台的核心"></a>ETL为什么能够成为企业数据平台的核心</h2><p>在讨论AI之前，我们首先需要理解，为什么ETL能够在企业数据平台中占据如此重要的位置。</p>
-<p>ETL（Extract、Transform、Load）从来都不是一个简单的数据同步过程，它承担的是连接业务系统与数据平台之间的桥梁作用。</p>
-<p>一家中大型企业通常拥有ERP、CRM、MES、WMS、SRM、OA等多个业务系统。每个系统的数据模型、编码规则、业务口径都存在差异。如果直接将这些数据用于分析，不仅难以关联，而且很容易产生大量口径不一致的问题。</p>
-<p>例如，一个看似简单的”组织架构”概念，在不同系统中的定义就可能完全不同。OA中的组织架构可能是人力的组织架构，ERP中的组织架构可能是财务的组织架构。如果没有统一的数据转换和建模过程，即使拥有再先进的分析工具，也无法得到可信的分析结果。</p>
-<p>因此，ETL真正承担的，并不是”搬运数据”的工作，而是帮助企业完成数据标准化、业务规则沉淀以及统一数据口径。这也是为什么数据仓库建设过程中，大量时间实际上花费在数据清洗、字段映射和业务规则确认上，而真正编写SQL代码只是整个过程中的最后一步。</p>
-<p>过去二十年，无数企业的数据平台正是依靠这样的方式逐步建立起来的。</p>
-<h2 id="AI首先改变的，是ETL的开发方式"><a href="#AI首先改变的，是ETL的开发方式" class="headerlink" title="AI首先改变的，是ETL的开发方式"></a>AI首先改变的，是ETL的开发方式</h2><p>如果观察最近一年AI在数据开发领域的应用，可以发现一个非常明显的特点：AI最先进入的，并不是数据架构设计，而是开发过程。</p>
-<p>过去，一个新的ETL任务通常需要经历需求分析、表结构阅读、字段理解、SQL开发、测试验证、上线部署等多个步骤。整个过程中，大量工作实际上属于重复性的编码劳动。</p>
-<p>例如，当需要将订单表与客户表进行关联统计时，开发人员往往需要先了解两个表之间的关联关系，再编写SQL完成数据转换。如果需要增加一个新的统计维度，又需要重新修改SQL并进行测试。</p>
-<p>而今天，这部分工作已经开始发生变化。</p>
-<p>越来越多的AI开发工具能够根据自然语言描述自动生成SQL，也能够解释已有SQL的逻辑，甚至能够根据数据血缘关系推荐关联字段，帮助开发人员快速完成初稿。对于一些结构相对固定的数据同步任务，AI已经能够生成相当高质量的ETL代码。</p>
-<p>换句话说，AI首先替代的是重复性的编码过程，而不是数据开发本身。</p>
-<p>这一点，与软件开发领域正在发生的变化高度相似。GitHub Copilot、Codex 等工具能够帮助程序员编写代码，却并没有减少系统设计的重要性。数据开发同样如此，SQL生成越来越容易，但真正困难的问题依然存在。</p>
-<h2 id="数据开发真正困难的，从来不是SQL"><a href="#数据开发真正困难的，从来不是SQL" class="headerlink" title="数据开发真正困难的，从来不是SQL"></a>数据开发真正困难的，从来不是SQL</h2><p>很多企业第一次接触AI生成SQL时，都会产生一种错觉：既然AI能够写SQL，那么数据开发工程师是不是就没有价值了？</p>
-<p>事实上，这是将数据开发简单理解为”写SQL”所产生的误解。</p>
-<p>真正的数据开发工作，远远不止SQL。</p>
-<p>举一个非常常见的例子。</p>
-<p>业务部门提出一个需求：”统计新增客户数量。”</p>
-<p>对于AI来说，这句话可以很容易转换成SQL语句。</p>
-<p>但真正的问题在于，什么叫”新增客户”？</p>
-<p>是第一次注册的客户？</p>
-<p>还是第一次下单的客户？</p>
-<p>是否需要剔除测试账号？</p>
-<p>历史客户重新激活是否算新增？</p>
-<p>这些问题，没有任何一个能够通过大模型自动推理出来。</p>
-<p>因为它们不是技术问题，而是业务规则。</p>
-<p>类似的问题几乎存在于企业所有核心指标之中。</p>
-<p>销售额是否包含退货订单？</p>
-<p>利润是否包含税费？</p>
-<p>库存是否按照自然日统计？</p>
-<p>客户生命周期如何划分？</p>
-<p>这些定义往往需要经过业务部门、财务部门和数据团队长期讨论之后才能形成统一标准。</p>
-<p>SQL只是业务规则的一种表达方式，而不是业务规则本身。</p>
-<p>因此，即使未来AI能够自动完成SQL开发，也无法替代企业对于业务知识的理解和沉淀。</p>
-<h2 id="AI时代，数据工程师需要重新定义自己的价值"><a href="#AI时代，数据工程师需要重新定义自己的价值" class="headerlink" title="AI时代，数据工程师需要重新定义自己的价值"></a>AI时代，数据工程师需要重新定义自己的价值</h2><p>如果说过去的数据开发工程师，更像是一名代码生产者，那么未来的数据工程师，更应该成为企业数据体系的设计者。</p>
-<p>这种变化已经开始出现。</p>
-<p>越来越多企业开始关注数据语义层（Semantic Layer）、统一指标体系、元数据管理、数据质量管理以及知识图谱建设。这些工作的共同特点是，它们关注的不再是代码本身，而是企业数据如何被理解、如何被组织以及如何被复用。</p>
-<p>对于未来的Data Agent而言，它是否能够正确回答业务问题，并不取决于SQL写得是否优雅，而取决于企业是否已经建立起统一的数据语言。</p>
-<p>因此，未来数据工程师需要投入更多精力思考的问题可能是：</p>
-<ul>
-<li>企业的数据模型是否能够准确表达业务？</li>
-<li>不同部门之间的数据口径是否一致？</li>
-<li>元数据是否完整？</li>
-<li>指标体系是否统一？</li>
-<li>数据质量是否能够支撑AI分析？</li>
-</ul>
-<p>这些问题，才是真正决定AI应用效果的关键因素。</p>
-<h2 id="AI不会削弱数据质量的重要性，反而会放大它的价值"><a href="#AI不会削弱数据质量的重要性，反而会放大它的价值" class="headerlink" title="AI不会削弱数据质量的重要性，反而会放大它的价值"></a>AI不会削弱数据质量的重要性，反而会放大它的价值</h2><p>过去，在BI时代，一份错误的数据通常意味着一张错误的报表。</p>
-<p>虽然会影响业务分析，但由于报表具有固定格式和固定使用者，问题往往能够较快发现并修正。</p>
-<p>而AI时代的情况完全不同。</p>
-<p>越来越多企业开始建设知识库、智能问数平台和Data Agent。AI不再只是展示数据，而是直接参与分析、解释甚至决策建议。</p>
-<p>如果底层数据存在错误，那么错误将不仅出现在某一张报表中，而可能通过Agent快速传播到更多业务场景。</p>
-<p>错误的数据口径可能导致AI持续输出错误答案。</p>
-<p>缺失的元数据可能导致AI生成错误SQL。</p>
-<p>低质量的数据可能导致模型形成错误推理。</p>
-<p>换句话说，AI并不会自动提高数据质量，它只会更高效地消费数据，并更快速地放大数据质量问题。</p>
-<p>这也是为什么我越来越认为，未来企业数据团队最重要的竞争力，不是开发速度，而是数据质量。</p>
-<p>作为《数据质量管理实践手册》中文版联合译者，在翻译这本书的过程中，我其中一个最大的感受是：<strong>数据质量不单单是一个技术问题，更是企业管理能力的体现。</strong> 当AI开始成为企业的重要生产工具之后，这句话的重要性将进一步凸显。未来，我也会用专门几篇文章，结合企业实践，系统讨论AI时代的数据质量体系应该如何建设。</p>
-<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>回顾过去二十年的企业数据平台建设，我们会发现，每一次技术变革都没有消灭上一代技术，而是在重新定义它的价值。</p>
-<p>数据库没有因为数据仓库而消失。</p>
-<p>数据仓库没有因为BI而消失。</p>
-<p>BI也不会因为ChatBI而消失。</p>
-<p>同样，ETL不会因为AI而消失。</p>
-<p>真正发生变化的是，数据开发正在从以代码为中心，逐渐走向以知识为中心；数据工程师的核心竞争力，也将从编写SQL，逐渐转向理解业务、组织数据和管理知识。</p>
-<p>未来的数据平台，不再只是数据流转的平台，更是企业知识不断沉淀和持续演进的平台。</p>
-<p>而Data Agent，正是建立在这一基础之上的下一代数据消费模式。</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>Data Agent是什么？为什么它代表下一代数据应用？</title>
-    <url>/2026/07/t-data-dev-paradigm-06/</url>
-    <content><![CDATA[<h1 id="Data-Agent是什么？为什么它代表下一代数据应用？"><a href="#Data-Agent是什么？为什么它代表下一代数据应用？" class="headerlink" title="Data Agent是什么？为什么它代表下一代数据应用？"></a>Data Agent是什么？为什么它代表下一代数据应用？</h1><p>最近一年，Data Agent 几乎成为所有数据平台和 AI 厂商共同关注的方向。</p>
-<p>无论是国内还是国外，从智能问数、AI 分析助手，到企业知识库，再到各种”数字员工”，越来越多的产品开始使用 Agent 来描述自己的能力。</p>
-<p>与此同时，一个新的概念也开始频繁出现：</p>
-<p><strong>Data Agent。</strong></p>
-<p>有人把它理解成 ChatBI 的升级版，有人认为它只是一个能够自动生成 SQL 的机器人，也有人将它与 RAG、MCP、工作流等技术混为一谈。</p>
-<p>事实上，这些理解都触及了 Data Agent 的一部分能力，却没有回答一个更重要的问题：</p>
-<p><strong>为什么在数据仓库、BI、ChatBI 已经比较成熟的今天，企业仍然需要 Data Agent？</strong></p>
-<p>我认为，要理解 Data Agent，首先需要理解企业数据应用的发展过程。</p>
-<h2 id="从”展示数据”到”理解数据”"><a href="#从”展示数据”到”理解数据”" class="headerlink" title="从”展示数据”到”理解数据”"></a>从”展示数据”到”理解数据”</h2><p>过去二十年，企业数据应用经历了三个非常明显的发展阶段。</p>
-<p>第一个阶段是报表时代。</p>
-<p>这一阶段，数据的主要价值是展示结果。</p>
-<p>每天早晨，管理者打开报表，查看昨天的销售额、库存、利润以及订单完成情况。报表回答的是”发生了什么”。</p>
-<p>第二个阶段是BI时代。</p>
-<p>BI 不仅能够展示数据，还能够帮助管理者按照不同维度进行分析，例如按区域、产品、客户或者时间进行钻取分析。相比静态报表，BI 大幅提升了企业的数据消费能力，但前提依然是分析路径需要提前设计。</p>
-<p>第三个阶段则是ChatBI。</p>
-<p>用户不再需要学习系统如何使用，而是可以直接提出问题，例如：</p>
-<p>“今年华东地区利润下降最快的客户是谁？”</p>
-<p>系统根据问题自动生成 SQL，并返回分析结果。</p>
-<p>相比 BI，ChatBI 最大的变化是交互方式由点击变成了对话。</p>
-<p>然而，无论是报表、BI 还是 ChatBI，它们本质上仍然围绕同一个目标：</p>
-<p><strong>回答用户提出的问题。</strong></p>
-<p>而 Data Agent，希望完成的事情已经不仅仅是回答问题。</p>
-<h2 id="Data-Agent-真正的变化，是开始完成任务"><a href="#Data-Agent-真正的变化，是开始完成任务" class="headerlink" title="Data Agent 真正的变化，是开始完成任务"></a>Data Agent 真正的变化，是开始完成任务</h2><p>假设企业负责人提出这样一个需求：</p>
-<p>“分析最近三个月利润下降的原因，并提出改进建议。”</p>
-<p>对于传统 BI 来说，它能够展示利润变化趋势。</p>
-<p>对于 ChatBI 来说，它能够回答利润下降了多少。</p>
-<p>但是，它们都很难继续完成后续工作。</p>
-<p>例如：</p>
-<p>利润下降主要来自哪些客户？</p>
-<p>哪些产品贡献最大？</p>
-<p>是否受到退货影响？</p>
-<p>是否存在库存积压？</p>
-<p>是否需要进一步分析供应链数据？</p>
-<p>是否可以形成分析报告？</p>
-<p>这些问题并不是独立存在的，而是一系列连续的分析任务。</p>
-<p>Data Agent 最大的特点，就是能够围绕一个目标，主动规划分析步骤，并根据分析结果不断调整后续动作，直到完成整个任务。</p>
-<p>也就是说，它不仅回答问题，更开始解决问题。</p>
-<p>这是它与传统BI最大的区别。</p>
-<h2 id="为什么今天才出现-Data-Agent？"><a href="#为什么今天才出现-Data-Agent？" class="headerlink" title="为什么今天才出现 Data Agent？"></a>为什么今天才出现 Data Agent？</h2><p>很多人认为，这是因为大模型足够强大了。</p>
-<p>这当然是一个重要原因。</p>
-<p>但我认为，还有另一个更加重要的原因。</p>
-<p>过去的数据平台，主要围绕”数据”构建。</p>
-<p>今天的数据平台，开始围绕”知识”构建。</p>
-<p>例如，一个成熟的数据平台不仅保存了订单、客户、库存等业务数据，还逐步沉淀了：</p>
-<ol>
-<li>指标定义。</li>
-<li>数据血缘。</li>
-<li>元数据。</li>
-<li>业务规则。</li>
-<li>知识文档。</li>
-<li>数据质量规则。</li>
-<li>组织权限。</li>
-</ol>
-<p>这些内容过去分散在不同系统中。</p>
-<p>AI 出现之后，它们第一次有机会被统一利用。</p>
-<p>换句话说，</p>
-<blockquote>
-<p>真正支撑 Data Agent 的，并不仅仅是大模型，更包含企业多年积累的数据资产和知识资产。</p>
-</blockquote>
-<p>没有这些基础，Agent很难真正理解企业。</p>
-<h2 id="一个优秀的-Data-Agent，需要理解什么？"><a href="#一个优秀的-Data-Agent，需要理解什么？" class="headerlink" title="一个优秀的 Data Agent，需要理解什么？"></a>一个优秀的 Data Agent，需要理解什么？</h2><p>很多演示中，我们看到 Agent 能够自动生成 SQL，于是误以为这就是 Data Agent 的核心能力。</p>
-<p>实际上，生成 SQL 只是最后一步。</p>
-<p>在真正进入企业场景之前，一个 Data Agent 至少需要理解四个层面的内容。</p>
-<h3 id="首先，它需要理解业务。"><a href="#首先，它需要理解业务。" class="headerlink" title="首先，它需要理解业务。"></a>首先，它需要理解业务。</h3><p>例如，企业所说的”销售额”到底采用哪一种口径，利润是否包含税费，新增客户如何定义。这些都属于业务语义，而不是数据库语法。</p>
-<h3 id="其次，它需要理解数据。"><a href="#其次，它需要理解数据。" class="headerlink" title="其次，它需要理解数据。"></a>其次，它需要理解数据。</h3><p>哪些表保存订单信息，哪些字段表示客户编号，不同系统之间如何建立关联，这些决定了它是否能够找到正确的数据来源。</p>
-<h3 id="第三，它需要理解知识。"><a href="#第三，它需要理解知识。" class="headerlink" title="第三，它需要理解知识。"></a>第三，它需要理解知识。</h3><p>例如，企业过去沉淀的大量分析报告、制度文件、经营规则以及行业经验，都可能成为 Agent 推理的重要依据。</p>
-<h3 id="最后，它还需要理解任务。"><a href="#最后，它还需要理解任务。" class="headerlink" title="最后，它还需要理解任务。"></a>最后，它还需要理解任务。</h3><p>很多时候，用户提出的是一个目标，而不是一个明确的问题。Agent 需要将目标拆解成多个步骤，并协调不同工具共同完成。</p>
-<p>因此，Data Agent 并不是一个”会写SQL”的工具，而是一个能够理解企业知识、规划任务流程并利用数据完成目标的智能体。</p>
-<h2 id="Data-Agent-为什么离不开数据仓库？"><a href="#Data-Agent-为什么离不开数据仓库？" class="headerlink" title="Data Agent 为什么离不开数据仓库？"></a>Data Agent 为什么离不开数据仓库？</h2><p>看到这里，也许有人会产生疑问：</p>
-<p>既然 Agent 如此智能，是不是意味着未来不再需要数据仓库？</p>
-<p>我的答案依然是否定的。</p>
-<p>事实上，Agent 越智能，对数据底座的要求反而越高。</p>
-<p>原因很简单。</p>
-<p>Agent 并不会创造事实。</p>
-<p>它只能消费事实。</p>
-<p>如果企业存在多个版本的销售额。</p>
-<p>如果客户名称在不同系统中不一致。</p>
-<p>如果历史数据缺失。</p>
-<p>如果数据质量存在严重问题。</p>
-<p>那么 Agent 只会比人更快地得到错误答案。</p>
-<p>过去，数据仓库服务于 BI。</p>
-<p>未来，数据仓库将更多地服务于 Agent。</p>
-<p>它的角色正在发生变化，但它作为企业统一数据底座的价值，并没有发生改变。</p>
-<h2 id="下一代数据应用，不再只是一个系统"><a href="#下一代数据应用，不再只是一个系统" class="headerlink" title="下一代数据应用，不再只是一个系统"></a>下一代数据应用，不再只是一个系统</h2><p>过去，我们理解的数据应用通常是一套系统。</p>
-<p>一个 BI 平台。</p>
-<p>一个报表平台。</p>
-<p>一个数据门户。</p>
-<p>用户进入系统，完成查询，再退出系统。</p>
-<p>而未来的数据应用，更可能是一位长期在线的智能助手。</p>
-<p>它能够:</p>
-<ul>
-<li>理解企业数据。</li>
-<li>理解业务语义。</li>
-<li>理解组织知识。</li>
-<li>理解管理目标。</li>
-</ul>
-<p>不仅能够回答问题，还能够持续完成任务，与业务人员协同工作。</p>
-<p>从这个意义上说，Data Agent 代表的不只是一次产品升级，而是企业数据应用模式的一次转变。</p>
-<p>过去，企业建设的是一个”数据平台”。</p>
-<p>未来，企业更希望拥有一个能够持续利用数据创造价值的”智能伙伴”。</p>
-<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>过去二十年，企业数据体系一直围绕”数据如何被消费”展开。</p>
-<p>从报表，到 BI，再到 ChatBI，每一次变化都让获取数据变得更加容易。</p>
-<p>而 Data Agent 所代表的新阶段，则开始思考另一个问题：</p>
-<p><strong>如何让数据主动参与工作，而不仅仅是等待人来查询。</strong></p>
-<p>这意味着，企业数据应用正在从”提供数据”走向”完成任务”，从”支持决策”走向”参与决策”。</p>
-<p>当然，这种能力并不是凭空产生的。</p>
-<p>它依赖于统一的数据模型、完善的数据治理、可靠的数据质量以及持续积累的企业知识。</p>
-<p>伴随着技术的发展与进步，Agent 站到了舞台中央，而真正支撑它的，是企业过去二十年建立起来的数据体系。</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>从开发答案到生成答案：AI 为什么会重构整个企业数据体系？</title>
-    <url>/2026/07/t-data-dev-paradigm-07/</url>
-    <content><![CDATA[<p>如果要用一句话概括过去二十年企业数据体系的发展，我更愿意这样描述：</p>
-<p><strong>企业数据体系的发展史，本质上是一部不断降低“获取答案成本”的历史。</strong></p>
-<p>从数据库到数据仓库，从 BI 到 ChatBI，再到今天的 Data Agent，技术形态不断变化，但企业真正追求的目标始终没有改变——如何更快、更准确、更低成本地获得经营问题的答案。</p>
-<p>过去，我们一直在优化数据。</p>
-<p>今天，我们开始重新思考答案。</p>
-<p>这看似只是表达方式的变化，却意味着企业数据体系正在发生一次比数据库、数据仓库甚至大数据平台更加深刻的变革。</p>
-<h2 id="一个长期被忽略的问题"><a href="#一个长期被忽略的问题" class="headerlink" title="一个长期被忽略的问题"></a>一个长期被忽略的问题</h2><p>很多企业在建设数据平台时，都会把注意力放在技术架构上。</p>
-<p>选择什么数据库？</p>
-<p>采用什么计算引擎？</p>
-<p>使用 Hive 还是 Spark？</p>
-<p>建设数据湖还是 Lakehouse？</p>
-<p>这些问题当然重要。</p>
-<p>但如果站在企业经营的角度来看，它们其实都属于手段，而不是目的。</p>
-<p>企业建设数据平台，从来不是为了拥有更多的数据。</p>
-<p>企业真正需要的是：</p>
-<p><strong>能够快速得到经营问题的答案。</strong></p>
-<p>例如：</p>
-<p>为什么利润下降了？</p>
-<p>哪些客户正在流失？</p>
-<p>哪些产品值得继续投入？</p>
-<p>库存为什么持续增加？</p>
-<p>这些问题，才是企业真正关心的问题。</p>
-<p>因此，我们不妨换一个视角重新理解过去二十年的数据体系。</p>
-<p>数据仓库也好，BI 也好，数据治理也好，它们真正解决的，其实都是同一个问题：</p>
-<p>如何更高效地生产答案。</p>
-<h2 id="为什么传统数据体系一定要“开发答案”？"><a href="#为什么传统数据体系一定要“开发答案”？" class="headerlink" title="为什么传统数据体系一定要“开发答案”？"></a>为什么传统数据体系一定要“开发答案”？</h2><p>在上一篇文章中，我们讨论了 Data Agent 开始具备完成任务的能力。</p>
-<p>那么，在 Agent 出现之前，企业是如何获得答案的？</p>
-<p>答案其实非常熟悉。</p>
-<p>业务部门提出需求。</p>
-<p>数据团队分析需求。</p>
-<p>开发 ETL。</p>
-<p>建设数据模型。</p>
-<p>开发指标。</p>
-<p>开发报表。</p>
-<p>最后，业务查看结果。</p>
-<p>整个过程几乎所有企业都经历过。</p>
-<p>如果用一句话概括传统数据开发模式，那就是：</p>
-<p><strong>先开发答案，再等待问题出现。</strong></p>
-<p>为什么会形成这样的模式？</p>
-<p>因为过去的软件系统几乎都是”预定义”的。</p>
-<p>报表需要提前设计。</p>
-<p>指标需要提前计算。</p>
-<p>分析主题需要提前建设。</p>
-<p>甚至用户能够点击哪些按钮，也需要提前开发。</p>
-<p>这种模式有一个非常明显的特点：</p>
-<p>企业需要预测未来会提出哪些问题，然后提前准备好对应的答案。</p>
-<p>因此，数据团队真正开发的，并不是 SQL，也不是报表，而是一套能够回答未来问题的答案体系。</p>
-<p>过去二十年，数据仓库和BI之所以能够成功，很大程度上正是因为这种模式满足了企业当时的管理需求。</p>
-<h2 id="为什么今天开始变了？"><a href="#为什么今天开始变了？" class="headerlink" title="为什么今天开始变了？"></a>为什么今天开始变了？</h2><p>过去几年，大模型的发展让很多人第一次意识到一件事情：</p>
-<p>也许，并不是所有答案都需要提前准备。</p>
-<p>例如，当管理者提出：</p>
-<p>“分析一下华东地区利润下降最快的客户，并说明主要原因。”</p>
-<p>传统模式下，数据团队通常需要新增分析主题、新增指标、新增报表，经过开发、测试和上线之后，才能得到最终结果。</p>
-<p>而今天，一个具备企业知识和数据能力的 Agent，已经能够自动理解问题、规划分析步骤、生成 SQL，并最终形成分析结论。</p>
-<p>请注意，这里真正发生变化的，并不是 SQL 生成。</p>
-<p>而是答案的生产方式。</p>
-<p>过去，答案来自开发。</p>
-<p>今天，答案开始来自生成。</p>
-<p>这是 AI 带来的第一层变化。</p>
-<h2 id="从“预定义答案”到“动态生成答案”"><a href="#从“预定义答案”到“动态生成答案”" class="headerlink" title="从“预定义答案”到“动态生成答案”"></a>从“预定义答案”到“动态生成答案”</h2><p>如果进一步观察，会发现传统 BI 和 Data Agent 之间最大的区别，并不是交互方式。</p>
-<p>很多人认为，过去点击报表，现在通过聊天窗口输入问题，这就是 AI 时代最大的变化。</p>
-<p>实际上，这只是用户体验的变化。</p>
-<p>真正的变化发生在系统内部。</p>
-<p>过去的数据体系采用的是一种”预定义答案”模式。</p>
-<p>数据团队需要提前定义业务指标，提前设计分析主题，提前开发报表。当用户提出问题时，系统实际上只是展示已经准备好的结果。</p>
-<p>这种模式非常适合固定场景。</p>
-<p>例如经营驾驶舱、月度报表、KPI 监控。</p>
-<p>因为这些问题每天都会出现。</p>
-<p>但它也存在天然局限。</p>
-<p>企业真正有价值的问题，往往具有临时性和探索性。</p>
-<p>管理者今天关心利润。</p>
-<p>明天可能关心库存。</p>
-<p>后天可能又开始分析客户结构。</p>
-<p>这些问题无法全部提前设计。</p>
-<p>于是，AI 带来了另一种可能。</p>
-<p>系统不再提前准备所有答案，而是在用户提出问题之后，根据企业数据、业务规则以及知识体系，动态生成最合适的分析结果。</p>
-<p>从预定义答案，到动态生成答案，这不仅仅是技术升级，更是企业数据消费模式的一次范式转换。</p>
-<h2 id="企业真正需要的，不是更多报表，而是更低的答案成本"><a href="#企业真正需要的，不是更多报表，而是更低的答案成本" class="headerlink" title="企业真正需要的，不是更多报表，而是更低的答案成本"></a>企业真正需要的，不是更多报表，而是更低的答案成本</h2><p>如果我们重新审视企业过去二十年的数据建设，会发现一个有趣的规律。</p>
-<p>数据库解决的是数据存储成本。</p>
-<p>数据仓库解决的是数据整合成本。</p>
-<p>BI 解决的是数据消费成本。</p>
-<p>而 AI 正在解决另一个长期存在却容易被忽略的问题：</p>
-<p>答案生产成本。</p>
-<p>过去，一个新的分析需求，可能需要几天甚至几周。</p>
-<p>未来，同样的问题，也许几分钟就能够完成。</p>
-<p>这里节省的，不仅仅是开发时间。</p>
-<p>更重要的是，企业开始拥有快速验证假设的能力。</p>
-<p>过去，管理者往往因为获取答案成本太高，而放弃很多探索性问题。</p>
-<p>未来，由于提问几乎没有成本，企业的数据分析方式也会随之改变。</p>
-<p>从这个意义上说，AI 带来的不仅是效率提升，更可能改变企业决策的方式。</p>
-<h2 id="这是否意味着数据仓库不重要了？"><a href="#这是否意味着数据仓库不重要了？" class="headerlink" title="这是否意味着数据仓库不重要了？"></a>这是否意味着数据仓库不重要了？</h2><p>很多人在看到这里时，都会产生一个疑问。</p>
-<p>既然 AI 能够动态生成答案，那么是不是意味着数据仓库、BI 甚至 ETL 都会逐渐失去价值？</p>
-<p>我的答案依然是否定的。</p>
-<p>因为生成答案，并不意味着创造事实。</p>
-<p>AI 能够生成分析过程。</p>
-<p>却不能生成真实数据。</p>
-<p>能够生成 SQL。</p>
-<p>却不能生成统一口径。</p>
-<p>能够生成报告。</p>
-<p>却不能生成可信事实。</p>
-<p>未来，Agent 生成答案的能力越强，对企业数据底座的要求反而越高。</p>
-<p>统一的数据模型。</p>
-<p>完善的数据治理。</p>
-<p>可靠的数据质量。</p>
-<p>标准化的业务语义。</p>
-<p>这些能力不会因为 AI 而削弱，而会成为 AI 时代最重要的基础设施。</p>
-<p>过去，数据仓库服务 BI。</p>
-<p>未来，数据仓库将服务 Agent。</p>
-<p>角色发生了变化，但价值没有改变。</p>
-<h2 id="企业数据体系正在进入新的阶段"><a href="#企业数据体系正在进入新的阶段" class="headerlink" title="企业数据体系正在进入新的阶段"></a>企业数据体系正在进入新的阶段</h2><p>过去二十年，企业数据体系一直围绕”数据如何流动”进行建设。</p>
-<p>数据同步。</p>
-<p>数据加工。</p>
-<p>数据建模。</p>
-<p>数据存储。</p>
-<p>数据展示。</p>
-<p>整个流程强调的是数据从一个系统流向另一个系统。</p>
-<p>而今天，企业开始更加关注另一件事情：</p>
-<p>知识如何沉淀。</p>
-<p>语义如何表达。</p>
-<p>答案如何生成。</p>
-<p>换句话说，企业数据体系正在从”数据驱动”逐渐走向”知识驱动”。</p>
-<p>数据依然重要，但数据已经不再是终点。</p>
-<p>真正的目标，是让企业积累的数据能够持续转化为知识，并最终帮助企业持续获得高质量的答案。</p>
-<p>这，或许才是 Data Agent 真正代表的未来。</p>
-<h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>过去，我们一直认为，企业数据开发的目标是建设一个越来越完善的数据平台。</p>
-<p>今天，我越来越觉得，这种理解已经不够完整。</p>
-<p>未来的数据平台，不只是数据流转的平台，也不仅仅是报表分析的平台。</p>
-<p>它更应该成为企业知识持续积累、持续理解、持续创造价值的平台。</p>
-<p>如果说过去二十年的关键词是<strong>开发答案</strong>，那么未来十年的关键词，很可能就是<strong>生成答案</strong>。</p>
-<p>而这一变化，并不会终结数据仓库、BI 和数据治理。</p>
-<p>相反，它们将共同构成 AI 时代企业数据体系的新底座。</p>
-<p>因此，我更愿意把今天的 AI 理解为一次新的起点，而不是传统数据体系的终点。</p>
-]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
   </entry>
 </search>
