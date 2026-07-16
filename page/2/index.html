@@ -186,6 +186,340 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://itaoyuyin.com/2026/05/t-data-governance-series-07/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="陶玉印">
+      <meta itemprop="description" content="陶玉印,15年数据治理与数据仓库实践者，涵盖数据治理、数据质量、数据仓库、数据平台、主数据管理、制造业数字化等领域。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="陶玉印的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2026/05/t-data-governance-series-07/" class="post-title-link" itemprop="url">数据标准，为什么是数据治理的起点？</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-05-11 10:00:00 / 修改时间：14:17:43" itemprop="dateCreated datePublished" datetime="2026-05-11T10:00:00+08:00">2026-05-11</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>很多企业在做数据治理时，最先关注的往往是：</p>
+<ul>
+<li>数据仓库</li>
+<li>BI报表</li>
+<li>数据平台</li>
+<li>数据质量工具</li>
+</ul>
+<p>但真正做一段时间后，几乎都会碰到同一个问题：</p>
+<blockquote>
+<p>为什么系统越来越多，数据反而越来越乱？</p>
+</blockquote>
+<p>有时候甚至会出现一种情况：</p>
+<ul>
+<li>两张报表的数据都没错</li>
+<li>但结果就是对不上</li>
+</ul>
+<p>继续往下追，最后发现：</p>
+<blockquote>
+<p>原来大家说的根本不是同一个东西。</p>
+</blockquote>
+<p>而这背后真正缺失的，往往就是：</p>
+<blockquote>
+<p>数据标准。</p>
+</blockquote>
+<h3 id="一、很多企业的数据问题，本质是“标准问题”"><a href="#一、很多企业的数据问题，本质是“标准问题”" class="headerlink" title="一、很多企业的数据问题，本质是“标准问题”"></a>一、很多企业的数据问题，本质是“标准问题”</h3><p>举几个非常常见的场景：</p>
+<p><strong>场景1：什么叫“订单”？</strong></p>
+<p>销售部门认为：</p>
+<blockquote>
+<p>客户下单就算订单。</p>
+</blockquote>
+<p>财务部门认为：</p>
+<blockquote>
+<p>完成审核才算订单。</p>
+</blockquote>
+<p>生产部门认为：</p>
+<blockquote>
+<p>下发生产计划才算订单。</p>
+</blockquote>
+<p>结果：</p>
+<p>同样是“订单数”，三个部门三种结果。</p>
+<p><strong>场景2：什么叫“库存”？</strong></p>
+<p>仓库看的是：</p>
+<blockquote>
+<p>实物库存。</p>
+</blockquote>
+<p>财务看的是：</p>
+<blockquote>
+<p>可结算库存。</p>
+</blockquote>
+<p>生产看的是：</p>
+<blockquote>
+<p>可领用库存。</p>
+</blockquote>
+<p>最后：</p>
+<ul>
+<li>数据都是真的</li>
+<li>但口径完全不同</li>
+</ul>
+<p><strong>场景3：组织架构不统一</strong></p>
+<p>人力系统一套组织编码；<br>ERP另一套；<br>财务系统可能还有第三套。</p>
+<p>于是你会发现：</p>
+<blockquote>
+<p>同一个部门，在不同系统里是“不同的组织”。</p>
+</blockquote>
+<p>这些问题表面看是：</p>
+<ul>
+<li>系统问题</li>
+<li>数据问题</li>
+</ul>
+<p>但本质上，其实是：</p>
+<blockquote>
+<p>没有统一的数据标准。</p>
+</blockquote>
+<h3 id="二、什么是“数据标准”？"><a href="#二、什么是“数据标准”？" class="headerlink" title="二、什么是“数据标准”？"></a>二、什么是“数据标准”？</h3><p>很多人会把“数据标准”理解成：</p>
+<ul>
+<li>字段命名规范</li>
+<li>表结构规范</li>
+<li>技术文档</li>
+</ul>
+<p>这些当然属于标准的一部分，但还不够。</p>
+<p>真正的数据标准，核心解决的是：</p>
+<blockquote>
+<p>同一个数据，在全公司范围内“怎么理解、怎么算、怎么使用”。</p>
+</blockquote>
+<p>它至少包括几个层面：</p>
+<p><strong>1️⃣ 业务标准</strong></p>
+<p>例如：</p>
+<ul>
+<li>什么是订单？</li>
+<li>什么是收入？</li>
+<li>什么是有效的组织？</li>
+</ul>
+<p>👉 这是最核心的一层。</p>
+<p><strong>2️⃣ 指标标准</strong></p>
+<p>例如：</p>
+<ul>
+<li>收入怎么算？</li>
+<li>库存周转率怎么算？</li>
+<li>产能利用率怎么算？</li>
+</ul>
+<p>👉 保证报表之间一致。</p>
+<p><strong>3️⃣ 主数据标准</strong></p>
+<p>例如：</p>
+<ul>
+<li>物料编码规则</li>
+<li>组织编码规则</li>
+<li>供应商编码规则</li>
+</ul>
+<p>👉 保证系统之间一致。</p>
+<p><strong>4️⃣ 技术标准</strong></p>
+<p>例如：</p>
+<ul>
+<li>字段命名</li>
+<li>数据类型</li>
+<li>接口规范</li>
+</ul>
+<p>👉 保证技术实现统一。</p>
+<h3 id="三、为什么说“数据标准”是治理起点？"><a href="#三、为什么说“数据标准”是治理起点？" class="headerlink" title="三、为什么说“数据标准”是治理起点？"></a>三、为什么说“数据标准”是治理起点？</h3><p>因为数据治理后面所有工作，都建立在“统一标准”之上。</p>
+<p>没有标准，数据仓库会越来越乱</p>
+<p>不同系统：</p>
+<ul>
+<li>名称不同</li>
+<li>含义不同</li>
+<li>口径不同</li>
+</ul>
+<p>你只能不断做：</p>
+<ul>
+<li>转换</li>
+<li>映射</li>
+<li>特殊处理</li>
+</ul>
+<p>最终数据模型会越来越复杂。</p>
+<p>没有标准，数据质量无法真正做好</p>
+<p>你会发现：</p>
+<blockquote>
+<p>连“什么叫正确”都不清楚。</p>
+</blockquote>
+<p>例如：</p>
+<blockquote>
+<p>什么叫异常订单？<br>什么叫有效库存？</p>
+</blockquote>
+<p>没有标准，就没有判断依据。</p>
+<p>没有标准，BI一定会“打架”</p>
+<p>很多企业都有这种场景：</p>
+<ul>
+<li>财务报表一个数</li>
+<li>经营分析另一个数</li>
+<li>业务部门还有第三个数</li>
+</ul>
+<p>大家都觉得自己是对的。</p>
+<p>其实问题不是谁错了，而是：</p>
+<blockquote>
+<p>大家用的不是同一套标准。</p>
+</blockquote>
+<h3 id="四、为什么很多企业“标准做不下去”？"><a href="#四、为什么很多企业“标准做不下去”？" class="headerlink" title="四、为什么很多企业“标准做不下去”？"></a>四、为什么很多企业“标准做不下去”？</h3><p>这也是一个很现实的问题。</p>
+<p>很多企业其实不是没做过数据标准，而是：</p>
+<blockquote>
+<p>做完之后，没人用。</p>
+</blockquote>
+<p>常见原因包括：</p>
+<p><strong>1️⃣ 只停留在文档层面</strong></p>
+<p>做了一套：</p>
+<ul>
+<li>Excel</li>
+<li>Word</li>
+<li>标准手册</li>
+</ul>
+<p>然后放进共享目录。</p>
+<p>几个月后，没人再打开。</p>
+<p><strong>2️⃣ 业务没有参与</strong></p>
+<p>很多标准是IT自己定义的。</p>
+<p>结果：</p>
+<ul>
+<li>业务不认可</li>
+<li>实际流程不适配</li>
+</ul>
+<p>最后只能“形式存在”。</p>
+<p><strong>3️⃣ 标准和系统脱节</strong></p>
+<p>文档是一套；<br>系统实现又是另一套。</p>
+<p>最终：</p>
+<blockquote>
+<p>标准只是“参考资料”。</p>
+</blockquote>
+<h3 id="五、那数据标准应该怎么做？"><a href="#五、那数据标准应该怎么做？" class="headerlink" title="五、那数据标准应该怎么做？"></a>五、那数据标准应该怎么做？</h3><p>这里不讲“大而全”，讲几个真正能落地的方法。</p>
+<p><strong>1️⃣ 先统一“关键指标”</strong></p>
+<p>不要一上来做几千个字段标准。</p>
+<p>建议优先统一：</p>
+<ul>
+<li>收入</li>
+<li>订单</li>
+<li>库存</li>
+<li>销量</li>
+</ul>
+<p>这些真正影响经营的数据。</p>
+<p><strong>2️⃣ 先解决“争议最大”的问题</strong></p>
+<p>因为这些问题：</p>
+<ul>
+<li>最容易引发冲突</li>
+<li>最影响业务信任</li>
+</ul>
+<p>例如：</p>
+<ul>
+<li>到底什么叫“有效订单”？</li>
+<li>到底哪个库存口径用于经营分析？</li>
+</ul>
+<p><strong>3️⃣ 标准必须“进入系统”</strong></p>
+<p>这是关键。</p>
+<p>真正有效的标准，不应该只存在于文档里，而应该：</p>
+<ul>
+<li>进入数据模型</li>
+<li>进入接口规则</li>
+<li>进入报表逻辑</li>
+</ul>
+<p>👉 只有系统真正执行，标准才算落地。</p>
+<p><strong>4️⃣ 建立“标准变更机制”</strong></p>
+<p>业务一定会变化。</p>
+<p>所以标准不能：</p>
+<blockquote>
+<p>一次制定，永久不变。</p>
+</blockquote>
+<p>而应该有：</p>
+<ul>
+<li>申请</li>
+<li>评审</li>
+<li>发布</li>
+<li>生效</li>
+</ul>
+<p>这样才能持续演进。</p>
+<p><strong>5️⃣ 数据标准，本质是“业务共识”</strong></p>
+<p>这一点特别重要。</p>
+<p>很多人以为：</p>
+<blockquote>
+<p>数据标准是技术工作。</p>
+</blockquote>
+<p>但实际上：</p>
+<blockquote>
+<p>它更像是“业务语言统一”。</p>
+</blockquote>
+<p>所以真正推动标准落地的关键，不是技术，而是：</p>
+<ul>
+<li>业务参与</li>
+<li>管理推动</li>
+<li>跨部门协同</li>
+</ul>
+<h3 id="六、一个很现实的理解"><a href="#六、一个很现实的理解" class="headerlink" title="六、一个很现实的理解"></a>六、一个很现实的理解</h3><p>很多企业的数据治理推进不下去，并不是因为：</p>
+<ul>
+<li>技术能力不够</li>
+<li>平台能力不够</li>
+</ul>
+<p>而是因为：</p>
+<blockquote>
+<p>大家对“同一个数据”没有形成共识。</p>
+</blockquote>
+<p>而数据标准，解决的正是这个问题。</p>
+<h3 id="七、写在最后"><a href="#七、写在最后" class="headerlink" title="七、写在最后"></a>七、写在最后</h3><p>数据治理有很多内容：</p>
+<ul>
+<li>数据仓库</li>
+<li>数据质量</li>
+<li>主数据</li>
+<li>BI分析</li>
+</ul>
+<p>但如果一定要问：</p>
+<blockquote>
+<p>哪件事最适合作为起点？</p>
+</blockquote>
+<p>我的理解始终是：</p>
+<blockquote>
+<p>数据标准。</p>
+</blockquote>
+<p>因为只有先说清楚：</p>
+<ul>
+<li>数据是什么</li>
+<li>怎么计算</li>
+<li>怎么使用</li>
+</ul>
+<p>后面的治理，才真正有基础。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://itaoyuyin.com/2026/05/t-data-governance-series-06/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1439,7 +1773,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-count">19</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
