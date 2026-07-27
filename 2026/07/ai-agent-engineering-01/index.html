@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="fppm4jYJLq7zYsAnjUA03HIBZ-2FJrmsLCNs6ufcumc">
+  <meta name="msvalidate.01" content="7f6cc3cefb714c53bdee98be40f0dcea">
+  <meta name="baidu-site-verification" content="codeva-YKfvlNtzSH">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"itaoyuyin.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="第1篇｜从 ChatGPT 到 AI Agent：为什么软件开发进入新时代 AI Agent Engineering 系列（一） 副标题：为什么 AI Agent 不只是 ChatGPT，而是一场新的软件工程革命    适合读者  Java &#x2F; Python 工程师 软件架构师 AI 应用开发者 数据工程师 希望转型 AI Agent 工程师的开发人员    一、前言：软件开发，又一次站在了拐点过">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从 ChatGPT 到 AI Agent：为什么软件开发进入新时代">
+<meta property="og:url" content="https://itaoyuyin.com/2026/07/ai-agent-engineering-01/index.html">
+<meta property="og:site_name" content="陶玉印的博客">
+<meta property="og:description" content="第1篇｜从 ChatGPT 到 AI Agent：为什么软件开发进入新时代 AI Agent Engineering 系列（一） 副标题：为什么 AI Agent 不只是 ChatGPT，而是一场新的软件工程革命    适合读者  Java &#x2F; Python 工程师 软件架构师 AI 应用开发者 数据工程师 希望转型 AI Agent 工程师的开发人员    一、前言：软件开发，又一次站在了拐点过">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-07-27T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-07-27T07:13:26.746Z">
+<meta property="article:author" content="陶玉印">
+<meta property="article:tag" content="数据治理，数据管理， 数据平台， 数据仓库， 陶玉印">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://itaoyuyin.com/2026/07/ai-agent-engineering-01/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>从 ChatGPT 到 AI Agent：为什么软件开发进入新时代 | 陶玉印的博客</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-176856665-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-176856665-1');
+      }
+    </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?6a50c5c210cb69091bddcc5ebd9bfffe";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">陶玉印的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">企业数据治理、数据仓库、数据质量、AI应用实践与研究</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-awesome">
+
+    <a href="/awesome/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>Awesome</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+
+
+  <meta name="google-site-verification" content="fppm4jYJLq7zYsAnjUA03HIBZ-2FJrmsLCNs6ufcumc" /> 
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://itaoyuyin.com/2026/07/ai-agent-engineering-01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="陶玉印">
+      <meta itemprop="description" content="陶玉印,15年数据治理与数据仓库实践者，涵盖数据治理、数据质量、数据仓库、数据平台、主数据管理、制造业数字化等领域。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="陶玉印的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          从 ChatGPT 到 AI Agent：为什么软件开发进入新时代
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-07-27 10:00:00 / 修改时间：15:13:26" itemprop="dateCreated datePublished" datetime="2026-07-27T10:00:00+08:00">2026-07-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI-Agent/" itemprop="url" rel="index"><span itemprop="name">AI Agent</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="第1篇｜从-ChatGPT-到-AI-Agent：为什么软件开发进入新时代"><a href="#第1篇｜从-ChatGPT-到-AI-Agent：为什么软件开发进入新时代" class="headerlink" title="第1篇｜从 ChatGPT 到 AI Agent：为什么软件开发进入新时代"></a>第1篇｜从 ChatGPT 到 AI Agent：为什么软件开发进入新时代</h1><blockquote>
+<p><strong>AI Agent Engineering 系列（一）</strong></p>
+<p><strong>副标题：为什么 AI Agent 不只是 ChatGPT，而是一场新的软件工程革命</strong></p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>适合读者</strong></p>
+<ul>
+<li>Java / Python 工程师</li>
+<li>软件架构师</li>
+<li>AI 应用开发者</li>
+<li>数据工程师</li>
+<li>希望转型 AI Agent 工程师的开发人员</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="一、前言：软件开发，又一次站在了拐点"><a href="#一、前言：软件开发，又一次站在了拐点" class="headerlink" title="一、前言：软件开发，又一次站在了拐点"></a>一、前言：软件开发，又一次站在了拐点</h2><p>过去二十年，软件开发经历了几次重要的范式演进。</p>
+<p>2005 年，我们讨论的是 <strong>MVC</strong>。</p>
+<p>2012 年，我们讨论的是 <strong>REST API</strong>。</p>
+<p>2016 年，我们讨论的是 <strong>微服务</strong>。</p>
+<p>2020 年，我们讨论的是 <strong>云原生（Cloud Native）</strong>。</p>
+<p>而今天，几乎所有技术大会、开源社区、互联网大厂和创业公司，都在讨论同一个词：</p>
+<blockquote>
+<p><strong>AI Agent。</strong></p>
+</blockquote>
+<p>很多开发者认为：</p>
+<blockquote>
+<p>“Agent 不就是把 ChatGPT 接个 API 吗？”</p>
+</blockquote>
+<p>也有人认为：</p>
+<blockquote>
+<p>“Agent 就是 Dify、Coze、LangGraph 这些开发平台。”</p>
+</blockquote>
+<p>甚至还有人觉得：</p>
+<blockquote>
+<p>“Agent 就是把几个 Prompt 串起来。”</p>
+</blockquote>
+<p>这些理解都不能算错，但都只停留在<strong>工具层</strong>。</p>
+<p>如果把 AI Agent 看成一个聊天机器人，那么你看到的是树叶；如果把 AI Agent 放到软件发展的历史中，你会发现，它更像是一次新的软件开发范式。</p>
+<p><strong>这篇文章，我们不讨论任何框架，不写任何 Prompt，也不会调用任何 OpenAI API。</strong></p>
+<p>我们只回答一个问题：</p>
+<blockquote>
+<p><strong>为什么越来越多的人认为，软件开发正在进入 Agent 时代？</strong></p>
+</blockquote>
+<hr>
+<h1 id="二、每一次软件革命，本质都是”抽象层”的升级"><a href="#二、每一次软件革命，本质都是”抽象层”的升级" class="headerlink" title="二、每一次软件革命，本质都是”抽象层”的升级"></a>二、每一次软件革命，本质都是”抽象层”的升级</h1><p>软件工程的发展，本质上是在不断提高抽象层级。</p>
+<p>让开发者越来越少关注底层细节，而越来越关注业务目标。</p>
+<p>例如最早写程序时，我们需要自己管理：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">CPU</span><br><span class="line"></span><br><span class="line">内存</span><br><span class="line"></span><br><span class="line">寄存器</span><br><span class="line"></span><br><span class="line">文件</span><br><span class="line"></span><br><span class="line">网络</span><br></pre></td></tr></table></figure>
+
+<p>后来出现了高级语言。</p>
+<p>程序员开始写：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(order.isPaid())&#123;</span><br><span class="line">    shipment.create();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>而不用关心汇编指令。</p>
+<p>后来出现 MVC。</p>
+<p>开发者开始关心：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Model</span><br><span class="line"></span><br><span class="line">View</span><br><span class="line"></span><br><span class="line">Controller</span><br></pre></td></tr></table></figure>
+
+<p>而不用再关心页面刷新。</p>
+<p>后来出现 ORM。</p>
+<p>SQL 变成：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">userRepository.findById(id)</span><br></pre></td></tr></table></figure>
+
+<p>后来出现 Kubernetes。</p>
+<p>部署变成：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">replicas:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<p>而不是自己管理服务器。</p>
+<p>每一次革命，都意味着：</p>
+<blockquote>
+<p><strong>程序员需要写的代码越来越少，而表达的业务意图越来越多。</strong></p>
+</blockquote>
+<hr>
+<h1 id="三、过去的软件，本质上是在描述”过程”"><a href="#三、过去的软件，本质上是在描述”过程”" class="headerlink" title="三、过去的软件，本质上是在描述”过程”"></a>三、过去的软件，本质上是在描述”过程”</h1><p>传统软件有一个共同特点。</p>
+<p>程序员必须提前告诉计算机：</p>
+<blockquote>
+<p><strong>每一步应该怎么做。</strong></p>
+</blockquote>
+<p>例如：</p>
+<p>用户下单。</p>
+<p>程序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">创建订单</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">检查库存</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">扣减库存</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">支付</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">生成物流</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">发送短信</span><br></pre></td></tr></table></figure>
+
+<p>整个流程都是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Input</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">Code</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">Output</span><br></pre></td></tr></table></figure>
+
+<p>程序本身就是流程。</p>
+<p>如果业务变了。</p>
+<p>程序必须修改。</p>
+<p>例如：</p>
+<p>增加优惠券。</p>
+<p>增加积分。</p>
+<p>增加满减。</p>
+<p>全部需要重新写代码。</p>
+<p>因为：</p>
+<p><strong>传统软件真正执行的是程序员写好的逻辑。</strong></p>
+<hr>
+<h1 id="四、AI-Agent，本质上是在描述”目标”"><a href="#四、AI-Agent，本质上是在描述”目标”" class="headerlink" title="四、AI Agent，本质上是在描述”目标”"></a>四、AI Agent，本质上是在描述”目标”</h1><p>Agent 最大的变化是什么？</p>
+<p>它不是描述过程。</p>
+<p>而是描述：</p>
+<blockquote>
+<p><strong>目标（Goal）。</strong></p>
+</blockquote>
+<p>例如：</p>
+<p>传统程序：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">create_report()</span><br><span class="line"></span><br><span class="line">calculate()</span><br><span class="line"></span><br><span class="line">draw_chart()</span><br><span class="line"></span><br><span class="line">send_email()</span><br></pre></td></tr></table></figure>
+
+<p>而 Agent：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">请分析过去三个月销售下降原因，</span><br><span class="line">生成报告，</span><br><span class="line">并发送给销售总监。</span><br></pre></td></tr></table></figure>
+
+<p>这里没有告诉模型：</p>
+<p>第一步做什么。</p>
+<p>第二步做什么。</p>
+<p>Agent 自己决定。</p>
+<p>例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">理解任务</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">拆解任务</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">查询数据库</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">调用Python分析</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">生成图表</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">写报告</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">发送邮件</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">结束</span><br></pre></td></tr></table></figure>
+
+<p>注意：</p>
+<p>这里的流程。</p>
+<p>不是程序员写出来的。</p>
+<p>而是：</p>
+<blockquote>
+<p><strong>Agent 在运行过程中动态决定。</strong></p>
+</blockquote>
+<p>这是软件工程第一次：</p>
+<p>让程序自己决定执行路径。</p>
+<hr>
+<h1 id="五、真正改变软件的，不是聊天，而是”决策能力”"><a href="#五、真正改变软件的，不是聊天，而是”决策能力”" class="headerlink" title="五、真正改变软件的，不是聊天，而是”决策能力”"></a>五、真正改变软件的，不是聊天，而是”决策能力”</h1><p>很多人把 ChatGPT 理解成：</p>
+<blockquote>
+<p>一个更聪明的搜索引擎。</p>
+</blockquote>
+<p>实际上。</p>
+<p>ChatGPT 最大价值不是回答问题。</p>
+<p>而是：</p>
+<p><strong>Reasoning（推理）。</strong></p>
+<p>推理意味着：</p>
+<p>模型可以：</p>
+<p>理解目标。</p>
+<p>分析问题。</p>
+<p>制定计划。</p>
+<p>不断修正。</p>
+<p>直到完成目标。</p>
+<p>于是：</p>
+<p>软件开始拥有：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Planning</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">Reasoning</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">Action</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">Observation</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">Reflection</span><br></pre></td></tr></table></figure>
+
+<p>而不是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">if</span><br><span class="line"></span><br><span class="line">else</span><br><span class="line"></span><br><span class="line">switch</span><br><span class="line"></span><br><span class="line">for</span><br></pre></td></tr></table></figure>
+
+<p>这意味着：</p>
+<p>软件第一次拥有了：</p>
+<blockquote>
+<p><strong>自主决策能力。</strong></p>
+</blockquote>
+<p>当然，这里的”自主”不是无限制的智能，而是在开发者设定的目标、工具和约束范围内，自主规划完成任务的步骤。</p>
+<hr>
+<h1 id="六、AI-Agent-与-ChatGPT，到底有什么区别？"><a href="#六、AI-Agent-与-ChatGPT，到底有什么区别？" class="headerlink" title="六、AI Agent 与 ChatGPT，到底有什么区别？"></a>六、AI Agent 与 ChatGPT，到底有什么区别？</h1><p>很多人第一次接触 Agent 时，会觉得：</p>
+<blockquote>
+<p>“不就是 ChatGPT 加几个 API 吗？”</p>
+</blockquote>
+<p>实际上，两者关注的问题完全不同。</p>
+<table>
+<thead>
+<tr>
+<th>ChatGPT</th>
+<th>AI Agent</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>回答问题</td>
+<td>完成任务</td>
+</tr>
+<tr>
+<td>一次对话</td>
+<td>持续执行</td>
+</tr>
+<tr>
+<td>生成文本</td>
+<td>调用工具</td>
+</tr>
+<tr>
+<td>被动回答</td>
+<td>主动规划</td>
+</tr>
+<tr>
+<td>不保存业务状态</td>
+<td>管理任务状态</td>
+</tr>
+<tr>
+<td>不操作外部系统</td>
+<td>操作真实世界</td>
+</tr>
+</tbody></table>
+<p>举一个简单例子。</p>
+<p>用户说：</p>
+<blockquote>
+<p>帮我订一张下周去上海的高铁票。</p>
+</blockquote>
+<p>ChatGPT 会回答：</p>
+<blockquote>
+<p>你可以登录 12306。</p>
+</blockquote>
+<p>Agent 则可能：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">打开12306</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">查询班次</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">比较价格</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">选择靠窗座位</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">提交订单</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">支付</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">通知用户</span><br></pre></td></tr></table></figure>
+
+<p>两者最大的区别不是模型。</p>
+<p>而是：</p>
+<blockquote>
+<p><strong>Agent 能够行动（Act）。</strong></p>
+</blockquote>
+<hr>
+<h1 id="七、一个真正的-Agent，到底由什么组成？"><a href="#七、一个真正的-Agent，到底由什么组成？" class="headerlink" title="七、一个真正的 Agent，到底由什么组成？"></a>七、一个真正的 Agent，到底由什么组成？</h1><p>很多框架喜欢画这样一张图：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">User</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">LLM</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">Answer</span><br></pre></td></tr></table></figure>
+
+<p>这只是聊天机器人。</p>
+<p>真正的 Agent 至少包含下面几个核心模块。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">                    User</span><br><span class="line">                      │</span><br><span class="line">                      ▼</span><br><span class="line">               Goal Manager</span><br><span class="line">                      │</span><br><span class="line">        ┌─────────────┴─────────────┐</span><br><span class="line">        ▼                           ▼</span><br><span class="line">   Planner                    Memory</span><br><span class="line">        │                           │</span><br><span class="line">        ▼                           ▼</span><br><span class="line"> Tool Router  ─────────────► Knowledge</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">  External Tools</span><br><span class="line">(API、数据库、浏览器、代码、Shell)</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line"> Observation</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line"> Reflection</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">   Final Result</span><br></pre></td></tr></table></figure>
+
+<p>各模块职责如下：</p>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Goal Manager</td>
+<td>理解用户真正目标</td>
+</tr>
+<tr>
+<td>Planner</td>
+<td>将目标拆解为可执行任务</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td>保存上下文和历史信息</td>
+</tr>
+<tr>
+<td>Tool Router</td>
+<td>选择合适工具完成任务</td>
+</tr>
+<tr>
+<td>Observation</td>
+<td>获取工具执行结果</td>
+</tr>
+<tr>
+<td>Reflection</td>
+<td>判断是否继续执行或调整方案</td>
+</tr>
+</tbody></table>
+<p>这也是后续整个系列会逐步展开的内容。</p>
+<hr>
+<h1 id="八、为什么说-Agent-是一种新的软件架构？"><a href="#八、为什么说-Agent-是一种新的软件架构？" class="headerlink" title="八、为什么说 Agent 是一种新的软件架构？"></a>八、为什么说 Agent 是一种新的软件架构？</h1><p>如果回顾过去二十年的软件架构，我们会发现一个规律：</p>
+<p>MVC 解决了界面组织问题。</p>
+<p>SOA 解决了系统集成问题。</p>
+<p>微服务解决了系统拆分问题。</p>
+<p>云原生解决了资源管理问题。</p>
+<p>而 Agent 解决的是：</p>
+<blockquote>
+<p><strong>复杂任务如何动态完成。</strong></p>
+</blockquote>
+<p>传统程序：</p>
+<p>程序员设计流程。</p>
+<p>Agent：</p>
+<p>程序员设计目标。</p>
+<p>流程由 AI 决定。</p>
+<p>因此：</p>
+<p>未来的软件，很可能不再是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">功能（Function）</span><br></pre></td></tr></table></figure>
+
+<p>而是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">能力（Capability）</span><br></pre></td></tr></table></figure>
+
+<p>以前：</p>
+<p>软件告诉用户：</p>
+<blockquote>
+<p>我有这些菜单。</p>
+</blockquote>
+<p>以后：</p>
+<p>软件问用户：</p>
+<blockquote>
+<p>你的目标是什么？</p>
+</blockquote>
+<p>这是一个非常大的变化。</p>
+<hr>
+<h1 id="九、企业场景案例：为什么企业开始关注-Agent？"><a href="#九、企业场景案例：为什么企业开始关注-Agent？" class="headerlink" title="九、企业场景案例：为什么企业开始关注 Agent？"></a>九、企业场景案例：为什么企业开始关注 Agent？</h1><p>以一个制造企业的数据分析部门为例。</p>
+<p>过去，如果销售总监想了解某产品销量下降原因，通常需要经历以下流程：</p>
+<ol>
+<li>提出分析需求。</li>
+<li>数据工程师编写 SQL。</li>
+<li>BI 工程师制作报表。</li>
+<li>分析师撰写分析报告。</li>
+<li>将结果发送给业务部门。</li>
+</ol>
+<p>整个过程可能需要数小时甚至数天。</p>
+<p>如果构建了企业级 Data Agent，流程会变成：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">销售总监：</span><br><span class="line">分析最近三个月华东区域产品A销量下降原因，</span><br><span class="line">重点关注库存、渠道和价格变化。</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">Agent 拆解任务</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">查询数据仓库</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">调用统计分析工具</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">生成图表</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">关联库存和价格数据</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">输出分析结论</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">形成 PPT 或 Word 报告</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">发送给销售总监</span><br></pre></td></tr></table></figure>
+
+<p>需要强调的是，<strong>这里的 Agent 并不是替代数据仓库、BI 或分析师</strong>。它更像是一个能够协调模型、工具、知识和业务流程的智能执行层，让原本需要多个角色串联完成的工作，以更高效率完成。</p>
+<p>这也是为什么越来越多的企业开始关注 Agent，但真正落地时，核心挑战往往不是模型，而是<strong>数据、工具、权限、流程和工程能力</strong>。</p>
+<hr>
+<h1 id="十、工程师需要重新学习什么？"><a href="#十、工程师需要重新学习什么？" class="headerlink" title="十、工程师需要重新学习什么？"></a>十、工程师需要重新学习什么？</h1><p>如果未来的软件越来越多采用 Agent 架构，那么软件工程师需要补充的能力也会发生变化。</p>
+<p>除了传统的软件设计能力之外，还需要理解：</p>
+<ul>
+<li>LLM 如何理解和推理任务。</li>
+<li>Prompt 如何像代码一样设计和维护。</li>
+<li>Tool 如何安全、稳定地接入业务系统。</li>
+<li>Memory 如何管理上下文和长期知识。</li>
+<li>Workflow 如何组织复杂任务。</li>
+<li>多 Agent 如何协同完成大型业务流程。</li>
+<li>如何评估 Agent 的效果、成本和可靠性。</li>
+</ul>
+<p>这并不意味着传统软件工程知识会失效。相反，分布式系统、架构设计、数据库、缓存、消息队列、权限、安全、监控等能力，在 Agent 系统中仍然是基础，只是需要与 AI 能力结合。</p>
+<hr>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>很多人认为 AI Agent 的出现，只是多了一种新的 AI 开发框架。</p>
+<p>但站在软件发展的历史中，它更像是一次新的软件工程范式演进。</p>
+<p>过去的软件：</p>
+<blockquote>
+<p><strong>程序员决定执行过程。</strong></p>
+</blockquote>
+<p>未来越来越多的软件：</p>
+<blockquote>
+<p><strong>程序员定义目标，Agent 动态规划执行路径。</strong></p>
+</blockquote>
+<p>这并不意味着传统软件会消失，而是意味着未来的软件将更多地由<strong>确定性程序</strong>与<strong>基于大模型的智能决策</strong>共同组成。</p>
+<p><strong>这，就是 AI Agent 与传统软件最大的不同，也是我们开启《AI Agent Engineering》系列的起点。</strong></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2026/07/t-data-dev-paradigm-08/" rel="prev" title="AI时代，数据仓库还有价值吗？">
+      <i class="fa fa-chevron-left"></i> AI时代，数据仓库还有价值吗？
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2026/07/t-data-dev-paradigm-09/" rel="next" title="为什么AI项目百分之90的问题，其实都是数据问题？">
+      为什么AI项目百分之90的问题，其实都是数据问题？ <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC1%E7%AF%87%EF%BD%9C%E4%BB%8E-ChatGPT-%E5%88%B0-AI-Agent%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91%E8%BF%9B%E5%85%A5%E6%96%B0%E6%97%B6%E4%BB%A3"><span class="nav-number">1.</span> <span class="nav-text">第1篇｜从 ChatGPT 到 AI Agent：为什么软件开发进入新时代</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%89%8D%E8%A8%80%EF%BC%9A%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91%EF%BC%8C%E5%8F%88%E4%B8%80%E6%AC%A1%E7%AB%99%E5%9C%A8%E4%BA%86%E6%8B%90%E7%82%B9"><span class="nav-number">1.1.</span> <span class="nav-text">一、前言：软件开发，又一次站在了拐点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%AF%8F%E4%B8%80%E6%AC%A1%E8%BD%AF%E4%BB%B6%E9%9D%A9%E5%91%BD%EF%BC%8C%E6%9C%AC%E8%B4%A8%E9%83%BD%E6%98%AF%E2%80%9D%E6%8A%BD%E8%B1%A1%E5%B1%82%E2%80%9D%E7%9A%84%E5%8D%87%E7%BA%A7"><span class="nav-number">2.</span> <span class="nav-text">二、每一次软件革命，本质都是”抽象层”的升级</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E8%BF%87%E5%8E%BB%E7%9A%84%E8%BD%AF%E4%BB%B6%EF%BC%8C%E6%9C%AC%E8%B4%A8%E4%B8%8A%E6%98%AF%E5%9C%A8%E6%8F%8F%E8%BF%B0%E2%80%9D%E8%BF%87%E7%A8%8B%E2%80%9D"><span class="nav-number">3.</span> <span class="nav-text">三、过去的软件，本质上是在描述”过程”</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81AI-Agent%EF%BC%8C%E6%9C%AC%E8%B4%A8%E4%B8%8A%E6%98%AF%E5%9C%A8%E6%8F%8F%E8%BF%B0%E2%80%9D%E7%9B%AE%E6%A0%87%E2%80%9D"><span class="nav-number">4.</span> <span class="nav-text">四、AI Agent，本质上是在描述”目标”</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E7%9C%9F%E6%AD%A3%E6%94%B9%E5%8F%98%E8%BD%AF%E4%BB%B6%E7%9A%84%EF%BC%8C%E4%B8%8D%E6%98%AF%E8%81%8A%E5%A4%A9%EF%BC%8C%E8%80%8C%E6%98%AF%E2%80%9D%E5%86%B3%E7%AD%96%E8%83%BD%E5%8A%9B%E2%80%9D"><span class="nav-number">5.</span> <span class="nav-text">五、真正改变软件的，不是聊天，而是”决策能力”</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%AD%E3%80%81AI-Agent-%E4%B8%8E-ChatGPT%EF%BC%8C%E5%88%B0%E5%BA%95%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">六、AI Agent 与 ChatGPT，到底有什么区别？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E4%B8%80%E4%B8%AA%E7%9C%9F%E6%AD%A3%E7%9A%84-Agent%EF%BC%8C%E5%88%B0%E5%BA%95%E7%94%B1%E4%BB%80%E4%B9%88%E7%BB%84%E6%88%90%EF%BC%9F"><span class="nav-number">7.</span> <span class="nav-text">七、一个真正的 Agent，到底由什么组成？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AF%B4-Agent-%E6%98%AF%E4%B8%80%E7%A7%8D%E6%96%B0%E7%9A%84%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84%EF%BC%9F"><span class="nav-number">8.</span> <span class="nav-text">八、为什么说 Agent 是一种新的软件架构？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B9%9D%E3%80%81%E4%BC%81%E4%B8%9A%E5%9C%BA%E6%99%AF%E6%A1%88%E4%BE%8B%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%81%E4%B8%9A%E5%BC%80%E5%A7%8B%E5%85%B3%E6%B3%A8-Agent%EF%BC%9F"><span class="nav-number">9.</span> <span class="nav-text">九、企业场景案例：为什么企业开始关注 Agent？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E3%80%81%E5%B7%A5%E7%A8%8B%E5%B8%88%E9%9C%80%E8%A6%81%E9%87%8D%E6%96%B0%E5%AD%A6%E4%B9%A0%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">10.</span> <span class="nav-text">十、工程师需要重新学习什么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">11.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">陶玉印</p>
+  <div class="site-description" itemprop="description">陶玉印,15年数据治理与数据仓库实践者，涵盖数据治理、数据质量、数据仓库、数据平台、主数据管理、制造业数字化等领域。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:taoyuyin@gmail.com" title="E-Mail → mailto:taoyuyin@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/taoyuyin" title="Zhi → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;taoyuyin" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>Zhi</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">陶玉印</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
