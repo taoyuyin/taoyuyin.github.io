@@ -3320,4 +3320,215 @@
 <p>而数据仓库存在二十多年的真正价值，也从来不是存储数据，而是帮助企业建立一套可以被持续信任的数据体系。</p>
 ]]></content>
   </entry>
+  <entry>
+    <title>为什么AI项目90%的问题，其实都是数据问题？</title>
+    <url>/2026/07/t-data-dev-paradigm-09/</url>
+    <content><![CDATA[<h1 id="为什么AI项目90-的问题，其实都是数据问题？"><a href="#为什么AI项目90-的问题，其实都是数据问题？" class="headerlink" title="为什么AI项目90%的问题，其实都是数据问题？"></a>为什么AI项目90%的问题，其实都是数据问题？</h1><p>最近两年，我接触了不少企业AI项目，也持续关注国内外AI产品的发展。从ChatBI、企业知识库，到RAG、Data Agent，再到各种”数字员工”，几乎所有企业都希望借助大模型，让数据真正服务于业务。</p>
+<p>有意思的是，大多数项目在Demo阶段都表现得相当不错。</p>
+<p>上传几份文档，模型就能回答问题；连接数据库，AI就能自动生成SQL；接入知识库，Agent就能完成简单的数据分析任务。</p>
+<p>但是，当这些项目真正进入企业生产环境之后，情况却发生了明显变化。</p>
+<p>有的回答不准确，有的不同时间得到不同答案，有的生成了SQL却查询不到正确的数据，还有一些项目虽然技术架构没有问题，但业务部门始终不愿意使用。</p>
+<p>很多企业的第一反应都是：</p>
+<blockquote>
+<p>模型能力还不够强。</p>
+</blockquote>
+<p>于是，他们开始尝试更大的模型、更长的上下文、更复杂的Prompt，甚至部署更昂贵的GPU资源。</p>
+<p>然而，投入越来越高，效果却并没有发生本质改善。</p>
+<p>在参与企业数据平台建设和数据治理工作的这些年里，我越来越认同一个观点：</p>
+<blockquote>
+<p><strong>大多数AI项目失败，并不是因为模型，而是因为数据。</strong></p>
+</blockquote>
+<p>如果说大模型决定了AI能够回答问题，那么企业数据体系决定了AI回答的问题是否可信。</p>
+<hr>
+<h1 id="AI项目真正运行时，到底依赖什么？"><a href="#AI项目真正运行时，到底依赖什么？" class="headerlink" title="AI项目真正运行时，到底依赖什么？"></a>AI项目真正运行时，到底依赖什么？</h1><p>很多企业第一次接触AI时，都会把注意力放在模型本身。</p>
+<p>例如：</p>
+<ul>
+<li>GPT-5.5 是否比其他模型更聪明？</li>
+<li>DeepSeek 是否更适合中文？</li>
+<li>Claude 是否更适合代码？</li>
+<li>模型参数越大是否效果越好？</li>
+</ul>
+<p>这些讨论当然有意义。</p>
+<p>但如果站在企业架构的角度来看，一个完整的AI项目远远不只是一个大模型。</p>
+<p>它更像下面这样一个体系。</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">               Business User</span><br><span class="line">                      │</span><br><span class="line">               自然语言提问</span><br><span class="line">                      │</span><br><span class="line">               LLM（理解问题）</span><br><span class="line">                      │</span><br><span class="line">     ┌──────────────────────────┐</span><br><span class="line">     │                          │</span><br><span class="line"> RAG知识库                  Data Agent</span><br><span class="line">     │                          │</span><br><span class="line">     └──────────────┬───────────┘</span><br><span class="line">                    │</span><br><span class="line">            Semantic Layer（语义层）</span><br><span class="line">                    │</span><br><span class="line">   ┌──────────────────────────────────┐</span><br><span class="line">   │          │            │           │</span><br><span class="line">Data Warehouse  Metadata   Metrics   Master Data</span><br><span class="line">   │          │            │           │</span><br><span class="line">   └──────────────────────────────────┘</span><br><span class="line">                    │</span><br><span class="line">           ERP / MES / CRM / SRM ...</span><br></pre></td></tr></table></figure>
+
+<p>很多企业真正投入建设的，往往只有图中最上面的一层——大模型。</p>
+<p>而真正决定AI是否能够稳定工作的，却是下面这一整套企业数据体系。</p>
+<p><strong>模型只是AI的大脑，数据体系才是AI的记忆、知识和判断依据。</strong></p>
+<hr>
+<h1 id="一个真实案例：为什么同一个问题，AI每天回答都不一样？"><a href="#一个真实案例：为什么同一个问题，AI每天回答都不一样？" class="headerlink" title="一个真实案例：为什么同一个问题，AI每天回答都不一样？"></a>一个真实案例：为什么同一个问题，AI每天回答都不一样？</h1><p>我曾参与过一家制造企业的数据平台建设。</p>
+<p>企业拥有ERP、MES、CRM、SRM等多个业务系统，数据仓库已经建设多年，同时也上线了BI平台。</p>
+<p>后来，企业开始尝试建设ChatBI，希望业务人员能够直接通过自然语言查询经营数据。</p>
+<p>项目初期效果很好。</p>
+<p>例如：</p>
+<blockquote>
+<p>去年销售额是多少？</p>
+</blockquote>
+<p>AI几秒钟就能够生成SQL并返回结果。</p>
+<p>但是，很快业务部门提出了新的问题：</p>
+<blockquote>
+<p>去年利润最高的客户是谁？</p>
+</blockquote>
+<p>AI第一次回答：</p>
+<p>A客户。</p>
+<p>第二次回答：</p>
+<p>B客户。</p>
+<p>第三次甚至变成了另外一个客户。</p>
+<p>模型并没有发生变化。</p>
+<p>SQL生成逻辑也没有变化。</p>
+<p>真正的问题在哪里？</p>
+<p>经过排查，我们发现问题出在数据层。</p>
+<p>ERP中的利润按照订单统计。</p>
+<p>财务系统中的利润按照开票统计。</p>
+<p>BI平台长期采用的是财务口径。</p>
+<p>而AI生成SQL时，却关联了ERP事实表。</p>
+<p>SQL本身完全正确。</p>
+<p>返回的数据也完全正确。</p>
+<p><strong>错误的是，它回答了另一个业务口径。</strong></p>
+<p>这类问题，在企业中远比模型幻觉更加常见。</p>
+<hr>
+<h1 id="AI不会制造错误，它只会放大错误"><a href="#AI不会制造错误，它只会放大错误" class="headerlink" title="AI不会制造错误，它只会放大错误"></a>AI不会制造错误，它只会放大错误</h1><p>很多人担心大模型会”一本正经地胡说八道”。</p>
+<p>这确实是AI需要解决的问题。</p>
+<p>但对于企业来说，更大的风险往往来自另一种情况：</p>
+<p><strong>AI基于错误的数据，生成了看起来非常可信的答案。</strong></p>
+<p>举一个简单的例子。</p>
+<p>假设企业的数据仓库中已经存在下面这样一张汇总表。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">    customer_name,</span><br><span class="line">    <span class="keyword">SUM</span>(profit_amount) <span class="keyword">AS</span> profit</span><br><span class="line"><span class="keyword">FROM</span> dws_sales_profit</span><br><span class="line"><span class="keyword">WHERE</span> order_date <span class="keyword">BETWEEN</span> <span class="string">&#x27;2025-01-01&#x27;</span> <span class="keyword">AND</span> <span class="string">&#x27;2025-12-31&#x27;</span></span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> customer_name</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> profit <span class="keyword">DESC</span></span><br><span class="line"><span class="keyword">LIMIT</span> <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这段SQL没有任何问题。</p>
+<p>AI生成它也没有问题。</p>
+<p>如果<code>profit_amount</code>字段本身已经因为退货逻辑处理错误而偏高，那么最终得到的所有分析结果都会是错误的。</p>
+<p>AI不会发现这一点。</p>
+<p>它只会更加高效地消费这些错误数据，并快速传播到更多业务场景。</p>
+<p>过去，一个错误指标可能影响一张BI报表。</p>
+<p>今天，一个错误指标可能影响：</p>
+<ul>
+<li>ChatBI</li>
+<li>企业知识库</li>
+<li>Data Agent</li>
+<li>智能经营分析</li>
+<li>自动决策系统</li>
+</ul>
+<p>AI时代，错误传播的速度比过去快得多。</p>
+<hr>
+<h1 id="企业-AI-真正缺少的，不是数据，而是统一的数据语言"><a href="#企业-AI-真正缺少的，不是数据，而是统一的数据语言" class="headerlink" title="企业 AI 真正缺少的，不是数据，而是统一的数据语言"></a>企业 AI 真正缺少的，不是数据，而是统一的数据语言</h1><p>如果深入分析大多数AI项目，会发现它们存在一个共同特点：</p>
+<p>数据很多。</p>
+<p>知识很多。</p>
+<p>系统也很多。</p>
+<p>真正缺少的是：</p>
+<p><strong>统一的数据语义。</strong></p>
+<p>举一个非常典型的例子。</p>
+<p>销售部门维护了一套销售额指标。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">metric:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">销售额</span></span><br><span class="line">  <span class="attr">formula:</span> <span class="string">已付款订单金额</span></span><br></pre></td></tr></table></figure>
+
+<p>财务部门维护的是另一套定义。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">metric:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">销售额</span></span><br><span class="line">  <span class="attr">formula:</span> <span class="string">已开票金额（含税）</span></span><br></pre></td></tr></table></figure>
+
+<p>BI平台采用第三种口径。</p>
+<p>AI知识库中的制度文件又采用第四种解释。</p>
+<p>于是，当老板问：</p>
+<blockquote>
+<p>今年销售额同比增长多少？</p>
+</blockquote>
+<p>AI能够回答。</p>
+<p>但它不知道：</p>
+<p><strong>到底应该相信哪一个”销售额”。</strong></p>
+<p>很多企业认为这是Prompt的问题。</p>
+<p>实际上，这是Semantic Layer（语义层）缺失的问题。</p>
+<p>模型不知道企业语言。</p>
+<p>因为企业自己还没有形成统一的数据语言。</p>
+<hr>
+<h1 id="为什么-Data-Agent-比-ChatBI-更依赖数据治理？"><a href="#为什么-Data-Agent-比-ChatBI-更依赖数据治理？" class="headerlink" title="为什么 Data Agent 比 ChatBI 更依赖数据治理？"></a>为什么 Data Agent 比 ChatBI 更依赖数据治理？</h1><p>上一篇文章我们讨论了Data Agent。</p>
+<p>很多人认为，Agent越智能，对底层数据的要求就越低。</p>
+<p>事实恰恰相反。</p>
+<p>Agent越智能。</p>
+<p>它调用的数据越多。</p>
+<p>分析链路越长。</p>
+<p>依赖的知识越复杂。</p>
+<p>对数据治理的要求反而越高。</p>
+<p>例如，一个利润分析任务，Agent可能会连续完成下面这些动作。</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">理解问题</span><br><span class="line">      │</span><br><span class="line">识别指标</span><br><span class="line">      │</span><br><span class="line">查询元数据</span><br><span class="line">      │</span><br><span class="line">定位事实表</span><br><span class="line">      │</span><br><span class="line">关联维度</span><br><span class="line">      │</span><br><span class="line">生成SQL</span><br><span class="line">      │</span><br><span class="line">调用知识库解释异常</span><br><span class="line">      │</span><br><span class="line">形成分析报告</span><br></pre></td></tr></table></figure>
+
+<p>任何一个环节的数据存在问题，最终结果都会受到影响。</p>
+<p>因此，Agent实际上放大了企业数据治理的重要性。</p>
+<p>过去，数据治理主要服务于BI。</p>
+<p>未来，数据治理更重要的使命，是服务于AI。</p>
+<hr>
+<h1 id="从数据仓库到AI，中间缺少了一层什么？"><a href="#从数据仓库到AI，中间缺少了一层什么？" class="headerlink" title="从数据仓库到AI，中间缺少了一层什么？"></a>从数据仓库到AI，中间缺少了一层什么？</h1><p>很多企业的技术架构已经非常先进。</p>
+<p>有数据湖。</p>
+<p>有Lakehouse。</p>
+<p>有实时计算。</p>
+<p>有向量数据库。</p>
+<p>甚至已经部署了企业级大模型。</p>
+<p>但是AI依然回答不好问题。</p>
+<p>原因就在于，中间缺少了一层。</p>
+<p>那就是：</p>
+<p><strong>企业知识表达层。</strong></p>
+<p>这一层包括：</p>
+<ul>
+<li>元数据（Metadata）</li>
+<li>指标体系（Metrics）</li>
+<li>主数据（MDM）</li>
+<li>数据血缘（Lineage）</li>
+<li>业务术语（Business Glossary）</li>
+<li>数据质量规则（Data Quality Rules）</li>
+<li>Semantic Layer（语义层）</li>
+</ul>
+<p>过去，这些能力更多是为了方便数据团队管理数据。</p>
+<p>今天，它们开始成为AI理解企业的基础。</p>
+<p>AI并不是直接理解数据库。</p>
+<p>AI真正理解的是企业知识。</p>
+<hr>
+<h2 id="架构师视角：未来的数据平台，不只是存储数据"><a href="#架构师视角：未来的数据平台，不只是存储数据" class="headerlink" title="架构师视角：未来的数据平台，不只是存储数据"></a>架构师视角：未来的数据平台，不只是存储数据</h2><p>很多企业正在建设AI平台，但真正需要升级的，往往不是模型，而是整个数据架构。</p>
+<p>未来的数据平台，更像是四层能力共同协作：</p>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>主要能力</th>
+<th>典型产品/技术</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>AI应用层</td>
+<td>ChatBI、Data Agent、智能运营</td>
+<td>Copilot、Agent、企业AI助手</td>
+</tr>
+<tr>
+<td>知识表达层</td>
+<td>Semantic Layer、元数据、指标体系、知识库</td>
+<td>AtScale、Cube、dbt Semantic Layer、DataHub、Apache Atlas</td>
+</tr>
+<tr>
+<td>数据基础层</td>
+<td>数据仓库、湖仓一体、实时计算</td>
+<td>Hive、ClickHouse、Snowflake、Databricks、Apache Doris、Apache Paimon</td>
+</tr>
+<tr>
+<td>数据源层</td>
+<td>ERP、MES、CRM、SRM、OA等业务系统</td>
+<td>SAP、Oracle ERP、金蝶、用友等</td>
+</tr>
+</tbody></table>
+<p>很多企业目前重点投入的是第一层。</p>
+<p>真正决定AI效果的，却是第二层和第三层。</p>
+<hr>
+<h2 id="企业实践建议"><a href="#企业实践建议" class="headerlink" title="企业实践建议"></a>企业实践建议</h2><p>结合近几年企业AI项目建设，我认为至少需要做好五件事情。</p>
+<p>第一，建立统一的数据指标体系，避免一个指标存在多个业务口径。</p>
+<p>第二，加强元数据管理，让AI能够理解字段、表和业务术语的真实含义。</p>
+<p>第三，持续建设Semantic Layer，将技术语言转换为业务语言。</p>
+<p>第四，把数据质量规则前移，在进入AI之前完成校验，而不是等AI回答错误之后再修正。</p>
+<p>第五，把数据治理从”项目”变成”持续运营能力”，因为Agent的能力会不断演进，而数据体系也必须持续演进。</p>
+<p>只有这样，AI才能真正建立在可信的数据基础之上。</p>
+<hr>
+<h1 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h1><p>过去几年，AI的发展让很多企业重新思考数据平台的价值。</p>
+<p>但我越来越认为，一个优秀的AI项目，真正比拼的并不是模型，而是企业多年积累的数据能力。</p>
+<p>模型决定了AI能够理解多复杂的问题。</p>
+<p>数据决定了AI回答的问题是否可信。</p>
+<p>知识决定了AI能否真正理解企业。</p>
+<p>因此，AI时代真正的竞争优势，不是拥有最大的模型，而是拥有最可信的数据体系。</p>
+<p>这也是为什么我始终认为，数据仓库、数据治理、元数据管理和数据质量，并不会因为AI而边缘化，反而会成为AI时代最重要的基础设施。</p>
+]]></content>
+  </entry>
 </search>

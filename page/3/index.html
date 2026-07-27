@@ -28,7 +28,7 @@
   <meta name="description" content="陶玉印,15年数据治理与数据仓库实践者，涵盖数据治理、数据质量、数据仓库、数据平台、主数据管理、制造业数字化等领域。">
 <meta property="og:type" content="website">
 <meta property="og:title" content="陶玉印的博客">
-<meta property="og:url" content="https://itaoyuyin.com/archives/page/2/index.html">
+<meta property="og:url" content="https://itaoyuyin.com/page/3/index.html">
 <meta property="og:site_name" content="陶玉印的博客">
 <meta property="og:description" content="陶玉印,15年数据治理与数据仓库实践者，涵盖数据治理、数据质量、数据仓库、数据平台、主数据管理、制造业数字化等领域。">
 <meta property="og:locale" content="zh_CN">
@@ -36,20 +36,20 @@
 <meta property="article:tag" content="数据治理，数据管理， 数据平台， 数据仓库， 陶玉印">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://itaoyuyin.com/archives/page/2/">
+<link rel="canonical" href="https://itaoyuyin.com/page/3/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : false,
+    isHome : true,
     isPost : false,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>归档 | 陶玉印的博客</title>
+  <title>陶玉印的博客</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-176856665-1"></script>
     <script>
@@ -180,236 +180,104 @@
         <div class="content-wrap">
           
 
-          <div class="content archive">
+          <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://itaoyuyin.com/2020/08/grep-string-with-find/">
 
-  
-  
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <span class="collection-header">嗯..! 目前共计 21 篇日志。 继续努力。</span>
-      </div>
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="陶玉印">
+      <meta itemprop="description" content="陶玉印,15年数据治理与数据仓库实践者，涵盖数据治理、数据质量、数据仓库、数据平台、主数据管理、制造业数字化等领域。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="陶玉印的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/grep-string-with-find/" class="post-title-link" itemprop="url">在 Linux 下通过 find 和 grep 查找包含指定字符串的文件</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-19 20:02:41" itemprop="dateCreated datePublished" datetime="2020-08-19T20:02:41+08:00">2020-08-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-20 13:49:19" itemprop="dateModified" datetime="2020-08-20T13:49:19+08:00">2020-08-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2026</span>
+          <h2 id="在-Linux-下通过-find-和-grep-查找包含指定字符串的文件"><a href="#在-Linux-下通过-find-和-grep-查找包含指定字符串的文件" class="headerlink" title="在 Linux 下通过 find 和 grep 查找包含指定字符串的文件"></a>在 Linux 下通过 find 和 grep 查找包含指定字符串的文件</h2><p>直接上示例，拿走即用</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ find /home -<span class="built_in">type</span> f -name <span class="string">&#x27;*.py&#x27;</span> -<span class="built_in">exec</span> grep -n <span class="string">&#x27;MySQL&#x27;</span> --color=auto &#123;&#125; \; -<span class="built_in">print</span></span><br></pre></td></tr></table></figure>
+
+<p>作用是在’/home’目录下查找包含’MySQL’以’py’结尾的文件，输出内容和行号，将结果打印在屏幕</p>
+<p>注意点：</p>
+<ul>
+<li>可以根据要查找的字符串或文件类型修改单引号里面的内容</li>
+<li>最好不要使用根目录，尽量缩小 Path 范围</li>
+</ul>
+<h2 id="拆分讲解"><a href="#拆分讲解" class="headerlink" title="拆分讲解"></a>拆分讲解</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ find /home -<span class="built_in">type</span> f <span class="comment"># 类型参数， f 为普通文件</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ find /home -name <span class="string">&#x27;*.py&#x27;</span> <span class="comment"># 根据文件名查找，查找 Python 文件</span></span><br></pre></td></tr></table></figure>
+
+<p>结合 -exec 与其他命令配合使用， find 在返回后执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ find /home -name <span class="string">&#x27;*.py&#x27;</span> -<span class="built_in">exec</span> grep -n <span class="string">&#x27;MySQL&#x27;</span> &#123;&#125; \; <span class="comment"># 查找 Python 文件，搜索包含&#x27;MySQL&#x27;的行</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ find /home -name <span class="string">&#x27;*.py&#x27;</span> -<span class="built_in">exec</span> grep -n <span class="string">&#x27;MySQL&#x27;</span> --color=auto &#123;&#125; \; -<span class="built_in">print</span> <span class="comment"># 查找 Python 文件，搜索包含&#x27;MySQL&#x27;的行，将文件打印出来</span></span><br></pre></td></tr></table></figure>
+
+<p>其他用法可以分别查看 find 和 grep 的用法。</p>
+
+      
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2026-05-26T10:00:00+08:00"
-              content="2026-05-26">
-          05-26
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2026/05/t-data-governance-series-09/" itemprop="url">
-            <span itemprop="name">数据治理组织，应该怎么设计？</span>
-          </a>
-      </div>
-
-    </header>
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
   </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2026-05-20T10:00:00+08:00"
-              content="2026-05-20">
-          05-20
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2026/05/t-data-governance-series-08/" itemprop="url">
-            <span itemprop="name">主数据管理（MDM），做还是不做</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2026-05-11T10:00:00+08:00"
-              content="2026-05-11">
-          05-11
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2026/05/t-data-governance-series-07/" itemprop="url">
-            <span itemprop="name">数据标准，为什么是数据治理的起点？</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2026-05-06T10:00:00+08:00"
-              content="2026-05-06">
-          05-06
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2026/05/t-data-governance-series-06/" itemprop="url">
-            <span itemprop="name">什么是“真正的数据治理体系”？</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-    <div class="collection-year">
-      <span class="collection-header">2020</span>
-    </div>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-18T16:00:00+08:00"
-              content="2020-10-18">
-          10-18
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/t-dmbok-data-management/" itemprop="url">
-            <span itemprop="name">数据管理知识体系-数据管理</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-09-20T10:00:00+08:00"
-              content="2020-09-20">
-          09-20
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/09/d-china-taxation-overview/" itemprop="url">
-            <span itemprop="name">了解下中国税收</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-09-12T09:02:16+08:00"
-              content="2020-09-12">
-          09-12
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/09/data-warehouse-and-data-lake/" itemprop="url">
-            <span itemprop="name">数据仓库（Data Warehouse）与数据湖（Data Lake）</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-08-29T08:00:00+08:00"
-              content="2020-08-29">
-          08-29
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/08/d-keep-macro-data-in-mind/" itemprop="url">
-            <span itemprop="name">培养点宏观数据思维</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-08-22T20:15:41+08:00"
-              content="2020-08-22">
-          08-22
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/08/build-jupyter-with-docker/" itemprop="url">
-            <span itemprop="name">使用 Docker 在本地构建 Jupyter Notebook</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-08-19T21:46:10+08:00"
-              content="2020-08-19">
-          08-19
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/08/bulid-picgo-with-github/" itemprop="url">
-            <span itemprop="name">利用 PicGo 和 GitHub 构建图床</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-
-    </div>
-  </div>
   
   
   
+
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/archives/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/archives/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/page/3/">3</a><a class="extend next" rel="next" href="/archives/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span>
   </nav>
 
 
