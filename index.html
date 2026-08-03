@@ -186,6 +186,285 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://itaoyuyin.com/2026/08/t-data-dev-paradigm-10/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="陶玉印">
+      <meta itemprop="description" content="陶玉印,15年数据治理与数据仓库实践者，涵盖数据治理、数据质量、数据仓库、数据平台、主数据管理、制造业数字化等领域。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="陶玉印的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2026/08/t-data-dev-paradigm-10/" class="post-title-link" itemprop="url">AI时代，数据质量为什么比模型更重要？</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-08-03 10:00:00 / 修改时间：08:54:33" itemprop="dateCreated datePublished" datetime="2026-08-03T10:00:00+08:00">2026-08-03</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="AI时代，数据质量为什么比模型更重要？"><a href="#AI时代，数据质量为什么比模型更重要？" class="headerlink" title="AI时代，数据质量为什么比模型更重要？"></a>AI时代，数据质量为什么比模型更重要？</h1><h2 id="——重新理解企业数据质量体系"><a href="#——重新理解企业数据质量体系" class="headerlink" title="——重新理解企业数据质量体系"></a>——重新理解企业数据质量体系</h2><p>如果让我预测未来五年企业AI建设过程中最容易被低估的一项能力，我会毫不犹豫地选择：</p>
+<p><strong>数据质量（Data Quality）。</strong></p>
+<p>过去两年，大模型的发展几乎吸引了所有人的关注。</p>
+<p>企业讨论最多的是模型参数、上下文长度、推理能力、Agent、RAG以及MCP，很少有人愿意花时间讨论数据质量。</p>
+<p>原因并不难理解。</p>
+<p>模型能够直接展示能力。</p>
+<p>而数据质量是一项长期投入、短期难以看到效果的基础工程。</p>
+<p>然而，在越来越多企业AI项目落地之后，一个现象开始变得十分明显：</p>
+<p><strong>决定AI项目最终效果的，往往不是模型，而是数据。</strong></p>
+<p>过去，企业更多关注模型是否足够聪明。</p>
+<p>今天，越来越多企业开始意识到：</p>
+<p>如果输入的数据本身存在问题，那么再优秀的大模型，也只能得到一个更加”聪明”的错误答案。</p>
+<hr>
+<h1 id="为什么BI时代的数据质量没有今天重要？"><a href="#为什么BI时代的数据质量没有今天重要？" class="headerlink" title="为什么BI时代的数据质量没有今天重要？"></a>为什么BI时代的数据质量没有今天重要？</h1><p>很多人会问：</p>
+<p>企业过去二十年一直在建设数据仓库，也一直在强调数据质量，为什么今天突然变得更加重要？</p>
+<p>原因在于：</p>
+<p><strong>数据消费方式发生了变化。</strong></p>
+<p>在BI时代，数据主要服务于报表和经营分析。</p>
+<p>一张报表如果存在错误，通常会经历这样的过程：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">业务发现异常。</span><br><span class="line">    ↓</span><br><span class="line">数据团队排查。</span><br><span class="line">    ↓</span><br><span class="line">修正ETL。</span><br><span class="line">    ↓</span><br><span class="line">重新发布报表。</span><br></pre></td></tr></table></figure>
+
+<p>虽然影响业务，但由于报表具有固定使用对象、固定展示方式以及固定更新周期，错误通常能够较快暴露。</p>
+<p>换句话说。</p>
+<p>BI时代的数据质量问题，大多数属于”局部影响”。</p>
+<p>而AI时代完全不同。</p>
+<p>ChatBI、企业知识库、Data Agent以及智能运营平台都开始直接消费企业数据。</p>
+<p>错误的数据一旦进入AI系统，就可能通过推理、总结、自动分析等方式快速传播到多个业务场景。</p>
+<p>因此。</p>
+<p>AI时代的数据质量已经不仅仅影响报表。</p>
+<p>它开始直接影响企业决策。</p>
+<hr>
+<h1 id="AI为什么会放大数据质量问题？"><a href="#AI为什么会放大数据质量问题？" class="headerlink" title="AI为什么会放大数据质量问题？"></a>AI为什么会放大数据质量问题？</h1><p>很多人认为，大模型最大的风险是”幻觉（Hallucination）”。</p>
+<p>事实上，对于企业来说，真正值得担心的往往不是模型幻觉，而是<strong>可信事实的缺失</strong>。</p>
+<p>例如，一家企业拥有两个利润指标。</p>
+<p>ERP采用订单利润。</p>
+<p>财务采用开票利润。</p>
+<p>BI平台采用财务口径。</p>
+<p>而Agent在生成SQL时，却引用了ERP事实表。</p>
+<p>整个分析过程没有任何语法错误。</p>
+<p>SQL能够正常执行。</p>
+<p>模型推理过程也完全正确。</p>
+<p>最终得到的答案却依然错误。</p>
+<p>为什么？</p>
+<p>因为：</p>
+<p><strong>AI能够保证推理逻辑正确，却无法保证事实基础正确。</strong></p>
+<p>这也是AI项目与互联网聊天机器人最大的区别。</p>
+<p>企业AI真正回答的是经营问题。</p>
+<p>经营问题没有”大概正确”。</p>
+<p>只有”正确”与”错误”。</p>
+<hr>
+<h1 id="一个真实案例：为什么Agent总是回答错利润？"><a href="#一个真实案例：为什么Agent总是回答错利润？" class="headerlink" title="一个真实案例：为什么Agent总是回答错利润？"></a>一个真实案例：为什么Agent总是回答错利润？</h1><p>下面分享一个典型案例。</p>
+<p>某制造企业建设了智能经营分析平台，希望管理层能够直接向Agent提问。</p>
+<p>例如：</p>
+<blockquote>
+<p>“分析最近半年利润下降最快的产品。”</p>
+</blockquote>
+<p>Agent能够自动完成以下流程：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">理解问题</span><br><span class="line">    ↓</span><br><span class="line">定位利润指标</span><br><span class="line">    ↓</span><br><span class="line">查询元数据</span><br><span class="line">    ↓</span><br><span class="line">生成SQL</span><br><span class="line">    ↓</span><br><span class="line">执行分析</span><br><span class="line">    ↓</span><br><span class="line">生成报告</span><br></pre></td></tr></table></figure>
+
+<p>整个流程运行正常。</p>
+<p>但业务部门始终认为结果不可信。</p>
+<p>最终定位问题发现：</p>
+<p>数据仓库同时维护了两个利润口径：</p>
+<ul>
+<li>毛利（Gross Profit）</li>
+<li>财务利润（Net Profit）</li>
+</ul>
+<p>而元数据没有明确标注默认口径。</p>
+<p>Agent自动选择了第一个指标。</p>
+<p>SQL完全正确。</p>
+<p>模型也没有幻觉。</p>
+<p>真正的问题来自：</p>
+<p><strong>指标语义缺失。</strong></p>
+<p>这个案例说明：</p>
+<p>未来影响AI项目的，不一定是算法。</p>
+<p>而是企业知识表达是否完整。</p>
+<hr>
+<h1 id="数据质量已经不仅仅是”准确”"><a href="#数据质量已经不仅仅是”准确”" class="headerlink" title="数据质量已经不仅仅是”准确”"></a>数据质量已经不仅仅是”准确”</h1><p>很多企业一提到数据质量，首先想到的是：</p>
+<ul>
+<li>空值</li>
+<li>重复值</li>
+<li>错误值</li>
+<li>格式错误</li>
+</ul>
+<p>这些当然属于数据质量。</p>
+<p>但如果站在AI时代重新理解数据质量，会发现它已经远远超出了传统定义。</p>
+<p>作为《数据质量管理实践手册》中文版联合译者，在翻译这本书的过程中，有一句定义让我印象非常深刻：</p>
+<blockquote>
+<p><strong>数据质量并不是数据本身的属性，而是数据满足使用目的的程度。</strong></p>
+</blockquote>
+<p>AI时代，这句话值得重新理解。</p>
+<p>过去，一份数据能够生成报表，我们认为质量合格。</p>
+<p>今天，一份数据不仅需要生成报表，还需要支撑：</p>
+<ul>
+<li>ChatBI</li>
+<li>Agent</li>
+<li>自动决策</li>
+<li>企业知识库</li>
+<li>智能运营</li>
+</ul>
+<p>数据的”使用目的”已经发生了变化。</p>
+<p>因此，数据质量的评价标准也必须随之升级。</p>
+<hr>
+<h1 id="AI时代的数据质量体系应该关注什么？"><a href="#AI时代的数据质量体系应该关注什么？" class="headerlink" title="AI时代的数据质量体系应该关注什么？"></a>AI时代的数据质量体系应该关注什么？</h1><p>我建议企业至少关注六类能力。</p>
+<table>
+<thead>
+<tr>
+<th>能力</th>
+<th>BI时代</th>
+<th>AI时代</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>准确性（Accuracy）</td>
+<td>★★★★★</td>
+<td>★★★★★</td>
+</tr>
+<tr>
+<td>完整性（Completeness）</td>
+<td>★★★★</td>
+<td>★★★★★</td>
+</tr>
+<tr>
+<td>一致性（Consistency）</td>
+<td>★★★★</td>
+<td>★★★★★</td>
+</tr>
+<tr>
+<td>时效性（Timeliness）</td>
+<td>★★★</td>
+<td>★★★★★</td>
+</tr>
+<tr>
+<td>语义一致性（Semantic Consistency）</td>
+<td>★★</td>
+<td>★★★★★</td>
+</tr>
+<tr>
+<td>可解释性（Explainability）</td>
+<td>★</td>
+<td>★★★★★</td>
+</tr>
+</tbody></table>
+<p>前三项是传统数据质量管理长期关注的问题。</p>
+<p>后三项，则越来越成为AI时代的新要求。</p>
+<p>例如：</p>
+<p>Agent为什么选择这个指标？</p>
+<p>SQL为什么这样生成？</p>
+<p>为什么推荐这个客户？</p>
+<p>未来，每一个AI回答，都需要能够追溯。</p>
+<hr>
+<h2 id="工程实践：把数据质量规则前移"><a href="#工程实践：把数据质量规则前移" class="headerlink" title="工程实践：把数据质量规则前移"></a>工程实践：把数据质量规则前移</h2><p>很多企业的数据质量检查仍然发生在报表阶段。</p>
+<p>AI时代，这种方式已经不够了。</p>
+<p>建议将质量校验前移到数据进入语义层之前。</p>
+<p>例如：</p>
+<p>Hive数据进入DWS层之前完成完整性检查。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">    <span class="keyword">COUNT</span>(*) <span class="keyword">AS</span> null_customer_cnt</span><br><span class="line"><span class="keyword">FROM</span> dwd_order_detail</span><br><span class="line"><span class="keyword">WHERE</span> customer_id <span class="keyword">IS</span> <span class="literal">NULL</span>;</span><br></pre></td></tr></table></figure>
+
+<p>对于关键业务指标，可以建立自动质量规则。</p>
+<p>例如：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">rule_name:</span> <span class="string">sales_amount_check</span></span><br><span class="line"></span><br><span class="line"><span class="attr">metric:</span> <span class="string">sales_amount</span></span><br><span class="line"></span><br><span class="line"><span class="attr">check:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">not_null</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&gt;=0</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">compare_last_7_days</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">compare_last_year_same_day</span></span><br><span class="line"></span><br><span class="line"><span class="attr">severity:</span> <span class="string">HIGH</span></span><br></pre></td></tr></table></figure>
+
+<p>只有通过质量校验的数据，才能进入Semantic Layer，最终被Agent消费。</p>
+<p>这比让Agent去”猜测”数据是否正确更加可靠。</p>
+<hr>
+<h2 id="工具参考"><a href="#工具参考" class="headerlink" title="工具参考"></a>工具参考</h2><p>不同企业可以根据自身规模选择不同的数据质量体系。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>代表工具</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>开源质量平台</td>
+<td>Great Expectations、Soda Core</td>
+<td>数据质量规则管理</td>
+</tr>
+<tr>
+<td>元数据平台</td>
+<td>Apache Atlas、DataHub</td>
+<td>元数据与血缘分析</td>
+</tr>
+<tr>
+<td>数据转换</td>
+<td>dbt</td>
+<td>建模与测试一体化</td>
+</tr>
+<tr>
+<td>语义层</td>
+<td>Cube、dbt Semantic Layer</td>
+<td>指标统一管理</td>
+</tr>
+<tr>
+<td>数仓平台</td>
+<td>Hive、ClickHouse、Apache Doris、Snowflake</td>
+<td>企业可信数据底座</td>
+</tr>
+</tbody></table>
+<p>工具不是目的。</p>
+<p>真正重要的是建立一套能够持续运行的数据质量体系。</p>
+<hr>
+<h2 id="架构师视角：未来的数据质量属于AI基础设施"><a href="#架构师视角：未来的数据质量属于AI基础设施" class="headerlink" title="架构师视角：未来的数据质量属于AI基础设施"></a>架构师视角：未来的数据质量属于AI基础设施</h2><p>过去，我们通常认为：</p>
+<p>数据质量属于数据治理。</p>
+<p>今天，我越来越倾向于另一种理解：</p>
+<p><strong>数据质量已经成为AI基础设施的一部分。</strong></p>
+<p>未来企业AI平台真正依赖的，并不是GPU数量，也不是模型参数，而是：</p>
+<p>可信数据。</p>
+<p>统一语义。</p>
+<p>高质量知识。</p>
+<p>模型可以持续升级。</p>
+<p>Agent可以不断演进。</p>
+<p>但是，如果企业没有建立可信的数据体系，那么所有AI能力最终都会受到限制。</p>
+<hr>
+<h1 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h1><p>过去二十年，数据质量更多是一项数据治理工作。</p>
+<p>今天，它正在成为企业AI建设过程中最重要的基础能力之一。</p>
+<p>AI不会自动提高数据质量。</p>
+<p>它只会更加快速地消费数据，更加广泛地传播数据，也更加依赖数据。</p>
+<p>因此，未来企业真正需要建设的，并不是一个”更聪明的大模型”，而是一套能够持续产生可信事实的数据体系。</p>
+<p>因为只有可信的数据，才能支撑可信的AI。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://itaoyuyin.com/2026/07/t-data-dev-paradigm-09/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -272,7 +551,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2026/07/ai-agent-engineering-01/" class="post-title-link" itemprop="url">从 ChatGPT 到 AI Agent：为什么软件开发进入新时代</a>
+            <a href="/2026/07/ai-agent-engineering-01/" class="post-title-link" itemprop="url">软件为什么需要 AI Agent？</a>
         </h2>
 
         <div class="post-meta">
@@ -283,7 +562,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2026-07-27 10:00:00 / 修改时间：15:13:26" itemprop="dateCreated datePublished" datetime="2026-07-27T10:00:00+08:00">2026-07-27</time>
+              <time title="创建时间：2026-07-27 10:00:00 / 修改时间：16:31:07" itemprop="dateCreated datePublished" datetime="2026-07-27T10:00:00+08:00">2026-07-27</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -306,334 +585,218 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="第1篇｜从-ChatGPT-到-AI-Agent：为什么软件开发进入新时代"><a href="#第1篇｜从-ChatGPT-到-AI-Agent：为什么软件开发进入新时代" class="headerlink" title="第1篇｜从 ChatGPT 到 AI Agent：为什么软件开发进入新时代"></a>第1篇｜从 ChatGPT 到 AI Agent：为什么软件开发进入新时代</h1><blockquote>
-<p><strong>AI Agent Engineering 系列（一）</strong></p>
-<p><strong>副标题：为什么 AI Agent 不只是 ChatGPT，而是一场新的软件工程革命</strong></p>
+          <h1 id="Chapter-1-软件为什么需要-AI-Agent？"><a href="#Chapter-1-软件为什么需要-AI-Agent？" class="headerlink" title="Chapter 1 软件为什么需要 AI Agent？"></a>Chapter 1 软件为什么需要 AI Agent？</h1><blockquote>
+<p><strong>Part I Foundations</strong></p>
+<p><strong>核心问题：为什么 AI Agent 会出现？</strong></p>
+<p><strong>本章结论：AI Agent 的出现，并不是因为大模型足够强，而是因为传统软件越来越难以应对开放性任务。</strong></p>
 </blockquote>
 <hr>
-<blockquote>
-<p><strong>适合读者</strong></p>
+<h1 id="Learning-Objectives"><a href="#Learning-Objectives" class="headerlink" title="Learning Objectives"></a>Learning Objectives</h1><p>完成本章后，应能够理解：</p>
 <ul>
-<li>Java / Python 工程师</li>
-<li>软件架构师</li>
-<li>AI 应用开发者</li>
-<li>数据工程师</li>
-<li>希望转型 AI Agent 工程师的开发人员</li>
+<li>软件为什么需要新的执行范式</li>
+<li>AI Agent 解决的核心问题是什么</li>
+<li>为什么 LLM 是 Agent 的基础，但 LLM 不等于 Agent</li>
+<li>Agent 在软件工程中的定位</li>
 </ul>
+<blockquote>
+<p>本章只讨论 <strong>Agent 出现的原因</strong>，不讨论 Agent 的定义、组成和实现。这些内容将在后续章节展开。</p>
 </blockquote>
 <hr>
-<h2 id="一、前言：软件开发，又一次站在了拐点"><a href="#一、前言：软件开发，又一次站在了拐点" class="headerlink" title="一、前言：软件开发，又一次站在了拐点"></a>一、前言：软件开发，又一次站在了拐点</h2><p>过去二十年，软件开发经历了几次重要的范式演进。</p>
-<p>2005 年，我们讨论的是 <strong>MVC</strong>。</p>
-<p>2012 年，我们讨论的是 <strong>REST API</strong>。</p>
-<p>2016 年，我们讨论的是 <strong>微服务</strong>。</p>
-<p>2020 年，我们讨论的是 <strong>云原生（Cloud Native）</strong>。</p>
-<p>而今天，几乎所有技术大会、开源社区、互联网大厂和创业公司，都在讨论同一个词：</p>
-<blockquote>
-<p><strong>AI Agent。</strong></p>
-</blockquote>
-<p>很多开发者认为：</p>
-<blockquote>
-<p>“Agent 不就是把 ChatGPT 接个 API 吗？”</p>
-</blockquote>
-<p>也有人认为：</p>
-<blockquote>
-<p>“Agent 就是 Dify、Coze、LangGraph 这些开发平台。”</p>
-</blockquote>
-<p>甚至还有人觉得：</p>
-<blockquote>
-<p>“Agent 就是把几个 Prompt 串起来。”</p>
-</blockquote>
-<p>这些理解都不能算错，但都只停留在<strong>工具层</strong>。</p>
-<p>如果把 AI Agent 看成一个聊天机器人，那么你看到的是树叶；如果把 AI Agent 放到软件发展的历史中，你会发现，它更像是一次新的软件开发范式。</p>
-<p><strong>这篇文章，我们不讨论任何框架，不写任何 Prompt，也不会调用任何 OpenAI API。</strong></p>
-<p>我们只回答一个问题：</p>
-<blockquote>
-<p><strong>为什么越来越多的人认为，软件开发正在进入 Agent 时代？</strong></p>
-</blockquote>
-<hr>
-<h1 id="二、每一次软件革命，本质都是”抽象层”的升级"><a href="#二、每一次软件革命，本质都是”抽象层”的升级" class="headerlink" title="二、每一次软件革命，本质都是”抽象层”的升级"></a>二、每一次软件革命，本质都是”抽象层”的升级</h1><p>软件工程的发展，本质上是在不断提高抽象层级。</p>
-<p>让开发者越来越少关注底层细节，而越来越关注业务目标。</p>
-<p>例如最早写程序时，我们需要自己管理：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">CPU</span><br><span class="line"></span><br><span class="line">内存</span><br><span class="line"></span><br><span class="line">寄存器</span><br><span class="line"></span><br><span class="line">文件</span><br><span class="line"></span><br><span class="line">网络</span><br></pre></td></tr></table></figure>
-
-<p>后来出现了高级语言。</p>
-<p>程序员开始写：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(order.isPaid())&#123;</span><br><span class="line">    shipment.create();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>而不用关心汇编指令。</p>
-<p>后来出现 MVC。</p>
-<p>开发者开始关心：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Model</span><br><span class="line"></span><br><span class="line">View</span><br><span class="line"></span><br><span class="line">Controller</span><br></pre></td></tr></table></figure>
-
-<p>而不用再关心页面刷新。</p>
-<p>后来出现 ORM。</p>
-<p>SQL 变成：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">userRepository.findById(id)</span><br></pre></td></tr></table></figure>
-
-<p>后来出现 Kubernetes。</p>
-<p>部署变成：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">replicas:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
-
-<p>而不是自己管理服务器。</p>
-<p>每一次革命，都意味着：</p>
-<blockquote>
-<p><strong>程序员需要写的代码越来越少，而表达的业务意图越来越多。</strong></p>
-</blockquote>
-<hr>
-<h1 id="三、过去的软件，本质上是在描述”过程”"><a href="#三、过去的软件，本质上是在描述”过程”" class="headerlink" title="三、过去的软件，本质上是在描述”过程”"></a>三、过去的软件，本质上是在描述”过程”</h1><p>传统软件有一个共同特点。</p>
-<p>程序员必须提前告诉计算机：</p>
-<blockquote>
-<p><strong>每一步应该怎么做。</strong></p>
-</blockquote>
+<h1 id="1-1-软件的发展，本质是在降低复杂度"><a href="#1-1-软件的发展，本质是在降低复杂度" class="headerlink" title="1.1 软件的发展，本质是在降低复杂度"></a>1.1 软件的发展，本质是在降低复杂度</h1><p>软件工程的发展历史，本质上是一部持续控制复杂度的历史。</p>
+<p>每一次重要的技术演进，都源于上一代开发模式无法继续支撑软件规模的增长。</p>
 <p>例如：</p>
-<p>用户下单。</p>
-<p>程序：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">创建订单</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">检查库存</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">扣减库存</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">支付</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">生成物流</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">发送短信</span><br></pre></td></tr></table></figure>
-
-<p>整个流程都是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Input</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">Code</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">Output</span><br></pre></td></tr></table></figure>
-
-<p>程序本身就是流程。</p>
-<p>如果业务变了。</p>
-<p>程序必须修改。</p>
-<p>例如：</p>
-<p>增加优惠券。</p>
-<p>增加积分。</p>
-<p>增加满减。</p>
-<p>全部需要重新写代码。</p>
-<p>因为：</p>
-<p><strong>传统软件真正执行的是程序员写好的逻辑。</strong></p>
-<hr>
-<h1 id="四、AI-Agent，本质上是在描述”目标”"><a href="#四、AI-Agent，本质上是在描述”目标”" class="headerlink" title="四、AI Agent，本质上是在描述”目标”"></a>四、AI Agent，本质上是在描述”目标”</h1><p>Agent 最大的变化是什么？</p>
-<p>它不是描述过程。</p>
-<p>而是描述：</p>
-<blockquote>
-<p><strong>目标（Goal）。</strong></p>
-</blockquote>
-<p>例如：</p>
-<p>传统程序：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">create_report()</span><br><span class="line"></span><br><span class="line">calculate()</span><br><span class="line"></span><br><span class="line">draw_chart()</span><br><span class="line"></span><br><span class="line">send_email()</span><br></pre></td></tr></table></figure>
-
-<p>而 Agent：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">请分析过去三个月销售下降原因，</span><br><span class="line">生成报告，</span><br><span class="line">并发送给销售总监。</span><br></pre></td></tr></table></figure>
-
-<p>这里没有告诉模型：</p>
-<p>第一步做什么。</p>
-<p>第二步做什么。</p>
-<p>Agent 自己决定。</p>
-<p>例如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">理解任务</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">拆解任务</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">查询数据库</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">调用Python分析</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">生成图表</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">写报告</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">发送邮件</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">结束</span><br></pre></td></tr></table></figure>
-
-<p>注意：</p>
-<p>这里的流程。</p>
-<p>不是程序员写出来的。</p>
-<p>而是：</p>
-<blockquote>
-<p><strong>Agent 在运行过程中动态决定。</strong></p>
-</blockquote>
-<p>这是软件工程第一次：</p>
-<p>让程序自己决定执行路径。</p>
-<hr>
-<h1 id="五、真正改变软件的，不是聊天，而是”决策能力”"><a href="#五、真正改变软件的，不是聊天，而是”决策能力”" class="headerlink" title="五、真正改变软件的，不是聊天，而是”决策能力”"></a>五、真正改变软件的，不是聊天，而是”决策能力”</h1><p>很多人把 ChatGPT 理解成：</p>
-<blockquote>
-<p>一个更聪明的搜索引擎。</p>
-</blockquote>
-<p>实际上。</p>
-<p>ChatGPT 最大价值不是回答问题。</p>
-<p>而是：</p>
-<p><strong>Reasoning（推理）。</strong></p>
-<p>推理意味着：</p>
-<p>模型可以：</p>
-<p>理解目标。</p>
-<p>分析问题。</p>
-<p>制定计划。</p>
-<p>不断修正。</p>
-<p>直到完成目标。</p>
-<p>于是：</p>
-<p>软件开始拥有：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Planning</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">Reasoning</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">Action</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">Observation</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">Reflection</span><br></pre></td></tr></table></figure>
-
-<p>而不是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">if</span><br><span class="line"></span><br><span class="line">else</span><br><span class="line"></span><br><span class="line">switch</span><br><span class="line"></span><br><span class="line">for</span><br></pre></td></tr></table></figure>
-
-<p>这意味着：</p>
-<p>软件第一次拥有了：</p>
-<blockquote>
-<p><strong>自主决策能力。</strong></p>
-</blockquote>
-<p>当然，这里的”自主”不是无限制的智能，而是在开发者设定的目标、工具和约束范围内，自主规划完成任务的步骤。</p>
-<hr>
-<h1 id="六、AI-Agent-与-ChatGPT，到底有什么区别？"><a href="#六、AI-Agent-与-ChatGPT，到底有什么区别？" class="headerlink" title="六、AI Agent 与 ChatGPT，到底有什么区别？"></a>六、AI Agent 与 ChatGPT，到底有什么区别？</h1><p>很多人第一次接触 Agent 时，会觉得：</p>
-<blockquote>
-<p>“不就是 ChatGPT 加几个 API 吗？”</p>
-</blockquote>
-<p>实际上，两者关注的问题完全不同。</p>
 <table>
 <thead>
 <tr>
-<th>ChatGPT</th>
-<th>AI Agent</th>
+<th>阶段</th>
+<th>主要问题</th>
+<th>解决方案</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>回答问题</td>
-<td>完成任务</td>
+<td>汇编语言</td>
+<td>开发效率低</td>
+<td>高级语言</td>
 </tr>
 <tr>
-<td>一次对话</td>
-<td>持续执行</td>
+<td>结构化编程</td>
+<td>流程混乱</td>
+<td>函数、模块</td>
 </tr>
 <tr>
-<td>生成文本</td>
-<td>调用工具</td>
+<td>面向对象</td>
+<td>系统复杂</td>
+<td>封装、继承、多态</td>
 </tr>
 <tr>
-<td>被动回答</td>
-<td>主动规划</td>
+<td>MVC</td>
+<td>职责耦合</td>
+<td>分层设计</td>
 </tr>
 <tr>
-<td>不保存业务状态</td>
-<td>管理任务状态</td>
+<td>微服务</td>
+<td>单体过大</td>
+<td>服务拆分</td>
 </tr>
 <tr>
-<td>不操作外部系统</td>
-<td>操作真实世界</td>
+<td>云原生</td>
+<td>运维复杂</td>
+<td>自动化资源管理</td>
 </tr>
 </tbody></table>
-<p>举一个简单例子。</p>
-<p>用户说：</p>
+<p>这些技术的发展方向并不相同，但目标一致：</p>
 <blockquote>
-<p>帮我订一张下周去上海的高铁票。</p>
-</blockquote>
-<p>ChatGPT 会回答：</p>
-<blockquote>
-<p>你可以登录 12306。</p>
-</blockquote>
-<p>Agent 则可能：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">打开12306</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">查询班次</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">比较价格</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">选择靠窗座位</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">提交订单</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">支付</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">通知用户</span><br></pre></td></tr></table></figure>
-
-<p>两者最大的区别不是模型。</p>
-<p>而是：</p>
-<blockquote>
-<p><strong>Agent 能够行动（Act）。</strong></p>
+<p><strong>降低软件系统的复杂度，提高软件的可维护性。</strong></p>
 </blockquote>
 <hr>
-<h1 id="七、一个真正的-Agent，到底由什么组成？"><a href="#七、一个真正的-Agent，到底由什么组成？" class="headerlink" title="七、一个真正的 Agent，到底由什么组成？"></a>七、一个真正的 Agent，到底由什么组成？</h1><p>很多框架喜欢画这样一张图：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">User</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">LLM</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">Answer</span><br></pre></td></tr></table></figure>
-
-<p>这只是聊天机器人。</p>
-<p>真正的 Agent 至少包含下面几个核心模块。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">                    User</span><br><span class="line">                      │</span><br><span class="line">                      ▼</span><br><span class="line">               Goal Manager</span><br><span class="line">                      │</span><br><span class="line">        ┌─────────────┴─────────────┐</span><br><span class="line">        ▼                           ▼</span><br><span class="line">   Planner                    Memory</span><br><span class="line">        │                           │</span><br><span class="line">        ▼                           ▼</span><br><span class="line"> Tool Router  ─────────────► Knowledge</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">  External Tools</span><br><span class="line">(API、数据库、浏览器、代码、Shell)</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line"> Observation</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line"> Reflection</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">   Final Result</span><br></pre></td></tr></table></figure>
-
-<p>各模块职责如下：</p>
-<table>
-<thead>
-<tr>
-<th>模块</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Goal Manager</td>
-<td>理解用户真正目标</td>
-</tr>
-<tr>
-<td>Planner</td>
-<td>将目标拆解为可执行任务</td>
-</tr>
-<tr>
-<td>Memory</td>
-<td>保存上下文和历史信息</td>
-</tr>
-<tr>
-<td>Tool Router</td>
-<td>选择合适工具完成任务</td>
-</tr>
-<tr>
-<td>Observation</td>
-<td>获取工具执行结果</td>
-</tr>
-<tr>
-<td>Reflection</td>
-<td>判断是否继续执行或调整方案</td>
-</tr>
-</tbody></table>
-<p>这也是后续整个系列会逐步展开的内容。</p>
-<hr>
-<h1 id="八、为什么说-Agent-是一种新的软件架构？"><a href="#八、为什么说-Agent-是一种新的软件架构？" class="headerlink" title="八、为什么说 Agent 是一种新的软件架构？"></a>八、为什么说 Agent 是一种新的软件架构？</h1><p>如果回顾过去二十年的软件架构，我们会发现一个规律：</p>
-<p>MVC 解决了界面组织问题。</p>
-<p>SOA 解决了系统集成问题。</p>
-<p>微服务解决了系统拆分问题。</p>
-<p>云原生解决了资源管理问题。</p>
-<p>而 Agent 解决的是：</p>
+<h1 id="1-2-传统软件擅长解决确定性问题"><a href="#1-2-传统软件擅长解决确定性问题" class="headerlink" title="1.2 传统软件擅长解决确定性问题"></a>1.2 传统软件擅长解决确定性问题</h1><p>过去几十年的软件开发，建立在一个共同假设之上：</p>
 <blockquote>
-<p><strong>复杂任务如何动态完成。</strong></p>
+<p><strong>开发者能够提前定义系统的执行过程。</strong></p>
 </blockquote>
-<p>传统程序：</p>
-<p>程序员设计流程。</p>
-<p>Agent：</p>
-<p>程序员设计目标。</p>
-<p>流程由 AI 决定。</p>
-<p>因此：</p>
-<p>未来的软件，很可能不再是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">功能（Function）</span><br></pre></td></tr></table></figure>
+<p>例如，一个订单系统可以抽象为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">创建订单</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">校验库存</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">计算价格</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">生成支付单</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">支付完成</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">发货</span><br></pre></td></tr></table></figure>
 
-<p>而是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">能力（Capability）</span><br></pre></td></tr></table></figure>
-
-<p>以前：</p>
-<p>软件告诉用户：</p>
-<blockquote>
-<p>我有这些菜单。</p>
-</blockquote>
-<p>以后：</p>
-<p>软件问用户：</p>
-<blockquote>
-<p>你的目标是什么？</p>
-</blockquote>
-<p>这是一个非常大的变化。</p>
-<hr>
-<h1 id="九、企业场景案例：为什么企业开始关注-Agent？"><a href="#九、企业场景案例：为什么企业开始关注-Agent？" class="headerlink" title="九、企业场景案例：为什么企业开始关注 Agent？"></a>九、企业场景案例：为什么企业开始关注 Agent？</h1><p>以一个制造企业的数据分析部门为例。</p>
-<p>过去，如果销售总监想了解某产品销量下降原因，通常需要经历以下流程：</p>
-<ol>
-<li>提出分析需求。</li>
-<li>数据工程师编写 SQL。</li>
-<li>BI 工程师制作报表。</li>
-<li>分析师撰写分析报告。</li>
-<li>将结果发送给业务部门。</li>
-</ol>
-<p>整个过程可能需要数小时甚至数天。</p>
-<p>如果构建了企业级 Data Agent，流程会变成：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">销售总监：</span><br><span class="line">分析最近三个月华东区域产品A销量下降原因，</span><br><span class="line">重点关注库存、渠道和价格变化。</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">Agent 拆解任务</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">查询数据仓库</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">调用统计分析工具</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">生成图表</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">关联库存和价格数据</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">输出分析结论</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">形成 PPT 或 Word 报告</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">发送给销售总监</span><br></pre></td></tr></table></figure>
-
-<p>需要强调的是，<strong>这里的 Agent 并不是替代数据仓库、BI 或分析师</strong>。它更像是一个能够协调模型、工具、知识和业务流程的智能执行层，让原本需要多个角色串联完成的工作，以更高效率完成。</p>
-<p>这也是为什么越来越多的企业开始关注 Agent，但真正落地时，核心挑战往往不是模型，而是<strong>数据、工具、权限、流程和工程能力</strong>。</p>
-<hr>
-<h1 id="十、工程师需要重新学习什么？"><a href="#十、工程师需要重新学习什么？" class="headerlink" title="十、工程师需要重新学习什么？"></a>十、工程师需要重新学习什么？</h1><p>如果未来的软件越来越多采用 Agent 架构，那么软件工程师需要补充的能力也会发生变化。</p>
-<p>除了传统的软件设计能力之外，还需要理解：</p>
+<p>开发者需要提前确定：</p>
 <ul>
-<li>LLM 如何理解和推理任务。</li>
-<li>Prompt 如何像代码一样设计和维护。</li>
-<li>Tool 如何安全、稳定地接入业务系统。</li>
-<li>Memory 如何管理上下文和长期知识。</li>
-<li>Workflow 如何组织复杂任务。</li>
-<li>多 Agent 如何协同完成大型业务流程。</li>
-<li>如何评估 Agent 的效果、成本和可靠性。</li>
+<li>执行顺序</li>
+<li>判断条件</li>
+<li>异常处理</li>
+<li>数据结构</li>
+<li>调用关系</li>
 </ul>
-<p>这并不意味着传统软件工程知识会失效。相反，分布式系统、架构设计、数据库、缓存、消息队列、权限、安全、监控等能力，在 Agent 系统中仍然是基础，只是需要与 AI 能力结合。</p>
+<p>因此，传统软件本质上是：</p>
+<blockquote>
+<p><strong>将业务规则转换为可执行程序。</strong></p>
+</blockquote>
+<p>这种方式对于规则明确、边界清晰的业务非常有效，也是现代软件工程成功的基础。</p>
 <hr>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>很多人认为 AI Agent 的出现，只是多了一种新的 AI 开发框架。</p>
-<p>但站在软件发展的历史中，它更像是一次新的软件工程范式演进。</p>
-<p>过去的软件：</p>
+<h1 id="1-3-软件开始面对越来越多的开放性任务"><a href="#1-3-软件开始面对越来越多的开放性任务" class="headerlink" title="1.3 软件开始面对越来越多的开放性任务"></a>1.3 软件开始面对越来越多的开放性任务</h1><p>近年来，软件处理的问题发生了变化。</p>
+<p>越来越多的新需求无法完全用固定规则描述。</p>
+<p>例如：</p>
+<ul>
+<li>总结一份几十页的技术文档。</li>
+<li>根据企业制度回答员工问题。</li>
+<li>分析销售下降原因。</li>
+<li>阅读合同并提取风险点。</li>
+<li>根据用户需求生成 SQL。</li>
+<li>自动编写代码并修复错误。</li>
+</ul>
+<p>这些任务有几个共同特点：</p>
+<p><strong>第一，它们没有固定算法。</strong></p>
+<p>例如”分析销量下降原因”，并不存在唯一正确的执行流程。</p>
+<p>不同的数据、不同的行业、不同的分析角度，都可能得到不同的分析路径。</p>
+<p><strong>第二，输入具有开放性。</strong></p>
+<p>用户不再按照固定格式输入参数，而是直接表达自己的目标。</p>
+<p>例如：</p>
 <blockquote>
-<p><strong>程序员决定执行过程。</strong></p>
+<p>分析最近一个季度利润下降的原因，并提出改进建议。</p>
 </blockquote>
-<p>未来越来越多的软件：</p>
+<p>对于软件来说，这不是一个函数调用，而是一段自然语言。</p>
+<p><strong>第三，完成任务需要动态决策。</strong></p>
+<p>系统需要根据中间结果决定下一步动作。</p>
+<p>例如：</p>
+<p>查询数据库后发现库存异常，接下来可能需要继续分析供应链数据，而不是按照预设流程继续执行。</p>
+<p>传统的软件设计方法，并不擅长处理这类问题。</p>
+<hr>
+<h1 id="1-4-LLM-提供了一种新的能力"><a href="#1-4-LLM-提供了一种新的能力" class="headerlink" title="1.4 LLM 提供了一种新的能力"></a>1.4 LLM 提供了一种新的能力</h1><p>大语言模型（Large Language Model，LLM）的价值，并不仅仅在于生成自然语言。</p>
+<p>对于软件工程而言，更重要的是另一种能力：</p>
 <blockquote>
-<p><strong>程序员定义目标，Agent 动态规划执行路径。</strong></p>
+<p><strong>理解自然语言，并将其转换为可执行的推理过程。</strong></p>
 </blockquote>
-<p>这并不意味着传统软件会消失，而是意味着未来的软件将更多地由<strong>确定性程序</strong>与<strong>基于大模型的智能决策</strong>共同组成。</p>
-<p><strong>这，就是 AI Agent 与传统软件最大的不同，也是我们开启《AI Agent Engineering》系列的起点。</strong></p>
+<p>例如：</p>
+<p>输入：</p>
+<blockquote>
+<p>统计最近半年销售额下降最快的产品。</p>
+</blockquote>
+<p>模型能够理解：</p>
+<ul>
+<li>“销售额”对应企业中的哪个业务概念；</li>
+<li>“最近半年”表示时间范围；</li>
+<li>“下降最快”意味着需要计算变化率；</li>
+<li>最终目标是完成分析，而不是简单返回数据。</li>
+</ul>
+<p>这意味着，软件第一次拥有了理解自然语言目标的能力。</p>
+<p>需要强调的是：</p>
+<p>LLM 并没有改变软件工程的基本原则。</p>
+<p>它只是增加了一种新的能力：</p>
+<blockquote>
+<p><strong>让软件能够处理过去难以形式化描述的问题。</strong></p>
+</blockquote>
+<hr>
+<h1 id="1-5-仅有-LLM，并不能完成复杂任务"><a href="#1-5-仅有-LLM，并不能完成复杂任务" class="headerlink" title="1.5 仅有 LLM，并不能完成复杂任务"></a>1.5 仅有 LLM，并不能完成复杂任务</h1><p>如果把 LLM 看作一个文本生成器，那么它能够完成的是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">输入</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">模型</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">输出</span><br></pre></td></tr></table></figure>
+
+<p>这种模式适合回答问题、生成内容、翻译文本等一次性交互。</p>
+<p>但是，真实的软件任务通常包含更多步骤。</p>
+<p>例如：</p>
+<blockquote>
+<p>生成一份销售分析报告。</p>
+</blockquote>
+<p>完成这个任务可能需要：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">理解目标</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">查询数据库</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">执行统计分析</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">生成图表</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">整理结论</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">输出报告</span><br></pre></td></tr></table></figure>
+
+<p>这里不仅需要模型生成文本，还需要：</p>
+<ul>
+<li>获取外部数据；</li>
+<li>调用工具；</li>
+<li>管理上下文；</li>
+<li>根据执行结果调整后续动作。</li>
+</ul>
+<p>这些能力已经超出了 LLM 本身的职责。</p>
+<p>因此，仅有模型，并不足以构建真正的软件系统。</p>
+<hr>
+<h1 id="1-6-AI-Agent-的出现"><a href="#1-6-AI-Agent-的出现" class="headerlink" title="1.6 AI Agent 的出现"></a>1.6 AI Agent 的出现</h1><p>AI Agent 正是在这样的背景下出现。</p>
+<p>它并不是一种新的模型。</p>
+<p>也不是某一种开发框架。</p>
+<p>Agent 更接近一种新的软件组织方式。</p>
+<p>它负责：</p>
+<ul>
+<li>接收目标；</li>
+<li>组织执行过程；</li>
+<li>协调模型与工具；</li>
+<li>管理任务状态；</li>
+<li>在任务完成前持续运行。</li>
+</ul>
+<p>LLM 在其中承担的是推理能力，而 Agent 负责组织整个执行过程。</p>
+<p>因此，两者的关系可以表示为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">            User Goal</span><br><span class="line">                 │</span><br><span class="line">                 ▼</span><br><span class="line">            AI Agent</span><br><span class="line"> ┌──────────┼──────────┐</span><br><span class="line"> ▼          ▼          ▼</span><br><span class="line">LLM       Tools      Memory</span><br><span class="line">                 │</span><br><span class="line">                 ▼</span><br><span class="line">             External Systems</span><br></pre></td></tr></table></figure>
+
+<p>Agent 并没有替代软件系统，而是在软件系统之上增加了一层新的执行能力。</p>
+<hr>
+<h1 id="1-7-Agent-解决的不是智能问题，而是工程问题"><a href="#1-7-Agent-解决的不是智能问题，而是工程问题" class="headerlink" title="1.7 Agent 解决的不是智能问题，而是工程问题"></a>1.7 Agent 解决的不是智能问题，而是工程问题</h1><p>从工程角度看，Agent 的价值并不是”更聪明”。</p>
+<p>真正改变的是软件组织方式。</p>
+<p>过去，开发者需要提前定义完整流程。</p>
+<p>未来，开发者更多定义的是：</p>
+<ul>
+<li>系统目标；</li>
+<li>可调用能力；</li>
+<li>执行约束；</li>
+<li>安全边界；</li>
+<li>评价标准。</li>
+</ul>
+<p>至于具体执行路径，则由 Agent 在运行过程中动态决定。</p>
+<p>因此，Agent 引入的软件工程问题包括：</p>
+<ul>
+<li>如何描述目标？</li>
+<li>如何规划任务？</li>
+<li>如何管理上下文？</li>
+<li>如何调用工具？</li>
+<li>如何评估执行结果？</li>
+<li>如何保证安全与可靠？</li>
+</ul>
+<p>这些问题构成了后续整本书讨论的核心内容。</p>
+<hr>
+<h1 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h1><p>传统软件建立在<strong>确定性流程</strong>之上，适用于规则明确、执行路径可预定义的业务。</p>
+<p>随着软件越来越多地处理开放性任务，固定流程逐渐成为限制因素。大语言模型提供了自然语言理解和推理能力，但模型本身无法完成完整的软件任务。</p>
+<p><strong>AI Agent 的出现，是为了将 LLM、工具、数据和业务系统组织成一个能够持续完成目标的软件执行体系。</strong></p>
+<p>因此，本书讨论的重点不是如何调用模型，而是如何设计、实现和运行一个企业级 AI Agent 系统。</p>
+<hr>
+<h1 id="References"><a href="#References" class="headerlink" title="References"></a>References</h1><p>References</p>
+<p>[1] OpenAI.<br>A Practical Guide to Building Agents.<br><a target="_blank" rel="noopener" href="https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/">https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/</a></p>
+<p>[2] Anthropic.<br>Building Effective AI Agents.<br><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/building-effective-agents">https://www.anthropic.com/engineering/building-effective-agents</a></p>
+<p>[3] Google.<br>Agent Development Kit Documentation.<br><a target="_blank" rel="noopener" href="https://google.github.io/adk-docs/">https://google.github.io/adk-docs/</a></p>
+<p>[4] Russell, Stuart; Norvig, Peter.<br>Artificial Intelligence: A Modern Approach.<br>Pearson.</p>
+<p>[5] Vaswani et al.<br>Attention Is All You Need.<br><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1706.03762">https://arxiv.org/abs/1706.03762</a></p>
 
       
     </div>
@@ -1351,226 +1514,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://itaoyuyin.com/2026/06/t-data-dev-paradigm-01/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="陶玉印">
-      <meta itemprop="description" content="陶玉印,15年数据治理与数据仓库实践者，涵盖数据治理、数据质量、数据仓库、数据平台、主数据管理、制造业数字化等领域。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="陶玉印的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2026/06/t-data-dev-paradigm-01/" class="post-title-link" itemprop="url">从报表到Agent：企业数据开发范式的二十年演进</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2026-06-06 10:00:00" itemprop="dateCreated datePublished" datetime="2026-06-06T10:00:00+08:00">2026-06-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2026-06-08 08:54:05" itemprop="dateModified" datetime="2026-06-08T08:54:05+08:00">2026-06-08</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>过去二十年，企业数据领域发生过很多变化。</p>
-<p>数据库、数据仓库、大数据平台、数据治理、BI、数据中台、湖仓一体、ChatBI、Data Agent……</p>
-<p>新概念层出不穷，新技术不断涌现。</p>
-<p>但如果站在更高的视角来看，这二十年的变化，本质上是在解决同一个问题：</p>
-<blockquote>
-<p><strong>如何更快、更准确地获得答案。</strong></p>
-</blockquote>
-<p>今天很多人在讨论AI、Agent、ChatBI。</p>
-<p>有人说数据仓库会消失，有人说BI将被取代，还有人认为未来根本不需要数据开发工程师。</p>
-<p>这些观点听起来很有冲击力，但如果不了解企业数据体系的发展历程，就很容易得出片面的结论。</p>
-<p>因此，在讨论AI会带来什么变化之前，我们不妨先回顾一下企业数据开发范式过去二十年的演进历程。</p>
-<h2 id="第一阶段：数据库时代——直接从业务系统取数"><a href="#第一阶段：数据库时代——直接从业务系统取数" class="headerlink" title="第一阶段：数据库时代——直接从业务系统取数"></a>第一阶段：数据库时代——直接从业务系统取数</h2><p>大约在2000年前后，大多数企业的信息化建设刚刚起步。</p>
-<p>企业中的核心系统主要是：</p>
-<ul>
-<li>ERP</li>
-<li>财务系统</li>
-<li>进销存系统</li>
-<li>人事系统</li>
-</ul>
-<p>那时的数据分析需求并不复杂。</p>
-<p>业务人员提出问题：</p>
-<p>“这个月销售额是多少？”</p>
-<p>技术人员登录数据库，写一条SQL。</p>
-<p>很快就能得到结果。</p>
-<p>那时的数据开发范式可以简单概括为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">业务系统 &#x3D; 数据源 &#x3D; 分析系统</span><br></pre></td></tr></table></figure>
-
-<p>所有分析工作直接基于业务数据库完成。</p>
-<p>这种模式在企业规模较小时运行良好。</p>
-<p>但随着企业发展，问题逐渐出现。</p>
-<p>例如：</p>
-<ul>
-<li>ERP关注交易处理</li>
-<li>财务系统关注账务处理</li>
-<li>CRM关注客户管理</li>
-</ul>
-<p>每个系统的数据标准不同。</p>
-<p>每个系统的数据口径不同。</p>
-<p>每个系统都只关注自身业务。</p>
-<p>当企业希望回答：</p>
-<p>“某客户的销售额、利润和回款情况如何？”</p>
-<p>就需要跨多个系统进行关联分析。</p>
-<p>此时，数据库时代开始暴露出局限性。</p>
-<p>企业需要一种新的数据组织方式。</p>
-<p>数据仓库由此诞生。</p>
-<h2 id="第二阶段：数据仓库时代——让数据形成统一语言"><a href="#第二阶段：数据仓库时代——让数据形成统一语言" class="headerlink" title="第二阶段：数据仓库时代——让数据形成统一语言"></a>第二阶段：数据仓库时代——让数据形成统一语言</h2><p>从2005年前后开始，越来越多企业开始建设数据仓库。</p>
-<p>数据仓库的核心思想并不复杂：</p>
-<p>把分散在各业务系统中的数据统一汇集起来。</p>
-<p>通过清洗、转换、整合。</p>
-<p>形成统一的数据资产。</p>
-<p>此时，企业数据架构开始演变为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">业务系统 → 数据集成 → 数据仓库 → 数据应用</span><br></pre></td></tr></table></figure>
-
-<p>对于很多企业而言，这是一次巨大的进步。</p>
-<p>数据仓库解决了几个关键问题：</p>
-<h3 id="第一，统一数据口径。"><a href="#第一，统一数据口径。" class="headerlink" title="第一，统一数据口径。"></a>第一，统一数据口径。</h3><p>同一个指标不再出现多个版本。</p>
-<h3 id="第二，沉淀历史数据。"><a href="#第二，沉淀历史数据。" class="headerlink" title="第二，沉淀历史数据。"></a>第二，沉淀历史数据。</h3><p>业务系统可能只保留当前状态。</p>
-<p>数据仓库可以保留完整历史轨迹。</p>
-<h3 id="第三，提高分析效率。"><a href="#第三，提高分析效率。" class="headerlink" title="第三，提高分析效率。"></a>第三，提高分析效率。</h3><p>复杂分析不再直接访问业务数据库。</p>
-<h3 id="第四，实现跨系统分析。"><a href="#第四，实现跨系统分析。" class="headerlink" title="第四，实现跨系统分析。"></a>第四，实现跨系统分析。</h3><p>企业第一次能够从全局视角看待经营数据。</p>
-<p>也正是在这一时期，维度建模、星型模型、事实表、维度表等概念开始广泛普及。</p>
-<p>很多企业的数据团队开始形成：</p>
-<ul>
-<li>ETL开发工程师</li>
-<li>数据仓库工程师</li>
-<li>BI工程师</li>
-</ul>
-<p>等专业岗位。</p>
-<p>数据开发开始进入工程化时代。</p>
-<h2 id="第三阶段：BI时代——从数据到决策"><a href="#第三阶段：BI时代——从数据到决策" class="headerlink" title="第三阶段：BI时代——从数据到决策"></a>第三阶段：BI时代——从数据到决策</h2><p>如果说数据仓库解决的是“数据从哪里来”的问题。</p>
-<p>那么BI解决的是：</p>
-<blockquote>
-<p>“数据如何被使用”的问题。</p>
-</blockquote>
-<p>从2010年以后，越来越多企业开始建设：</p>
-<ul>
-<li>经营驾驶舱</li>
-<li>管理看板</li>
-<li>KPI体系</li>
-<li>数据分析平台</li>
-</ul>
-<p>FineBI、Tableau、Power BI等产品快速发展。</p>
-<p>企业开始尝试用数据驱动决策。</p>
-<p>此时的数据开发范式变成：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">业务系统</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">数据仓库</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">OLAP</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">BI</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">决策分析</span><br></pre></td></tr></table></figure>
-
-<p>这也是很多企业今天仍然在采用的主流架构。</p>
-<p>这一模式极大提升了企业的数据使用效率。</p>
-<p>但与此同时，一个新的问题开始出现。</p>
-<p>所有答案都需要提前准备。</p>
-<ul>
-<li>业务提出需求。</li>
-<li>数据团队开发ETL。</li>
-<li>开发指标。</li>
-<li>开发报表。</li>
-<li>测试上线。</li>
-</ul>
-<p>最终才能看到结果。</p>
-<p>很多企业都经历过这样的场景：</p>
-<p>业务部门提出一个分析需求。</p>
-<p>排期两周。</p>
-<p>开发一周。</p>
-<p>测试三天。</p>
-<p>上线一天。</p>
-<p>最后花费近一个月时间。</p>
-<p>而业务真正关心的问题，可能只需要一个答案。</p>
-<p>问题并不在于技术。</p>
-<p>而在于这种模式本质上属于：</p>
-<p><strong>先开发答案，再提出问题。</strong></p>
-<p>这也为下一轮变革埋下伏笔。</p>
-<h2 id="第四阶段：AI时代——从开发答案到生成答案"><a href="#第四阶段：AI时代——从开发答案到生成答案" class="headerlink" title="第四阶段：AI时代——从开发答案到生成答案"></a>第四阶段：AI时代——从开发答案到生成答案</h2><p>2022年以后，大模型开始快速发展。</p>
-<p>ChatGPT、Claude、DeepSeek等产品让自然语言交互成为现实。</p>
-<p>与此同时，企业数据领域也开始出现新的变化。</p>
-<p>ChatBI开始流行。</p>
-<p>智能问数开始普及。</p>
-<p>企业知识库快速增长。</p>
-<p>Data Agent不断涌现。</p>
-<p>过去的数据分析过程通常是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">提出问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">提交需求</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发模型</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">开发报表</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">获得答案</span><br></pre></td></tr></table></figure>
-
-<p>而今天越来越多企业开始尝试：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">提出问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">Agent理解问题</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">自动检索数据</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">自动生成SQL</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">自动分析</span><br><span class="line"></span><br><span class="line">↓</span><br><span class="line"></span><br><span class="line">获得答案</span><br></pre></td></tr></table></figure>
-
-<p>两种模式最大的区别在于：</p>
-<p>过去是开发答案。</p>
-<p>现在是生成答案。</p>
-<p>这是企业数据开发范式过去二十年来最重要的一次变化。</p>
-<h2 id="AI会取代数据仓库吗？"><a href="#AI会取代数据仓库吗？" class="headerlink" title="AI会取代数据仓库吗？"></a>AI会取代数据仓库吗？</h2><p>这是最近两年被问得最多的问题之一。</p>
-<p>我的观点很明确：</p>
-<p>不会，至少在可预见的未来不会。</p>
-<p>因为AI解决的是答案生成问题，而数据仓库解决的是数据组织问题。两者并不是替代关系。</p>
-<p>Agent越强，越依赖高质量的数据基础。</p>
-<p>ChatBI越智能，越需要统一的数据口径。</p>
-<p>企业知识库越丰富，越需要高质量的数据治理。</p>
-<p>未来消失的不会是数据仓库，而是数据仓库作为最终消费终端的角色。</p>
-<p>它会逐渐退居幕后，成为Agent的数据底座。</p>
-<h2 id="下一代企业数据体系正在形成"><a href="#下一代企业数据体系正在形成" class="headerlink" title="下一代企业数据体系正在形成"></a>下一代企业数据体系正在形成</h2><p>回顾过去二十年。</p>
-<p>企业数据体系经历了四次重要演进：</p>
-<h3 id="数据库时代："><a href="#数据库时代：" class="headerlink" title="数据库时代："></a>数据库时代：</h3><p>解决数据存储问题。</p>
-<h3 id="数据仓库时代："><a href="#数据仓库时代：" class="headerlink" title="数据仓库时代："></a>数据仓库时代：</h3><p>解决数据整合问题。</p>
-<h3 id="BI时代："><a href="#BI时代：" class="headerlink" title="BI时代："></a>BI时代：</h3><p>解决数据消费问题。</p>
-<h3 id="AI时代："><a href="#AI时代：" class="headerlink" title="AI时代："></a>AI时代：</h3><p>解决答案生成问题。</p>
-<p>每一次演进，都不是推翻上一代体系。</p>
-<p>而是在上一代基础上的能力扩展。</p>
-<p>因此，我并不认为AI会终结企业数据体系。</p>
-<p>AI正在推动企业数据体系进入一个新的阶段。</p>
-<p>未来五年。</p>
-<p>真正值得关注的问题不是：</p>
-<p>“数据仓库会不会消失？”</p>
-<p>而是：</p>
-<blockquote>
-<p>“企业如何构建能够支撑Agent的数据体系？”</p>
-</blockquote>
-<p>这也是本专栏接下来希望持续探讨的话题。</p>
-<p>下一篇，我们将从一个最基础的问题开始：</p>
-<p><strong>为什么企业需要数据仓库？</strong></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1640,7 +1583,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-count">23</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

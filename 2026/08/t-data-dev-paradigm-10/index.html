@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta name="google-site-verification" content="fppm4jYJLq7zYsAnjUA03HIBZ-2FJrmsLCNs6ufcumc">
+  <meta name="msvalidate.01" content="7f6cc3cefb714c53bdee98be40f0dcea">
+  <meta name="baidu-site-verification" content="codeva-YKfvlNtzSH">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"itaoyuyin.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="AI时代，数据质量为什么比模型更重要？——重新理解企业数据质量体系如果让我预测未来五年企业AI建设过程中最容易被低估的一项能力，我会毫不犹豫地选择： 数据质量（Data Quality）。 过去两年，大模型的发展几乎吸引了所有人的关注。 企业讨论最多的是模型参数、上下文长度、推理能力、Agent、RAG以及MCP，很少有人愿意花时间讨论数据质量。 原因并不难理解。 模型能够直接展示能力。 而数据质">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI时代，数据质量为什么比模型更重要？">
+<meta property="og:url" content="https://itaoyuyin.com/2026/08/t-data-dev-paradigm-10/index.html">
+<meta property="og:site_name" content="陶玉印的博客">
+<meta property="og:description" content="AI时代，数据质量为什么比模型更重要？——重新理解企业数据质量体系如果让我预测未来五年企业AI建设过程中最容易被低估的一项能力，我会毫不犹豫地选择： 数据质量（Data Quality）。 过去两年，大模型的发展几乎吸引了所有人的关注。 企业讨论最多的是模型参数、上下文长度、推理能力、Agent、RAG以及MCP，很少有人愿意花时间讨论数据质量。 原因并不难理解。 模型能够直接展示能力。 而数据质">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-03T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-03T00:54:33.994Z">
+<meta property="article:author" content="陶玉印">
+<meta property="article:tag" content="数据治理，数据管理， 数据平台， 数据仓库， 陶玉印">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://itaoyuyin.com/2026/08/t-data-dev-paradigm-10/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>AI时代，数据质量为什么比模型更重要？ | 陶玉印的博客</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-176856665-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-176856665-1');
+      }
+    </script>
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?6a50c5c210cb69091bddcc5ebd9bfffe";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">陶玉印的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">企业数据治理、数据仓库、数据质量、AI应用实践与研究</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-awesome">
+
+    <a href="/awesome/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>Awesome</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+
+
+  <meta name="google-site-verification" content="fppm4jYJLq7zYsAnjUA03HIBZ-2FJrmsLCNs6ufcumc" /> 
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://itaoyuyin.com/2026/08/t-data-dev-paradigm-10/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="陶玉印">
+      <meta itemprop="description" content="陶玉印,15年数据治理与数据仓库实践者，涵盖数据治理、数据质量、数据仓库、数据平台、主数据管理、制造业数字化等领域。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="陶玉印的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          AI时代，数据质量为什么比模型更重要？
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-08-03 10:00:00 / 修改时间：08:54:33" itemprop="dateCreated datePublished" datetime="2026-08-03T10:00:00+08:00">2026-08-03</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="AI时代，数据质量为什么比模型更重要？"><a href="#AI时代，数据质量为什么比模型更重要？" class="headerlink" title="AI时代，数据质量为什么比模型更重要？"></a>AI时代，数据质量为什么比模型更重要？</h1><h2 id="——重新理解企业数据质量体系"><a href="#——重新理解企业数据质量体系" class="headerlink" title="——重新理解企业数据质量体系"></a>——重新理解企业数据质量体系</h2><p>如果让我预测未来五年企业AI建设过程中最容易被低估的一项能力，我会毫不犹豫地选择：</p>
+<p><strong>数据质量（Data Quality）。</strong></p>
+<p>过去两年，大模型的发展几乎吸引了所有人的关注。</p>
+<p>企业讨论最多的是模型参数、上下文长度、推理能力、Agent、RAG以及MCP，很少有人愿意花时间讨论数据质量。</p>
+<p>原因并不难理解。</p>
+<p>模型能够直接展示能力。</p>
+<p>而数据质量是一项长期投入、短期难以看到效果的基础工程。</p>
+<p>然而，在越来越多企业AI项目落地之后，一个现象开始变得十分明显：</p>
+<p><strong>决定AI项目最终效果的，往往不是模型，而是数据。</strong></p>
+<p>过去，企业更多关注模型是否足够聪明。</p>
+<p>今天，越来越多企业开始意识到：</p>
+<p>如果输入的数据本身存在问题，那么再优秀的大模型，也只能得到一个更加”聪明”的错误答案。</p>
+<hr>
+<h1 id="为什么BI时代的数据质量没有今天重要？"><a href="#为什么BI时代的数据质量没有今天重要？" class="headerlink" title="为什么BI时代的数据质量没有今天重要？"></a>为什么BI时代的数据质量没有今天重要？</h1><p>很多人会问：</p>
+<p>企业过去二十年一直在建设数据仓库，也一直在强调数据质量，为什么今天突然变得更加重要？</p>
+<p>原因在于：</p>
+<p><strong>数据消费方式发生了变化。</strong></p>
+<p>在BI时代，数据主要服务于报表和经营分析。</p>
+<p>一张报表如果存在错误，通常会经历这样的过程：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">业务发现异常。</span><br><span class="line">    ↓</span><br><span class="line">数据团队排查。</span><br><span class="line">    ↓</span><br><span class="line">修正ETL。</span><br><span class="line">    ↓</span><br><span class="line">重新发布报表。</span><br></pre></td></tr></table></figure>
+
+<p>虽然影响业务，但由于报表具有固定使用对象、固定展示方式以及固定更新周期，错误通常能够较快暴露。</p>
+<p>换句话说。</p>
+<p>BI时代的数据质量问题，大多数属于”局部影响”。</p>
+<p>而AI时代完全不同。</p>
+<p>ChatBI、企业知识库、Data Agent以及智能运营平台都开始直接消费企业数据。</p>
+<p>错误的数据一旦进入AI系统，就可能通过推理、总结、自动分析等方式快速传播到多个业务场景。</p>
+<p>因此。</p>
+<p>AI时代的数据质量已经不仅仅影响报表。</p>
+<p>它开始直接影响企业决策。</p>
+<hr>
+<h1 id="AI为什么会放大数据质量问题？"><a href="#AI为什么会放大数据质量问题？" class="headerlink" title="AI为什么会放大数据质量问题？"></a>AI为什么会放大数据质量问题？</h1><p>很多人认为，大模型最大的风险是”幻觉（Hallucination）”。</p>
+<p>事实上，对于企业来说，真正值得担心的往往不是模型幻觉，而是<strong>可信事实的缺失</strong>。</p>
+<p>例如，一家企业拥有两个利润指标。</p>
+<p>ERP采用订单利润。</p>
+<p>财务采用开票利润。</p>
+<p>BI平台采用财务口径。</p>
+<p>而Agent在生成SQL时，却引用了ERP事实表。</p>
+<p>整个分析过程没有任何语法错误。</p>
+<p>SQL能够正常执行。</p>
+<p>模型推理过程也完全正确。</p>
+<p>最终得到的答案却依然错误。</p>
+<p>为什么？</p>
+<p>因为：</p>
+<p><strong>AI能够保证推理逻辑正确，却无法保证事实基础正确。</strong></p>
+<p>这也是AI项目与互联网聊天机器人最大的区别。</p>
+<p>企业AI真正回答的是经营问题。</p>
+<p>经营问题没有”大概正确”。</p>
+<p>只有”正确”与”错误”。</p>
+<hr>
+<h1 id="一个真实案例：为什么Agent总是回答错利润？"><a href="#一个真实案例：为什么Agent总是回答错利润？" class="headerlink" title="一个真实案例：为什么Agent总是回答错利润？"></a>一个真实案例：为什么Agent总是回答错利润？</h1><p>下面分享一个典型案例。</p>
+<p>某制造企业建设了智能经营分析平台，希望管理层能够直接向Agent提问。</p>
+<p>例如：</p>
+<blockquote>
+<p>“分析最近半年利润下降最快的产品。”</p>
+</blockquote>
+<p>Agent能够自动完成以下流程：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">理解问题</span><br><span class="line">    ↓</span><br><span class="line">定位利润指标</span><br><span class="line">    ↓</span><br><span class="line">查询元数据</span><br><span class="line">    ↓</span><br><span class="line">生成SQL</span><br><span class="line">    ↓</span><br><span class="line">执行分析</span><br><span class="line">    ↓</span><br><span class="line">生成报告</span><br></pre></td></tr></table></figure>
+
+<p>整个流程运行正常。</p>
+<p>但业务部门始终认为结果不可信。</p>
+<p>最终定位问题发现：</p>
+<p>数据仓库同时维护了两个利润口径：</p>
+<ul>
+<li>毛利（Gross Profit）</li>
+<li>财务利润（Net Profit）</li>
+</ul>
+<p>而元数据没有明确标注默认口径。</p>
+<p>Agent自动选择了第一个指标。</p>
+<p>SQL完全正确。</p>
+<p>模型也没有幻觉。</p>
+<p>真正的问题来自：</p>
+<p><strong>指标语义缺失。</strong></p>
+<p>这个案例说明：</p>
+<p>未来影响AI项目的，不一定是算法。</p>
+<p>而是企业知识表达是否完整。</p>
+<hr>
+<h1 id="数据质量已经不仅仅是”准确”"><a href="#数据质量已经不仅仅是”准确”" class="headerlink" title="数据质量已经不仅仅是”准确”"></a>数据质量已经不仅仅是”准确”</h1><p>很多企业一提到数据质量，首先想到的是：</p>
+<ul>
+<li>空值</li>
+<li>重复值</li>
+<li>错误值</li>
+<li>格式错误</li>
+</ul>
+<p>这些当然属于数据质量。</p>
+<p>但如果站在AI时代重新理解数据质量，会发现它已经远远超出了传统定义。</p>
+<p>作为《数据质量管理实践手册》中文版联合译者，在翻译这本书的过程中，有一句定义让我印象非常深刻：</p>
+<blockquote>
+<p><strong>数据质量并不是数据本身的属性，而是数据满足使用目的的程度。</strong></p>
+</blockquote>
+<p>AI时代，这句话值得重新理解。</p>
+<p>过去，一份数据能够生成报表，我们认为质量合格。</p>
+<p>今天，一份数据不仅需要生成报表，还需要支撑：</p>
+<ul>
+<li>ChatBI</li>
+<li>Agent</li>
+<li>自动决策</li>
+<li>企业知识库</li>
+<li>智能运营</li>
+</ul>
+<p>数据的”使用目的”已经发生了变化。</p>
+<p>因此，数据质量的评价标准也必须随之升级。</p>
+<hr>
+<h1 id="AI时代的数据质量体系应该关注什么？"><a href="#AI时代的数据质量体系应该关注什么？" class="headerlink" title="AI时代的数据质量体系应该关注什么？"></a>AI时代的数据质量体系应该关注什么？</h1><p>我建议企业至少关注六类能力。</p>
+<table>
+<thead>
+<tr>
+<th>能力</th>
+<th>BI时代</th>
+<th>AI时代</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>准确性（Accuracy）</td>
+<td>★★★★★</td>
+<td>★★★★★</td>
+</tr>
+<tr>
+<td>完整性（Completeness）</td>
+<td>★★★★</td>
+<td>★★★★★</td>
+</tr>
+<tr>
+<td>一致性（Consistency）</td>
+<td>★★★★</td>
+<td>★★★★★</td>
+</tr>
+<tr>
+<td>时效性（Timeliness）</td>
+<td>★★★</td>
+<td>★★★★★</td>
+</tr>
+<tr>
+<td>语义一致性（Semantic Consistency）</td>
+<td>★★</td>
+<td>★★★★★</td>
+</tr>
+<tr>
+<td>可解释性（Explainability）</td>
+<td>★</td>
+<td>★★★★★</td>
+</tr>
+</tbody></table>
+<p>前三项是传统数据质量管理长期关注的问题。</p>
+<p>后三项，则越来越成为AI时代的新要求。</p>
+<p>例如：</p>
+<p>Agent为什么选择这个指标？</p>
+<p>SQL为什么这样生成？</p>
+<p>为什么推荐这个客户？</p>
+<p>未来，每一个AI回答，都需要能够追溯。</p>
+<hr>
+<h2 id="工程实践：把数据质量规则前移"><a href="#工程实践：把数据质量规则前移" class="headerlink" title="工程实践：把数据质量规则前移"></a>工程实践：把数据质量规则前移</h2><p>很多企业的数据质量检查仍然发生在报表阶段。</p>
+<p>AI时代，这种方式已经不够了。</p>
+<p>建议将质量校验前移到数据进入语义层之前。</p>
+<p>例如：</p>
+<p>Hive数据进入DWS层之前完成完整性检查。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">    <span class="keyword">COUNT</span>(*) <span class="keyword">AS</span> null_customer_cnt</span><br><span class="line"><span class="keyword">FROM</span> dwd_order_detail</span><br><span class="line"><span class="keyword">WHERE</span> customer_id <span class="keyword">IS</span> <span class="literal">NULL</span>;</span><br></pre></td></tr></table></figure>
+
+<p>对于关键业务指标，可以建立自动质量规则。</p>
+<p>例如：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">rule_name:</span> <span class="string">sales_amount_check</span></span><br><span class="line"></span><br><span class="line"><span class="attr">metric:</span> <span class="string">sales_amount</span></span><br><span class="line"></span><br><span class="line"><span class="attr">check:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">not_null</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&gt;=0</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">compare_last_7_days</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">compare_last_year_same_day</span></span><br><span class="line"></span><br><span class="line"><span class="attr">severity:</span> <span class="string">HIGH</span></span><br></pre></td></tr></table></figure>
+
+<p>只有通过质量校验的数据，才能进入Semantic Layer，最终被Agent消费。</p>
+<p>这比让Agent去”猜测”数据是否正确更加可靠。</p>
+<hr>
+<h2 id="工具参考"><a href="#工具参考" class="headerlink" title="工具参考"></a>工具参考</h2><p>不同企业可以根据自身规模选择不同的数据质量体系。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>代表工具</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>开源质量平台</td>
+<td>Great Expectations、Soda Core</td>
+<td>数据质量规则管理</td>
+</tr>
+<tr>
+<td>元数据平台</td>
+<td>Apache Atlas、DataHub</td>
+<td>元数据与血缘分析</td>
+</tr>
+<tr>
+<td>数据转换</td>
+<td>dbt</td>
+<td>建模与测试一体化</td>
+</tr>
+<tr>
+<td>语义层</td>
+<td>Cube、dbt Semantic Layer</td>
+<td>指标统一管理</td>
+</tr>
+<tr>
+<td>数仓平台</td>
+<td>Hive、ClickHouse、Apache Doris、Snowflake</td>
+<td>企业可信数据底座</td>
+</tr>
+</tbody></table>
+<p>工具不是目的。</p>
+<p>真正重要的是建立一套能够持续运行的数据质量体系。</p>
+<hr>
+<h2 id="架构师视角：未来的数据质量属于AI基础设施"><a href="#架构师视角：未来的数据质量属于AI基础设施" class="headerlink" title="架构师视角：未来的数据质量属于AI基础设施"></a>架构师视角：未来的数据质量属于AI基础设施</h2><p>过去，我们通常认为：</p>
+<p>数据质量属于数据治理。</p>
+<p>今天，我越来越倾向于另一种理解：</p>
+<p><strong>数据质量已经成为AI基础设施的一部分。</strong></p>
+<p>未来企业AI平台真正依赖的，并不是GPU数量，也不是模型参数，而是：</p>
+<p>可信数据。</p>
+<p>统一语义。</p>
+<p>高质量知识。</p>
+<p>模型可以持续升级。</p>
+<p>Agent可以不断演进。</p>
+<p>但是，如果企业没有建立可信的数据体系，那么所有AI能力最终都会受到限制。</p>
+<hr>
+<h1 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h1><p>过去二十年，数据质量更多是一项数据治理工作。</p>
+<p>今天，它正在成为企业AI建设过程中最重要的基础能力之一。</p>
+<p>AI不会自动提高数据质量。</p>
+<p>它只会更加快速地消费数据，更加广泛地传播数据，也更加依赖数据。</p>
+<p>因此，未来企业真正需要建设的，并不是一个”更聪明的大模型”，而是一套能够持续产生可信事实的数据体系。</p>
+<p>因为只有可信的数据，才能支撑可信的AI。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2026/07/t-data-dev-paradigm-09/" rel="prev" title="为什么AI项目百分之90的问题，其实都是数据问题？">
+      <i class="fa fa-chevron-left"></i> 为什么AI项目百分之90的问题，其实都是数据问题？
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#AI%E6%97%B6%E4%BB%A3%EF%BC%8C%E6%95%B0%E6%8D%AE%E8%B4%A8%E9%87%8F%E4%B8%BA%E4%BB%80%E4%B9%88%E6%AF%94%E6%A8%A1%E5%9E%8B%E6%9B%B4%E9%87%8D%E8%A6%81%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">AI时代，数据质量为什么比模型更重要？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%80%94%E2%80%94%E9%87%8D%E6%96%B0%E7%90%86%E8%A7%A3%E4%BC%81%E4%B8%9A%E6%95%B0%E6%8D%AE%E8%B4%A8%E9%87%8F%E4%BD%93%E7%B3%BB"><span class="nav-number">1.1.</span> <span class="nav-text">——重新理解企业数据质量体系</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88BI%E6%97%B6%E4%BB%A3%E7%9A%84%E6%95%B0%E6%8D%AE%E8%B4%A8%E9%87%8F%E6%B2%A1%E6%9C%89%E4%BB%8A%E5%A4%A9%E9%87%8D%E8%A6%81%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">为什么BI时代的数据质量没有今天重要？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AI%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E6%94%BE%E5%A4%A7%E6%95%B0%E6%8D%AE%E8%B4%A8%E9%87%8F%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">AI为什么会放大数据质量问题？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E7%9C%9F%E5%AE%9E%E6%A1%88%E4%BE%8B%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88Agent%E6%80%BB%E6%98%AF%E5%9B%9E%E7%AD%94%E9%94%99%E5%88%A9%E6%B6%A6%EF%BC%9F"><span class="nav-number">4.</span> <span class="nav-text">一个真实案例：为什么Agent总是回答错利润？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%B4%A8%E9%87%8F%E5%B7%B2%E7%BB%8F%E4%B8%8D%E4%BB%85%E4%BB%85%E6%98%AF%E2%80%9D%E5%87%86%E7%A1%AE%E2%80%9D"><span class="nav-number">5.</span> <span class="nav-text">数据质量已经不仅仅是”准确”</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AI%E6%97%B6%E4%BB%A3%E7%9A%84%E6%95%B0%E6%8D%AE%E8%B4%A8%E9%87%8F%E4%BD%93%E7%B3%BB%E5%BA%94%E8%AF%A5%E5%85%B3%E6%B3%A8%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">AI时代的数据质量体系应该关注什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5%EF%BC%9A%E6%8A%8A%E6%95%B0%E6%8D%AE%E8%B4%A8%E9%87%8F%E8%A7%84%E5%88%99%E5%89%8D%E7%A7%BB"><span class="nav-number">6.1.</span> <span class="nav-text">工程实践：把数据质量规则前移</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7%E5%8F%82%E8%80%83"><span class="nav-number">6.2.</span> <span class="nav-text">工具参考</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E5%B8%88%E8%A7%86%E8%A7%92%EF%BC%9A%E6%9C%AA%E6%9D%A5%E7%9A%84%E6%95%B0%E6%8D%AE%E8%B4%A8%E9%87%8F%E5%B1%9E%E4%BA%8EAI%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD"><span class="nav-number">6.3.</span> <span class="nav-text">架构师视角：未来的数据质量属于AI基础设施</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="nav-number">7.</span> <span class="nav-text">写在最后</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">陶玉印</p>
+  <div class="site-description" itemprop="description">陶玉印,15年数据治理与数据仓库实践者，涵盖数据治理、数据质量、数据仓库、数据平台、主数据管理、制造业数字化等领域。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:taoyuyin@gmail.com" title="E-Mail → mailto:taoyuyin@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/taoyuyin" title="Zhi → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;taoyuyin" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>Zhi</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">陶玉印</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
