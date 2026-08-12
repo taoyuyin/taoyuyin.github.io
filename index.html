@@ -186,6 +186,438 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://itaoyuyin.com/2026/08/data-ai-native-01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="陶玉印">
+      <meta itemprop="description" content="陶玉印,15年数据治理与数据仓库实践者，涵盖数据治理、数据质量、数据仓库、数据平台、主数据管理、制造业数字化等领域。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="陶玉印的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2026/08/data-ai-native-01/" class="post-title-link" itemprop="url">AI-Native 数据处理范式</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-08-12 10:00:00 / 修改时间：14:37:55" itemprop="dateCreated datePublished" datetime="2026-08-12T10:00:00+08:00">2026-08-12</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>“<strong>AI-Native 数据处理（AI-Native Data Processing）</strong>”，它还不像 ETL、ELT、Lakehouse 那样已经形成严格统一的行业定义，但主流数据平台正在明显向同一个方向收敛：Databricks 已把自然语言生成数据转换、Agent 访问结构化/非结构化数据纳入数据工程体系；Snowflake 把 LLM 能力直接变成可在数据处理流程中调用的 AI Functions；Microsoft Fabric 则开始让 Data Agent 根据问题判断相关数据源和执行方式。(<a target="_blank" rel="noopener" href="https://docs.databricks.com/aws/en/data-engineering/?utm_source=chatgpt.com" title="Data engineering with Databricks">Databricks Documentation</a>)</p>
+<p>因此，我更倾向于把它定义成一种<strong>新的数据计算与执行范式</strong>。</p>
+<hr>
+<h1 id="一、先给出一个定义"><a href="#一、先给出一个定义" class="headerlink" title="一、先给出一个定义"></a>一、先给出一个定义</h1><p>建议把 <strong>AI-Native 数据处理</strong>定义为：</p>
+<blockquote>
+<p><strong>以业务意图和数据语义作为任务入口，以模型推理作为动态决策机制，将确定性数据计算、概率性模型计算和外部工具调用组合成可规划、可执行、可观察、可评价、可反馈的数据处理过程。</strong></p>
+</blockquote>
+<p>如果把这个定义再压缩，可以写成：</p>
+<p><strong>AI-Native Data Processing = Intent + Semantics + Reasoning + Data Compute + Tool Use + Evaluation Loop</strong></p>
+<p>这里最关键的不是“用了 AI”，而是：</p>
+<blockquote>
+<p><strong>数据处理逻辑不再完全由开发人员事先编码确定，而允许系统在约束范围内，根据数据、语义、上下文和执行结果动态决定“怎么处理”。</strong></p>
+</blockquote>
+<p>这是范式发生变化的地方。</p>
+<hr>
+<h1 id="二、传统数据处理的核心是：预先定义-How"><a href="#二、传统数据处理的核心是：预先定义-How" class="headerlink" title="二、传统数据处理的核心是：预先定义 How"></a>二、传统数据处理的核心是：预先定义 How</h1><p>传统 ETL 本质上是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Requirement</span><br><span class="line">    ↓</span><br><span class="line">Developer</span><br><span class="line">    ↓</span><br><span class="line">SQL / Python / Spark</span><br><span class="line">    ↓</span><br><span class="line">DAG</span><br><span class="line">    ↓</span><br><span class="line">Execute</span><br><span class="line">    ↓</span><br><span class="line">Data</span><br></pre></td></tr></table></figure>
+
+<p>例如业务提出：</p>
+<blockquote>
+<p>计算每个经销商最近 12 个月销售额、回款额和应收余额。</p>
+</blockquote>
+<p>数据工程师需要提前知道：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">销售额在哪张表</span><br><span class="line">回款在哪张表</span><br><span class="line">客户主数据在哪</span><br><span class="line">日期字段是什么</span><br><span class="line">客户ID是什么</span><br><span class="line">如何Join</span><br><span class="line">如何过滤</span><br><span class="line">如何聚合</span><br></pre></td></tr></table></figure>
+
+<p>然后写成：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> ...</span><br><span class="line"><span class="keyword">FROM</span> sales s</span><br><span class="line"><span class="keyword">LEFT</span> <span class="keyword">JOIN</span> customer c ...</span><br><span class="line"><span class="keyword">LEFT</span> <span class="keyword">JOIN</span> payment p ...</span><br><span class="line"><span class="keyword">WHERE</span> ...</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> ...</span><br></pre></td></tr></table></figure>
+
+<p>所以传统数据处理的核心关系是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Requirement → Code → Execution → Data</span><br></pre></td></tr></table></figure>
+
+<p>真正控制数据处理过程的是 <strong>Code</strong>。</p>
+<hr>
+<h1 id="三、AI-Native-的核心变化：从-How-转向-What"><a href="#三、AI-Native-的核心变化：从-How-转向-What" class="headerlink" title="三、AI-Native 的核心变化：从 How 转向 What"></a>三、AI-Native 的核心变化：从 How 转向 What</h1><p>AI-Native 更像：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Intent</span><br><span class="line">  ↓</span><br><span class="line">Semantic Understanding</span><br><span class="line">  ↓</span><br><span class="line">Planning</span><br><span class="line">  ↓</span><br><span class="line">Tool / Model / Data Operator Selection</span><br><span class="line">  ↓</span><br><span class="line">Execution</span><br><span class="line">  ↓</span><br><span class="line">Evaluation</span><br><span class="line">  ↓</span><br><span class="line">Re-plan / Fix / Continue</span><br></pre></td></tr></table></figure>
+
+<p>用户给出的可能只是：</p>
+<blockquote>
+<p>分析最近半年华东地区销售下降的原因。</p>
+</blockquote>
+<p>系统首先要理解：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">“最近半年”是什么时间范围？</span><br><span class="line">“华东”对应哪个组织维度？</span><br><span class="line">“销售”使用收入、开票还是出库口径？</span><br><span class="line">“下降”与同比还是环比比较？</span><br><span class="line">“原因”可能涉及哪些维度？</span><br></pre></td></tr></table></figure>
+
+<p>然后根据 Semantic Layer / Metadata 找到：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sales_amount</span><br><span class="line">customer</span><br><span class="line">product</span><br><span class="line">sales_region</span><br><span class="line">channel</span><br><span class="line">price</span><br><span class="line">quantity</span><br><span class="line">promotion</span><br><span class="line">inventory</span><br></pre></td></tr></table></figure>
+
+<p>再规划：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Step 1 计算销售趋势</span><br><span class="line">Step 2 判断下降时间点</span><br><span class="line">Step 3 分解 Price / Volume</span><br><span class="line">Step 4 按产品分析</span><br><span class="line">Step 5 按客户分析</span><br><span class="line">Step 6 按地区分析</span><br><span class="line">Step 7 检查库存、停售、新品等异常</span><br></pre></td></tr></table></figure>
+
+<p>然后才生成 SQL、调用 Spark、执行查询、分析结果。</p>
+<p>如果发现：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">销售额下降主要来自A产品</span><br></pre></td></tr></table></figure>
+
+<p>系统还可以继续：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">检查A产品销量</span><br><span class="line">检查A产品价格</span><br><span class="line">检查库存</span><br><span class="line">检查客户覆盖率</span><br><span class="line">检查停售记录</span><br></pre></td></tr></table></figure>
+
+<p>因此：</p>
+<h3 id="ETL"><a href="#ETL" class="headerlink" title="ETL"></a>ETL</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Human defines What</span><br><span class="line">Human defines How</span><br><span class="line">Computer executes</span><br></pre></td></tr></table></figure>
+
+<h3 id="AI-Native"><a href="#AI-Native" class="headerlink" title="AI-Native"></a>AI-Native</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Human defines What + Constraints</span><br><span class="line"></span><br><span class="line">AI determines How</span><br><span class="line"></span><br><span class="line">Computer + Model execute</span><br></pre></td></tr></table></figure>
+
+<p>这是第一层本质变化。</p>
+<hr>
+<h1 id="四、但这里有一个非常重要的边界：AI-Native-≠-AI-assisted"><a href="#四、但这里有一个非常重要的边界：AI-Native-≠-AI-assisted" class="headerlink" title="四、但这里有一个非常重要的边界：AI-Native ≠ AI-assisted"></a>四、但这里有一个非常重要的边界：AI-Native ≠ AI-assisted</h1><p>现在很多产品容易把这几个概念混起来。</p>
+<p>我建议至少分成四层。</p>
+<table>
+<thead>
+<tr>
+<th>范式</th>
+<th>AI角色</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Traditional Data Processing</td>
+<td>无</td>
+<td>手写 SQL / Spark</td>
+</tr>
+<tr>
+<td>AI-Assisted Data Engineering</td>
+<td>辅助开发</td>
+<td>Copilot 写 SQL</td>
+</tr>
+<tr>
+<td>AI-Enhanced Data Processing</td>
+<td>AI成为算子</td>
+<td>LLM 分类、摘要、抽取</td>
+</tr>
+<tr>
+<td><strong>AI-Native Data Processing</strong></td>
+<td><strong>AI参与运行时规划与决策</strong></td>
+<td>Agent自主规划数据处理流程</td>
+</tr>
+</tbody></table>
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">“帮我写一段 Hive SQL”</span><br></pre></td></tr></table></figure>
+
+<p>这是：</p>
+<p><strong>AI-Assisted</strong></p>
+<p>并不是 AI-Native。</p>
+<p>下面这种：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> ai_classify(customer_comment)</span><br><span class="line"><span class="keyword">FROM</span> customer_feedback;</span><br></pre></td></tr></table></figure>
+
+<p>已经进一步了。</p>
+<p>这属于：</p>
+<p><strong>AI-Enhanced Data Processing</strong></p>
+<p>Snowflake Cortex AI Functions 已经体现这种趋势，允许直接在数据处理流程中对文本、图像等非结构化数据执行模型推理。(<a target="_blank" rel="noopener" href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql?utm_source=chatgpt.com" title="Snowflake Cortex AI Functions (including LLM functions)">Snowflake Documentation</a>)</p>
+<p>但真正的 AI-Native 应该是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">目标：</span><br><span class="line">识别导致客户流失的主要因素</span><br><span class="line"></span><br><span class="line">Agent:</span><br><span class="line">    ↓</span><br><span class="line">读取指标定义</span><br><span class="line">    ↓</span><br><span class="line">寻找相关数据</span><br><span class="line">    ↓</span><br><span class="line">检查数据质量</span><br><span class="line">    ↓</span><br><span class="line">决定分析方法</span><br><span class="line">    ↓</span><br><span class="line">生成 SQL</span><br><span class="line">    ↓</span><br><span class="line">执行</span><br><span class="line">    ↓</span><br><span class="line">判断结果</span><br><span class="line">    ↓</span><br><span class="line">发现需要客服文本</span><br><span class="line">    ↓</span><br><span class="line">调用 LLM 提取投诉原因</span><br><span class="line">    ↓</span><br><span class="line">关联结构化数据</span><br><span class="line">    ↓</span><br><span class="line">重新分析</span><br><span class="line">    ↓</span><br><span class="line">评价结果是否足够解释问题</span><br></pre></td></tr></table></figure>
+
+<p>此时 <strong>AI 已经进入数据处理的 Control Plane</strong>。</p>
+<p>这才是关键。</p>
+<hr>
+<h1 id="五、因此-AI-Native-真正改变的是“控制平面”"><a href="#五、因此-AI-Native-真正改变的是“控制平面”" class="headerlink" title="五、因此 AI-Native 真正改变的是“控制平面”"></a>五、因此 AI-Native 真正改变的是“控制平面”</h1><p>这是理解这个范式最重要的一点。</p>
+<p>传统数据平台可以抽象为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">       Control Plane</span><br><span class="line">            │</span><br><span class="line">   DAG / Scheduler / Code</span><br><span class="line">            │</span><br><span class="line">            ▼</span><br><span class="line">       Data Plane</span><br><span class="line"> ┌──────────┼──────────┐</span><br><span class="line">SQL       Spark       Python</span><br><span class="line"> │          │           │</span><br><span class="line"> └──────────┼───────────┘</span><br><span class="line">            ▼</span><br><span class="line">           Data</span><br></pre></td></tr></table></figure>
+
+<p>Airflow、Oozie、DataWorks、Dagster、Fabric Pipeline，本质上都主要属于控制层。</p>
+<p>DAG 是预先确定的：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">A → B → C → D</span><br></pre></td></tr></table></figure>
+
+<p>而 AI-Native：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">            Intent</span><br><span class="line">               │</span><br><span class="line">               ▼</span><br><span class="line">      Semantic / Context</span><br><span class="line">               │</span><br><span class="line">               ▼</span><br><span class="line">      ┌─────────────────┐</span><br><span class="line">      │ AI Control Plane│</span><br><span class="line">      │                 │</span><br><span class="line">      │ Reasoning       │</span><br><span class="line">      │ Planning        │</span><br><span class="line">      │ Tool Selection  │</span><br><span class="line">      │ Evaluation      │</span><br><span class="line">      │ Re-planning     │</span><br><span class="line">      └────────┬────────┘</span><br><span class="line">               │</span><br><span class="line">   ┌───────────┼───────────┐</span><br><span class="line">   ▼           ▼           ▼</span><br><span class="line">  SQL        Spark        LLM</span><br><span class="line">   │           │           │</span><br><span class="line">   ├───────────┼───────────┤</span><br><span class="line">   ▼           ▼           ▼</span><br><span class="line">Vector DB     API       Python</span><br><span class="line">   │           │           │</span><br><span class="line">   └───────────┼───────────┘</span><br><span class="line">               ▼</span><br><span class="line">              Data</span><br></pre></td></tr></table></figure>
+
+<p>所以从架构上讲：</p>
+<blockquote>
+<p><strong>AI-Native 最大的变化并不是多了一个 LLM Compute Engine，而是 Data Control Plane 从静态编排转向了“受约束的智能编排”。</strong></p>
+</blockquote>
+<p>最近关于 Agentic Cloud Data Engineering 的研究也开始把 Agent 放到这个位置：让 Agent 基于 pipeline telemetry、metadata 和 governance policy 做受约束的控制决策，而不是单纯生成代码。(<a target="_blank" rel="noopener" href="https://arxiv.org/html/2512.23737v1?utm_source=chatgpt.com" title="Governing Cloud Data Pipelines with Agentic AI">arXiv</a>)</p>
+<hr>
+<h1 id="六、第二个本质变化：Deterministic-Probabilistic-Computing"><a href="#六、第二个本质变化：Deterministic-Probabilistic-Computing" class="headerlink" title="六、第二个本质变化：Deterministic + Probabilistic Computing"></a>六、第二个本质变化：Deterministic + Probabilistic Computing</h1><p>传统数据处理的基本假设是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Input + Program → Deterministic Output</span><br></pre></td></tr></table></figure>
+
+<p>比如：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SUM(amount)</span><br></pre></td></tr></table></figure>
+
+<p>同样的数据：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">执行100次</span><br><span class="line">结果100次相同</span><br></pre></td></tr></table></figure>
+
+<p>但 AI 计算不同：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Text + Model + Prompt + Context</span><br><span class="line">             ↓</span><br><span class="line">          Result</span><br></pre></td></tr></table></figure>
+
+<p>它天然带有概率性质。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">客户投诉：</span><br><span class="line">“产品还可以，就是最近送货越来越慢。”</span><br></pre></td></tr></table></figure>
+
+<p>传统 SQL 很难处理。</p>
+<p>LLM 可以：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;product_quality&quot;</span>: <span class="string">&quot;positive&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;logistics&quot;</span>: <span class="string">&quot;negative&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;complaint_type&quot;</span>: <span class="string">&quot;delivery_delay&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>于是未来的数据处理算子会变成两类：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Data Operator</span><br><span class="line"></span><br><span class="line">├── Deterministic Operator</span><br><span class="line">│   ├── Filter</span><br><span class="line">│   ├── Join</span><br><span class="line">│   ├── Aggregate</span><br><span class="line">│   ├── Window</span><br><span class="line">│   └── Sort</span><br><span class="line">│</span><br><span class="line">└── AI Operator</span><br><span class="line">    ├── Extract</span><br><span class="line">    ├── Classify</span><br><span class="line">    ├── Summarize</span><br><span class="line">    ├── Embed</span><br><span class="line">    ├── Entity Resolution</span><br><span class="line">    ├── Semantic Match</span><br><span class="line">    └── Reason</span><br></pre></td></tr></table></figure>
+
+<p>Snowflake 把 AI Function 放进 SQL、Databricks 提供数据 enrichment 与结构化/非结构化 Agent 工具，本质上都是在让 <strong>Model Compute 成为 Data Compute 的一等公民</strong>。(<a target="_blank" rel="noopener" href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql?utm_source=chatgpt.com" title="Snowflake Cortex AI Functions (including LLM functions)">Snowflake Documentation</a>)</p>
+<p>这是第二个非常重要的范式变化。</p>
+<hr>
+<h1 id="七、第三个变化：Structured-Data-→-Multimodal-Data"><a href="#七、第三个变化：Structured-Data-→-Multimodal-Data" class="headerlink" title="七、第三个变化：Structured Data → Multimodal Data"></a>七、第三个变化：Structured Data → Multimodal Data</h1><p>过去数据工程天然偏爱：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Table</span><br><span class="line">Row</span><br><span class="line">Column</span><br><span class="line">Schema</span><br></pre></td></tr></table></figure>
+
+<p>所以传统数据仓库解决得最好的是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ERP</span><br><span class="line">CRM</span><br><span class="line">MES</span><br><span class="line">WMS</span><br><span class="line">SRM</span><br></pre></td></tr></table></figure>
+
+<p>这类结构化数据。</p>
+<p>但企业大量知识实际上存在于：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">PDF</span><br><span class="line">Word</span><br><span class="line">Excel</span><br><span class="line">邮件</span><br><span class="line">合同</span><br><span class="line">图片</span><br><span class="line">客服记录</span><br><span class="line">会议纪要</span><br><span class="line">产品说明书</span><br><span class="line">SOP</span><br><span class="line">日志</span><br><span class="line">音频</span><br><span class="line">视频</span><br></pre></td></tr></table></figure>
+
+<p>过去的处理通常是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Unstructured</span><br><span class="line">      ↓</span><br><span class="line">特殊ETL</span><br><span class="line">      ↓</span><br><span class="line">Structure</span><br><span class="line">      ↓</span><br><span class="line">Database</span><br></pre></td></tr></table></figure>
+
+<p>而 AI-Native 更接近：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">                Enterprise Data</span><br><span class="line"></span><br><span class="line">      ┌────────────┼────────────┐</span><br><span class="line">      ▼            ▼            ▼</span><br><span class="line">Structured    Semi-structured  Unstructured</span><br><span class="line">    │              │             │</span><br><span class="line">    SQL           JSON          LLM/VLM</span><br><span class="line">    │              │             │</span><br><span class="line">    └──────────────┼─────────────┘</span><br><span class="line">                   ▼</span><br><span class="line">             Semantic Layer</span><br></pre></td></tr></table></figure>
+
+<p>Databricks 当前已经明确区分 Agent 对 structured data 和 unstructured data 的访问机制，Snowflake Cortex 同样把文档、文本和图像处理纳入数据平台。(<a target="_blank" rel="noopener" href="https://docs.databricks.com/gcp/en/generative-ai/agent-framework/unstructured-retrieval-tools?utm_source=chatgpt.com" title="Connect agents to unstructured data">Databricks Documentation</a>)</p>
+<p>所以未来“数据”的边界本身都会扩大。</p>
+<hr>
+<h1 id="八、第四个变化：Schema-First-→-Semantic-First"><a href="#八、第四个变化：Schema-First-→-Semantic-First" class="headerlink" title="八、第四个变化：Schema First → Semantic First"></a>八、第四个变化：Schema First → Semantic First</h1><p>这是我认为企业落地 AI-Native 时比 LLM 更重要的一层。</p>
+<p>传统数据系统主要告诉计算机：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">table: dwd_sales_order</span><br><span class="line">column: amt</span><br><span class="line">type: decimal(18,2)</span><br></pre></td></tr></table></figure>
+
+<p>但 Agent 真正需要知道：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">amt 是什么？</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">销售额</span><br><span class="line">含税还是不含税？</span><br><span class="line">开票还是发货？</span><br><span class="line">人民币还是原币？</span><br><span class="line">订单取消是否计入？</span><br><span class="line">退货怎么计算？</span><br><span class="line">集团内部交易是否剔除？</span><br></pre></td></tr></table></figure>
+
+<p>所以未来 Metadata 必须从：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Technical Metadata</span><br></pre></td></tr></table></figure>
+
+<p>升级到：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Business Semantics</span><br></pre></td></tr></table></figure>
+
+<p>整个体系会变成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">Physical Data</span><br><span class="line"></span><br><span class="line">Table</span><br><span class="line">Column</span><br><span class="line">Partition</span><br><span class="line">File</span><br><span class="line">    │</span><br><span class="line">    ▼</span><br><span class="line">Metadata</span><br><span class="line">    │</span><br><span class="line">    ▼</span><br><span class="line">Semantic Layer</span><br><span class="line">    │</span><br><span class="line">    ├── Entity</span><br><span class="line">    ├── Metric</span><br><span class="line">    ├── Dimension</span><br><span class="line">    ├── Relationship</span><br><span class="line">    ├── Business Rule</span><br><span class="line">    ├── Data Quality</span><br><span class="line">    └── Permission</span><br><span class="line">    │</span><br><span class="line">    ▼</span><br><span class="line">Agent</span><br></pre></td></tr></table></figure>
+
+<p>没有 Semantic Layer：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Agent → 猜 SQL</span><br></pre></td></tr></table></figure>
+
+<p>有 Semantic Layer：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Agent → 理解业务 → 规划 → SQL</span><br></pre></td></tr></table></figure>
+
+<p>这也是为什么 AI-Native 数据架构和我们之前讲的 <strong>指标语义层 / Agent Semantic Interface</strong> 最终实际上会汇合。</p>
+<hr>
+<h1 id="九、第五个变化：Pipeline-→-Goal-driven-Workflow"><a href="#九、第五个变化：Pipeline-→-Goal-driven-Workflow" class="headerlink" title="九、第五个变化：Pipeline → Goal-driven Workflow"></a>九、第五个变化：Pipeline → Goal-driven Workflow</h1><p>传统 Pipeline：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Source</span><br><span class="line"> ↓</span><br><span class="line">ODS</span><br><span class="line"> ↓</span><br><span class="line">DWD</span><br><span class="line"> ↓</span><br><span class="line">DWS</span><br><span class="line"> ↓</span><br><span class="line">ADS</span><br><span class="line"> ↓</span><br><span class="line">BI</span><br></pre></td></tr></table></figure>
+
+<p>最重要的是：</p>
+<blockquote>
+<p>路径固定。</p>
+</blockquote>
+<p>AI-Native：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">Goal</span><br><span class="line"> │</span><br><span class="line"> ▼</span><br><span class="line">Planner</span><br><span class="line"> │</span><br><span class="line"> ├─ Task A</span><br><span class="line"> ├─ Task B</span><br><span class="line"> └─ Task C</span><br><span class="line">     │</span><br><span class="line">     ▼</span><br><span class="line">Observe</span><br><span class="line"> │</span><br><span class="line"> ▼</span><br><span class="line">Evaluate</span><br><span class="line"> │</span><br><span class="line"> ├─ sufficient → Finish</span><br><span class="line"> │</span><br><span class="line"> └─ insufficient</span><br><span class="line">         │</span><br><span class="line">         ▼</span><br><span class="line">      Re-plan</span><br></pre></td></tr></table></figure>
+
+<p>也就是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Plan</span><br><span class="line"> ↓</span><br><span class="line">Execute</span><br><span class="line"> ↓</span><br><span class="line">Observe</span><br><span class="line"> ↓</span><br><span class="line">Evaluate</span><br><span class="line"> ↓</span><br><span class="line">Re-plan</span><br></pre></td></tr></table></figure>
+
+<p>因此真正的最小执行单位可能从：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Job</span><br><span class="line">Task</span><br><span class="line">DAG</span><br></pre></td></tr></table></figure>
+
+<p>逐渐变成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Goal</span><br><span class="line">Plan</span><br><span class="line">Action</span><br><span class="line">Observation</span><br></pre></td></tr></table></figure>
+
+<p>这和 Agent 系统的 Reasoning–Acting Loop 是一致的。</p>
+<hr>
+<h1 id="十、还有一个经常被忽略的变化：Test-→-Evaluation"><a href="#十、还有一个经常被忽略的变化：Test-→-Evaluation" class="headerlink" title="十、还有一个经常被忽略的变化：Test → Evaluation"></a>十、还有一个经常被忽略的变化：Test → Evaluation</h1><p>传统数据工程：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT COUNT(*)</span><br><span class="line">NULL检查</span><br><span class="line">唯一性检查</span><br><span class="line">金额平衡</span><br><span class="line">Schema检查</span><br></pre></td></tr></table></figure>
+
+<p>判断通常是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PASS / FAIL</span><br></pre></td></tr></table></figure>
+
+<p>AI-Native 不够。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">从合同中提取付款条件</span><br></pre></td></tr></table></figure>
+
+<p>你不能简单测试：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result IS NOT NULL</span><br></pre></td></tr></table></figure>
+
+<p>还必须评价：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">正确率？</span><br><span class="line">完整率？</span><br><span class="line">置信度？</span><br><span class="line">Groundedness？</span><br><span class="line">格式是否合法？</span><br><span class="line">业务规则是否满足？</span><br></pre></td></tr></table></figure>
+
+<p>于是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Traditional Data Quality</span><br><span class="line"></span><br><span class="line">Rule → Result → Pass / Fail</span><br></pre></td></tr></table></figure>
+
+<p>变成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">AI-Native Quality</span><br><span class="line"></span><br><span class="line">Rule</span><br><span class="line"> +</span><br><span class="line">Statistical Evaluation</span><br><span class="line"> +</span><br><span class="line">LLM Evaluation</span><br><span class="line"> +</span><br><span class="line">Business Validation</span><br><span class="line"> +</span><br><span class="line">Human Feedback</span><br></pre></td></tr></table></figure>
+
+<p>所以未来：</p>
+<blockquote>
+<p><strong>Evaluation 很可能会成为 AI 数据工程里的一级基础设施。</strong></p>
+</blockquote>
+<p>而不是测试阶段附加的一套工具。</p>
+<hr>
+<h1 id="十一、因此我会给-AI-Native-定义-7-个判定特征"><a href="#十一、因此我会给-AI-Native-定义-7-个判定特征" class="headerlink" title="十一、因此我会给 AI-Native 定义 7 个判定特征"></a>十一、因此我会给 AI-Native 定义 7 个判定特征</h1><p>一个数据系统是否真正称得上 <strong>AI-Native Data Processing</strong>，我认为至少应该满足其中大部分：</p>
+<table>
+<thead>
+<tr>
+<th>特征</th>
+<th>核心变化</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Intent-driven</strong></td>
+<td>从描述 How 转向描述 What</td>
+</tr>
+<tr>
+<td><strong>Semantic-aware</strong></td>
+<td>理解指标、实体、关系和业务语义</td>
+</tr>
+<tr>
+<td><strong>Hybrid Computing</strong></td>
+<td>SQL/Spark + LLM/ML/VLM</td>
+</tr>
+<tr>
+<td><strong>Dynamic Planning</strong></td>
+<td>运行时决定执行路径</td>
+</tr>
+<tr>
+<td><strong>Tool Using</strong></td>
+<td>Agent 可以调用数据库/API/代码等工具</td>
+</tr>
+<tr>
+<td><strong>Closed-loop</strong></td>
+<td>Observe → Evaluate → Re-plan</td>
+</tr>
+<tr>
+<td><strong>Governed &amp; Auditable</strong></td>
+<td>权限、血缘、成本、质量、审计仍然受控</td>
+</tr>
+</tbody></table>
+<p>注意最后一个非常重要。</p>
+<p>AI-Native <strong>绝不是：</strong></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">用户</span><br><span class="line"> ↓</span><br><span class="line">LLM</span><br><span class="line"> ↓</span><br><span class="line">随便生成SQL</span><br><span class="line"> ↓</span><br><span class="line">生产数据库</span><br></pre></td></tr></table></figure>
+
+<p>企业级应该是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">             Intent</span><br><span class="line">                │</span><br><span class="line">                ▼</span><br><span class="line">            AI Agent</span><br><span class="line">                │</span><br><span class="line">      ┌─────────┴─────────┐</span><br><span class="line">      ▼                   ▼</span><br><span class="line"> Semantic Layer      Governance</span><br><span class="line">      │                   │</span><br><span class="line">      │             Permission</span><br><span class="line">      │             Policy</span><br><span class="line">      │             Cost</span><br><span class="line">      │             Quality</span><br><span class="line">      │</span><br><span class="line">      ▼</span><br><span class="line">    Planner</span><br><span class="line">      │</span><br><span class="line">      ▼</span><br><span class="line">  Execution Plan</span><br><span class="line">      │</span><br><span class="line"> ┌────┼────┬────┐</span><br><span class="line"> ▼    ▼    ▼    ▼</span><br><span class="line">SQL Spark LLM  API</span><br><span class="line"> │    │    │    │</span><br><span class="line"> └────┴────┴────┘</span><br><span class="line">      │</span><br><span class="line">      ▼</span><br><span class="line">  Observation</span><br><span class="line">      │</span><br><span class="line">      ▼</span><br><span class="line">  Evaluation</span><br><span class="line">      │</span><br><span class="line">      ├── Finish</span><br><span class="line">      │</span><br><span class="line">      └── Re-plan</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="十二、用一句话区分-ETL、ELT、AI-Native"><a href="#十二、用一句话区分-ETL、ELT、AI-Native" class="headerlink" title="十二、用一句话区分 ETL、ELT、AI-Native"></a>十二、用一句话区分 ETL、ELT、AI-Native</h1><p>这是我认为比较容易传播的一组定义：</p>
+<h3 id="ETL-1"><a href="#ETL-1" class="headerlink" title="ETL"></a>ETL</h3><blockquote>
+<p><strong>人在数据进入平台之前定义怎么处理。</strong></p>
+</blockquote>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Extract → Transform → Load</span><br></pre></td></tr></table></figure>
+
+<h3 id="ELT"><a href="#ELT" class="headerlink" title="ELT"></a>ELT</h3><blockquote>
+<p><strong>先把数据放进平台，再由计算引擎处理。</strong></p>
+</blockquote>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Extract → Load → Transform</span><br></pre></td></tr></table></figure>
+
+<h3 id="AI-Native-1"><a href="#AI-Native-1" class="headerlink" title="AI-Native"></a>AI-Native</h3><blockquote>
+<p><strong>人定义目标、语义和约束，由智能执行系统动态决定如何处理数据。</strong></p>
+</blockquote>
+<p>可以抽象成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Intent</span><br><span class="line">   ↓</span><br><span class="line">Understand</span><br><span class="line">   ↓</span><br><span class="line">Plan</span><br><span class="line">   ↓</span><br><span class="line">Execute</span><br><span class="line">   ↓</span><br><span class="line">Evaluate</span><br><span class="line">   ↓</span><br><span class="line">Adapt</span><br></pre></td></tr></table></figure>
+
+<p>甚至可以给它一个比较有意思的缩写：</p>
+<h1 id="IUPEA"><a href="#IUPEA" class="headerlink" title="IUPEA"></a>IUPEA</h1><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Intent</span><br><span class="line">Understand</span><br><span class="line">Plan</span><br><span class="line">Execute</span><br><span class="line">Adapt</span><br></pre></td></tr></table></figure>
+
+<p>当然我不会急着把它包装成行业术语，但这个过程模型本身是成立的。</p>
+<hr>
+<h1 id="十三、我认为还应该明确：AI-Native-Data-Processing-有两个方向"><a href="#十三、我认为还应该明确：AI-Native-Data-Processing-有两个方向" class="headerlink" title="十三、我认为还应该明确：AI-Native Data Processing 有两个方向"></a>十三、我认为还应该明确：AI-Native Data Processing 有两个方向</h1><p>这个区别非常重要。</p>
+<h2 id="方向-A：Data-for-AI"><a href="#方向-A：Data-for-AI" class="headerlink" title="方向 A：Data for AI"></a>方向 A：Data for AI</h2><p>目标是：</p>
+<blockquote>
+<p><strong>把数据加工成 AI 能消费的数据。</strong></p>
+</blockquote>
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Document</span><br><span class="line"> ↓</span><br><span class="line">Parse</span><br><span class="line"> ↓</span><br><span class="line">Chunk</span><br><span class="line"> ↓</span><br><span class="line">Metadata</span><br><span class="line"> ↓</span><br><span class="line">Embedding</span><br><span class="line"> ↓</span><br><span class="line">Vector Index</span><br><span class="line"> ↓</span><br><span class="line">RAG</span><br></pre></td></tr></table></figure>
+
+<p>这是现在很多所谓：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AI Data Pipeline</span><br></pre></td></tr></table></figure>
+
+<p>真正做的事情。</p>
+<p>Databricks 的 RAG 数据管道文档就是典型例子：将非结构化文档转成适合 GenAI 检索的数据资产。(<a target="_blank" rel="noopener" href="https://docs.databricks.com/aws/en/agents/tutorials/ai-cookbook/quality-data-pipeline-rag?utm_source=chatgpt.com" title="Build an unstructured data pipeline for RAG">Databricks Documentation</a>)</p>
+<hr>
+<h2 id="方向-B：AI-for-Data"><a href="#方向-B：AI-for-Data" class="headerlink" title="方向 B：AI for Data"></a>方向 B：AI for Data</h2><p>目标是：</p>
+<blockquote>
+<p><strong>让 AI 本身参与数据处理。</strong></p>
+</blockquote>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Intent</span><br><span class="line"> ↓</span><br><span class="line">Agent</span><br><span class="line"> ↓</span><br><span class="line">Understand Data</span><br><span class="line"> ↓</span><br><span class="line">Plan</span><br><span class="line"> ↓</span><br><span class="line">SQL / Spark / LLM</span><br><span class="line"> ↓</span><br><span class="line">Evaluation</span><br></pre></td></tr></table></figure>
+
+<p>我认为：</p>
+<blockquote>
+<p><strong>只有 B，或者 A+B 的结合，才更接近严格意义上的 AI-Native Data Processing。</strong></p>
+</blockquote>
+<p>否则只是：</p>
+<p><strong>AI-ready Data Engineering。</strong></p>
+<hr>
+<h1 id="十四、再进一步，我认为未来的数据处理栈可能变成五层"><a href="#十四、再进一步，我认为未来的数据处理栈可能变成五层" class="headerlink" title="十四、再进一步，我认为未来的数据处理栈可能变成五层"></a>十四、再进一步，我认为未来的数据处理栈可能变成五层</h1><p>传统架构通常是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Storage</span><br><span class="line">Compute</span><br><span class="line">SQL</span><br><span class="line">Orchestration</span><br><span class="line">BI</span><br></pre></td></tr></table></figure>
+
+<p>AI-Native 后可能逐渐形成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">┌──────────────────────────────┐</span><br><span class="line">│ 5. Agent / Application Layer │</span><br><span class="line">│ ChatBI / Data Agent / Apps   │</span><br><span class="line">├──────────────────────────────┤</span><br><span class="line">│ 4. Semantic Layer            │</span><br><span class="line">│ Metric / Entity / Knowledge  │</span><br><span class="line">├──────────────────────────────┤</span><br><span class="line">│ 3. Intelligent Control Plane │</span><br><span class="line">│ Planner / Agent / Evaluator  │</span><br><span class="line">├──────────────────────────────┤</span><br><span class="line">│ 2. Hybrid Compute Layer      │</span><br><span class="line">│ SQL / Spark / ML / LLM / VLM│</span><br><span class="line">├──────────────────────────────┤</span><br><span class="line">│ 1. Unified Data Layer        │</span><br><span class="line">│ DW / Lake / Vector / Docs    │</span><br><span class="line">└──────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<p>真正的新东西其实集中在：</p>
+<p><strong>第 3 层 Intelligent Control Plane。</strong></p>
+<p>很多企业目前正在建设第 2 层：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">数据库 + LLM</span><br></pre></td></tr></table></figure>
+
+<p>但真正进入 AI-Native，还需要：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Semantic Layer</span><br><span class="line">+</span><br><span class="line">Agent Runtime</span><br><span class="line">+</span><br><span class="line">Evaluation</span><br><span class="line">+</span><br><span class="line">Governance</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="十五、最后给一个我比较认可的“范式公式”"><a href="#十五、最后给一个我比较认可的“范式公式”" class="headerlink" title="十五、最后给一个我比较认可的“范式公式”"></a>十五、最后给一个我比较认可的“范式公式”</h1><p>如果要把我们这次讨论沉淀成一个后续可以持续使用的架构定义，我建议：</p>
+<p>[<br>\text{AI-Native Data Processing}<br>================================</p>
+<p>\text{Semantic Data}<br>+<br>\text{Deterministic Compute}<br>+<br>\text{Probabilistic Compute}<br>+<br>\text{Agentic Control}<br>+<br>\text{Evaluation}<br>+<br>\text{Governance}<br>]</p>
+<p>也就是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">              Semantic</span><br><span class="line">                 │</span><br><span class="line">                 ▼</span><br><span class="line">Intent → Agentic Control → Plan</span><br><span class="line">                 │</span><br><span class="line">      ┌──────────┼──────────┐</span><br><span class="line">      ▼          ▼          ▼</span><br><span class="line">     SQL        Spark       AI</span><br><span class="line">      │          │          │</span><br><span class="line">      └──────────┼──────────┘</span><br><span class="line">                 ▼</span><br><span class="line">              Result</span><br><span class="line">                 │</span><br><span class="line">                 ▼</span><br><span class="line">             Evaluation</span><br><span class="line">                 │</span><br><span class="line">                 ▼</span><br><span class="line">              Feedback</span><br></pre></td></tr></table></figure>
+
+<h3 id="最核心的一句话"><a href="#最核心的一句话" class="headerlink" title="最核心的一句话"></a>最核心的一句话</h3><p><strong>传统数据工程是在“编写数据处理程序”，AI-Native 数据工程则开始变成“构建能够理解目标并完成数据处理的数据智能系统”。</strong></p>
+<p>而这意味着数据工程师的核心产物也会逐渐发生变化：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">过去：</span><br><span class="line"></span><br><span class="line">SQL</span><br><span class="line">ETL</span><br><span class="line">DAG</span><br><span class="line">Data Mart</span><br><span class="line"></span><br><span class="line">              ↓</span><br><span class="line"></span><br><span class="line">未来：</span><br><span class="line"></span><br><span class="line">Semantic Model</span><br><span class="line">Tool</span><br><span class="line">Policy</span><br><span class="line">Evaluation</span><br><span class="line">Agent Workflow</span><br><span class="line">Data Product</span><br></pre></td></tr></table></figure>
+
+<p>这也是为什么我认为 <strong>AI-Native 数据处理不是 ETL 的一次升级，而很可能是 ETL → ELT 之后更深的一次数据工程范式迁移。</strong></p>
+<p>如果沿着这个概念继续往下推，其实可以得到一个非常完整的体系：</p>
+<p><strong>ETL → ELT → Analytics Engineering → AI-Assisted Data Engineering → Agentic Data Engineering → AI-Native Data Processing</strong></p>
+<p>这条演进链，非常适合进一步拆成“AI 时代数据开发范式”的核心理论框架。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://itaoyuyin.com/2026/08/t-data-dev-paradigm-11/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1476,78 +1908,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://itaoyuyin.com/2026/06/t-data-dev-paradigm-03/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="陶玉印">
-      <meta itemprop="description" content="陶玉印,15年数据治理与数据仓库实践者，涵盖数据治理、数据质量、数据仓库、数据平台、主数据管理、制造业数字化等领域。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="陶玉印的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2026/06/t-data-dev-paradigm-03/" class="post-title-link" itemprop="url">BI为什么成为企业数据消费的主流模式？</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2026-06-23 10:00:00" itemprop="dateCreated datePublished" datetime="2026-06-23T10:00:00+08:00">2026-06-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2026-06-22 15:41:48" itemprop="dateModified" datetime="2026-06-22T15:41:48+08:00">2026-06-22</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>BI之所以能够成为过去二十年企业数据消费的主流模式，本质上是因为它解决了一个关键问题：如何让数据真正服务于管理决策。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2026/06/t-data-dev-paradigm-03/">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1617,7 +1977,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-count">25</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1629,7 +1989,7 @@
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="mailto:taoyuyin@gmail.com" title="E-Mail → mailto:taoyuyin@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+        <a href="https://github.com/taoyuyin" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;taoyuyin" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
       <span class="links-of-author-item">
         <a href="https://www.zhihu.com/people/taoyuyin" title="Zhi → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;taoyuyin" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>Zhi</a>
