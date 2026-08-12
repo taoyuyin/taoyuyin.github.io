@@ -4610,9 +4610,6 @@
 
 <hr>
 <h1 id="十五、最后给一个比较认可的“范式公式”"><a href="#十五、最后给一个比较认可的“范式公式”" class="headerlink" title="十五、最后给一个比较认可的“范式公式”"></a>十五、最后给一个比较认可的“范式公式”</h1><p>如果要把我们这次讨论沉淀成一个后续可以持续使用的架构定义，可以为：</p>
-<p>[<br>\text{AI-Native Data Processing}<br>================================</p>
-<p>\text{Semantic Data}<br>+<br>\text{Deterministic Compute}<br>+<br>\text{Probabilistic Compute}<br>+<br>\text{Agentic Control}<br>+<br>\text{Evaluation}<br>+<br>\text{Governance}<br>]</p>
-<p>也就是：</p>
 <figure class="highlight text"><table><tr><td class="code"><pre><span class="line">              Semantic</span><br><span class="line">                 │</span><br><span class="line">                 ▼</span><br><span class="line">Intent → Agentic Control → Plan</span><br><span class="line">                 │</span><br><span class="line">      ┌──────────┼──────────┐</span><br><span class="line">      ▼          ▼          ▼</span><br><span class="line">     SQL        Spark       AI</span><br><span class="line">      │          │          │</span><br><span class="line">      └──────────┼──────────┘</span><br><span class="line">                 ▼</span><br><span class="line">              Result</span><br><span class="line">                 │</span><br><span class="line">                 ▼</span><br><span class="line">             Evaluation</span><br><span class="line">                 │</span><br><span class="line">                 ▼</span><br><span class="line">              Feedback</span><br></pre></td></tr></table></figure>
 
 <h2 id="最核心的一句话"><a href="#最核心的一句话" class="headerlink" title="最核心的一句话"></a>最核心的一句话</h2><p><strong>传统数据工程是在“编写数据处理程序”，AI-Native 数据工程则开始变成“构建能够理解目标并完成数据处理的数据智能系统”。</strong></p>
