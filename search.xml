@@ -5089,8 +5089,7 @@
 
 <p>特别是企业场景中，后三个非常重要。</p>
 <h2 id="1-Knowledge-Freshness"><a href="#1-Knowledge-Freshness" class="headerlink" title="1. Knowledge Freshness"></a>1. Knowledge Freshness</h2><p>知识可以独立更新。</p>
-<p>###2. Private Knowledge</p>
-<p>可以接：</p>
+<h2 id="2-Private-Knowledge"><a href="#2-Private-Knowledge" class="headerlink" title="2. Private Knowledge"></a>2. Private Knowledge</h2><p>可以接：</p>
 <figure class="highlight text"><table><tr><td class="code"><pre><span class="line">ERP</span><br><span class="line">MES</span><br><span class="line">CRM</span><br><span class="line">SRM</span><br><span class="line">DW</span><br><span class="line">Wiki</span><br><span class="line">SharePoint</span><br><span class="line">PDF</span><br></pre></td></tr></table></figure>
 
 <h2 id="3-Traceability"><a href="#3-Traceability" class="headerlink" title="3. Traceability"></a>3. Traceability</h2><p>可以回答：</p>
@@ -5162,7 +5161,7 @@
 </blockquote>
 <p>这也是我认为理解现代 RAG 最重要的一点。</p>
 <hr>
-<h1 id="最后总结成一句话"><a href="#最后总结成一句话" class="headerlink" title="最后总结成一句话"></a>最后总结成一句话</h1><p>LLM + RAG 的演化，本质上经历了：</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>LLM + RAG 的演化，本质上经历了：</p>
 <blockquote>
 <p><strong>“给 LLM 找几段资料” → “给 LLM 建立可靠的知识访问层” → “让 LLM 自己决定如何获取知识” → “让 Agent 在推理过程中持续获取、验证和利用外部世界的信息”。</strong></p>
 </blockquote>
