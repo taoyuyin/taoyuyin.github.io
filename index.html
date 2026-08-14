@@ -186,6 +186,609 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://itaoyuyin.com/2026/08/llm-rag-architecture-roadmap/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="陶玉印">
+      <meta itemprop="description" content="陶玉印,15年数据治理与数据仓库实践者，涵盖数据治理、数据质量、数据仓库、数据平台、主数据管理、制造业数字化等领域。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="陶玉印的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2026/08/llm-rag-architecture-roadmap/" class="post-title-link" itemprop="url">LLM + RAG 架构的演进过程</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-08-14 10:00:00 / 修改时间：11:51:42" itemprop="dateCreated datePublished" datetime="2026-08-14T10:00:00+08:00">2026-08-14</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>可以把 <strong>LLM + RAG 的演化</strong>理解为一条很清晰的路线：</p>
+<blockquote>
+<p><strong>LLM 内部参数知识 → 外挂知识 → 提升检索质量 → 检索可决策 → 多步检索与推理 → 图结构知识 → Agent 主导检索 → RAG / Long Context / Tool / Memory 融合</strong></p>
+</blockquote>
+<p>真正变化的并不只是“向量数据库越来越高级”，而是 <strong>LLM 与外部知识之间的控制权在发生变化</strong>：最早是程序固定检索，后来模型开始判断“要不要查、查什么、结果是否可信、是否需要继续查”，最终 RAG 逐渐成为 Agent 的一个底层能力。</p>
+<hr>
+<h1 id="一、为什么会出现-RAG"><a href="#一、为什么会出现-RAG" class="headerlink" title="一、为什么会出现 RAG"></a>一、为什么会出现 RAG</h1><p>LLM 本身可以看成一种 <strong>Parametric Memory（参数化记忆）</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">训练数据</span><br><span class="line">   ↓</span><br><span class="line">Model Training</span><br><span class="line">   ↓</span><br><span class="line">模型参数</span><br><span class="line">   ↓</span><br><span class="line">LLM</span><br></pre></td></tr></table></figure>
+
+<p>知识被编码到了模型参数中。</p>
+<p>这带来几个天然问题：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">               LLM</span><br><span class="line">                │</span><br><span class="line">     ┌──────────┼──────────┐</span><br><span class="line">     ↓          ↓          ↓</span><br><span class="line">  知识滞后     私域未知     难以追溯</span><br><span class="line">     │          │          │</span><br><span class="line">训练截止日期   企业数据    不知道答案来源</span><br></pre></td></tr></table></figure>
+
+<p>例如问：</p>
+<blockquote>
+<p>公司 2026 年最新差旅制度中，住宿标准是多少？</p>
+</blockquote>
+<p>即使模型推理能力很强，也不应该指望它“记住”企业内部刚更新的制度。</p>
+<p>2020 年 Lewis 等人提出 RAG 时，核心思想就是把：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Parametric Memory</span><br><span class="line">模型参数中的知识</span><br></pre></td></tr></table></figure>
+
+<p>与：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Non-parametric Memory</span><br><span class="line">外部知识库</span><br></pre></td></tr></table></figure>
+
+<p>结合起来。原论文使用稠密向量索引作为外部记忆，让生成模型基于检索到的知识回答。(<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2005.11401?utm_source=chatgpt.com" title="Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks">arXiv</a>)</p>
+<p>从工程视角，可以把它抽象成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Answer = LLM(</span><br><span class="line">    Question,</span><br><span class="line">    Retrieve(Question, KnowledgeBase)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>这就是后面所有 RAG 架构的起点。</p>
+<hr>
+<h1 id="二、阶段-0：纯-LLM-——-Parametric-Knowledge"><a href="#二、阶段-0：纯-LLM-——-Parametric-Knowledge" class="headerlink" title="二、阶段 0：纯 LLM —— Parametric Knowledge"></a>二、阶段 0：纯 LLM —— Parametric Knowledge</h1><p>RAG 出现以前，最简单的是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">User</span><br><span class="line"> ↓</span><br><span class="line">Prompt</span><br><span class="line"> ↓</span><br><span class="line">LLM</span><br><span class="line"> ↓</span><br><span class="line">Answer</span><br></pre></td></tr></table></figure>
+
+<p>如果知识不足，有两个主要办法：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Prompt Engineering</span><br><span class="line">Fine-tuning</span><br></pre></td></tr></table></figure>
+
+<p>Fine-tuning 的问题是：</p>
+<p><strong>它适合改变模型行为，不适合频繁更新事实知识。</strong></p>
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">让模型学会：</span><br><span class="line">&quot;按照企业数据分析师的风格回答&quot;</span><br></pre></td></tr></table></figure>
+
+<p>很适合 Fine-tuning。</p>
+<p>但：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">2026年8月最新销售政策是什么？</span><br><span class="line">今天库存是多少？</span><br><span class="line">最新产品价格是多少？</span><br></pre></td></tr></table></figure>
+
+<p>显然不应该靠重新训练模型解决。</p>
+<p>因此早期形成了一个重要分工：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">     LLM</span><br><span class="line">      │</span><br><span class="line">Reasoning / Language</span><br><span class="line">      │</span><br><span class="line">      ↓</span><br><span class="line">模型负责推理</span><br><span class="line">      </span><br><span class="line">     RAG</span><br><span class="line">      │</span><br><span class="line">   Knowledge</span><br><span class="line">      │</span><br><span class="line">      ↓</span><br><span class="line">外部系统负责事实</span><br></pre></td></tr></table></figure>
+
+<p>这是理解 RAG 的第一原则。</p>
+<hr>
+<h1 id="三、第一代：Naive-RAG"><a href="#三、第一代：Naive-RAG" class="headerlink" title="三、第一代：Naive RAG"></a>三、第一代：Naive RAG</h1><p>大约 2022～2023 年企业最常见的 RAG，就是今天大家最熟悉的：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">                 Offline</span><br><span class="line">                   │</span><br><span class="line">Document</span><br><span class="line">   ↓</span><br><span class="line">Parsing</span><br><span class="line">   ↓</span><br><span class="line">Chunking</span><br><span class="line">   ↓</span><br><span class="line">Embedding</span><br><span class="line">   ↓</span><br><span class="line">Vector DB</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">                 Online</span><br><span class="line">                   │</span><br><span class="line">User Question</span><br><span class="line">      ↓</span><br><span class="line">Embedding</span><br><span class="line">      ↓</span><br><span class="line">Vector Search</span><br><span class="line">      ↓</span><br><span class="line">Top K Chunks</span><br><span class="line">      ↓</span><br><span class="line">Prompt</span><br><span class="line">      ↓</span><br><span class="line">LLM</span><br><span class="line">      ↓</span><br><span class="line">Answer</span><br></pre></td></tr></table></figure>
+
+<p>例如企业知识库：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">PDF</span><br><span class="line">Word</span><br><span class="line">Wiki</span><br><span class="line">规章制度</span><br><span class="line">产品文档</span><br><span class="line">       ↓</span><br><span class="line">    Chunk</span><br><span class="line">       ↓</span><br><span class="line"> Embedding</span><br><span class="line">       ↓</span><br><span class="line">  Vector DB</span><br><span class="line">       ↑</span><br><span class="line">       │</span><br><span class="line">   用户问题</span><br></pre></td></tr></table></figure>
+
+<p>这其实就是典型的：</p>
+<blockquote>
+<p><strong>Retrieve → Read → Generate</strong></p>
+</blockquote>
+<p>需要注意一点：工程界后来所谓的“Naive RAG”，并不完全等同于 2020 RAG 原论文中的端到端训练架构，而更多指这种 <strong>Vector DB + TopK + Prompt</strong> 的工程实现。</p>
+<h2 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h2><p>最大的优点是简单。</p>
+<p>知识更新：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">旧文档删除</span><br><span class="line">新文档 Embedding</span><br><span class="line">Vector DB 更新</span><br></pre></td></tr></table></figure>
+
+<p>不需要重新训练 LLM。</p>
+<p>同时非常适合：</p>
+<ul>
+<li>企业知识库；</li>
+<li>产品手册；</li>
+<li>FAQ；</li>
+<li>制度查询；</li>
+<li>技术文档；</li>
+<li>客服知识库。</li>
+</ul>
+<h2 id="最大问题"><a href="#最大问题" class="headerlink" title="最大问题"></a>最大问题</h2><p>问题逐渐从：</p>
+<blockquote>
+<p>LLM 不知道答案。</p>
+</blockquote>
+<p>变成：</p>
+<blockquote>
+<p><strong>Retriever 没找到正确答案。</strong></p>
+</blockquote>
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Question</span><br><span class="line">   ↓</span><br><span class="line">Vector Search</span><br><span class="line">   ↓</span><br><span class="line">Top5</span><br><span class="line">   ↓</span><br><span class="line">只有 Top3 真正相关</span><br><span class="line">   ↓</span><br><span class="line">LLM</span><br></pre></td></tr></table></figure>
+
+<p>如果真正答案根本没进入 Context：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">LLM 再聪明</span><br><span class="line">     ≠</span><br><span class="line">能够生成正确事实</span><br></pre></td></tr></table></figure>
+
+<p>因此 RAG 领域慢慢出现一句非常重要的工程判断：</p>
+<blockquote>
+<p><strong>RAG 的上限，很大程度取决于 Context Quality，而不仅仅取决于 LLM。</strong></p>
+</blockquote>
+<p>这促成了第二阶段。</p>
+<hr>
+<h1 id="四、第二代：Advanced-RAG"><a href="#四、第二代：Advanced-RAG" class="headerlink" title="四、第二代：Advanced RAG"></a>四、第二代：Advanced RAG</h1><p>Advanced RAG 的核心，不是换一个更强 LLM，而是优化：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Retrieval Pipeline</span><br></pre></td></tr></table></figure>
+
+<p>整体结构开始变成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Question</span><br><span class="line">   ↓</span><br><span class="line">Query Processing</span><br><span class="line">   ↓</span><br><span class="line">Hybrid Retrieval</span><br><span class="line">   ↓</span><br><span class="line">Candidate Documents</span><br><span class="line">   ↓</span><br><span class="line">Reranking</span><br><span class="line">   ↓</span><br><span class="line">Context Filtering</span><br><span class="line">   ↓</span><br><span class="line">LLM</span><br></pre></td></tr></table></figure>
+
+<p>也就是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> Pre-Retrieval</span><br><span class="line">      │</span><br><span class="line">      ↓</span><br><span class="line">   Retrieval</span><br><span class="line">      │</span><br><span class="line">      ↓</span><br><span class="line">Post-Retrieval</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="1-Pre-Retrieval"><a href="#1-Pre-Retrieval" class="headerlink" title="1. Pre-Retrieval"></a>1. Pre-Retrieval</h2><p>首先优化问题。</p>
+<p>例如用户问：</p>
+<blockquote>
+<p>去年华东地区耗材产品利润为什么下降？</p>
+</blockquote>
+<p>直接 embedding 整句话效果可能并不好。</p>
+<p>系统可以先：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Query Rewrite</span><br><span class="line"></span><br><span class="line">去年</span><br><span class="line"> ↓</span><br><span class="line">2025</span><br><span class="line"></span><br><span class="line">华东地区</span><br><span class="line"> ↓</span><br><span class="line">上海、江苏、浙江……</span><br><span class="line"></span><br><span class="line">利润下降</span><br><span class="line"> ↓</span><br><span class="line">收入、成本、销量、单价、毛利</span><br></pre></td></tr></table></figure>
+
+<p>甚至把一个问题拆成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Query 1：2025 华东销售收入</span><br><span class="line">Query 2：2025 华东销售成本</span><br><span class="line">Query 3：2024 华东毛利率</span><br><span class="line">Query 4：2025 华东毛利率</span><br></pre></td></tr></table></figure>
+
+<p>这开始出现 <strong>Multi-query / Query Decomposition</strong>。</p>
+<hr>
+<h1 id="五、Embedding-单路检索-→-Hybrid-Search"><a href="#五、Embedding-单路检索-→-Hybrid-Search" class="headerlink" title="五、Embedding 单路检索 → Hybrid Search"></a>五、Embedding 单路检索 → Hybrid Search</h1><p>纯 Vector Search 有一个明显问题：</p>
+<p>它擅长：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">semantic similarity</span><br><span class="line">语义相似</span><br></pre></td></tr></table></figure>
+
+<p>但未必擅长：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">精确产品编码</span><br><span class="line">合同编号</span><br><span class="line">客户名称</span><br><span class="line">特殊缩写</span><br><span class="line">表名</span><br><span class="line">字段名</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZWFSYS_DF_JE</span><br></pre></td></tr></table></figure>
+
+<p>这种字段，用 embedding 检索可能不如关键词搜索。</p>
+<p>于是企业 RAG 常见架构变为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">           Query</span><br><span class="line">             │</span><br><span class="line">    ┌────────┴────────┐</span><br><span class="line">    ↓                 ↓</span><br><span class="line">BM25 Search       Vector Search</span><br><span class="line">Keyword             Semantic</span><br><span class="line">    │                 │</span><br><span class="line">    └────────┬────────┘</span><br><span class="line">             ↓</span><br><span class="line">           Fusion</span><br><span class="line">             ↓</span><br><span class="line">         Candidates</span><br></pre></td></tr></table></figure>
+
+<p>也就是：</p>
+<blockquote>
+<p><strong>Sparse Retrieval + Dense Retrieval</strong></p>
+</blockquote>
+<p>这也是现代企业 RAG 中非常常见的一层。</p>
+<hr>
+<h1 id="六、Retriever-后面增加-Reranker"><a href="#六、Retriever-后面增加-Reranker" class="headerlink" title="六、Retriever 后面增加 Reranker"></a>六、Retriever 后面增加 Reranker</h1><p>原来：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Vector Search</span><br><span class="line">    ↓</span><br><span class="line">Top 5</span><br></pre></td></tr></table></figure>
+
+<p>后来：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Retriever</span><br><span class="line">    ↓</span><br><span class="line">Top 50</span><br><span class="line">    ↓</span><br><span class="line">Reranker</span><br><span class="line">    ↓</span><br><span class="line">Top 5</span><br></pre></td></tr></table></figure>
+
+<p>Retriever 的目标：</p>
+<blockquote>
+<p><strong>Recall</strong></p>
+</blockquote>
+<p>尽量别漏。</p>
+<p>Reranker 的目标：</p>
+<blockquote>
+<p><strong>Precision</strong></p>
+</blockquote>
+<p>把真正相关的内容排到前面。</p>
+<p>所以：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">   Retriever</span><br><span class="line">       │</span><br><span class="line">high recall</span><br><span class="line">       ↓</span><br><span class="line">   50 docs</span><br><span class="line">       │</span><br><span class="line">   Reranker</span><br><span class="line">       │</span><br><span class="line">high precision</span><br><span class="line">       ↓</span><br><span class="line">    5 docs</span><br></pre></td></tr></table></figure>
+
+<p>这实际上是一个非常重要的架构演进。</p>
+<hr>
+<h1 id="七、第三代：Modular-RAG"><a href="#七、第三代：Modular-RAG" class="headerlink" title="七、第三代：Modular RAG"></a>七、第三代：Modular RAG</h1><p>再往后，人们发现：</p>
+<blockquote>
+<p>RAG 不应该是一个 Pipeline，而应该是很多可组合模块。</p>
+</blockquote>
+<p>于是变成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">           Query</span><br><span class="line">             │</span><br><span class="line">      Query Router</span><br><span class="line">      /      |      \</span><br><span class="line">     /       |       \</span><br><span class="line">Vector      SQL      Web</span><br><span class="line">Search      Query    Search</span><br><span class="line">   │          │        │</span><br><span class="line">   └──────────┼────────┘</span><br><span class="line">              ↓</span><br><span class="line">          Reranker</span><br><span class="line">              ↓</span><br><span class="line">       Context Builder</span><br><span class="line">              ↓</span><br><span class="line">            LLM</span><br></pre></td></tr></table></figure>
+
+<p>RAG 从：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">固定流水线</span><br></pre></td></tr></table></figure>
+
+<p>演变成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Composable Architecture</span><br></pre></td></tr></table></figure>
+
+<p>典型模块包括：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Query Rewriter</span><br><span class="line">Query Router</span><br><span class="line">Retriever</span><br><span class="line">Hybrid Search</span><br><span class="line">Reranker</span><br><span class="line">Graph Search</span><br><span class="line">SQL Retriever</span><br><span class="line">Web Search</span><br><span class="line">Context Compressor</span><br><span class="line">Citation Generator</span><br><span class="line">Evaluator</span><br></pre></td></tr></table></figure>
+
+<p>这一步非常关键。</p>
+<p>因为企业知识绝不只是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PDF → Vector DB</span><br></pre></td></tr></table></figure>
+
+<p>而是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">                 Enterprise Knowledge</span><br><span class="line"></span><br><span class="line">     ┌─────────────┼──────────────┐</span><br><span class="line">     ↓             ↓              ↓</span><br><span class="line">Documents      Data Warehouse    API</span><br><span class="line">     ↓             ↓              ↓</span><br><span class="line">Vector DB         SQL           Tools</span><br><span class="line"></span><br><span class="line">        ↓</span><br><span class="line">Knowledge Graph</span><br><span class="line"></span><br><span class="line">        ↓</span><br><span class="line">Search Engine</span><br></pre></td></tr></table></figure>
+
+<p>所以真正成熟的 RAG，本质上已经变成了：</p>
+<blockquote>
+<p><strong>Enterprise Knowledge Access Layer</strong></p>
+</blockquote>
+<p>而不只是 Vector DB。</p>
+<hr>
+<h1 id="八、第四代：Adaptive-RAG"><a href="#八、第四代：Adaptive-RAG" class="headerlink" title="八、第四代：Adaptive RAG"></a>八、第四代：Adaptive RAG</h1><p>接下来出现了一个非常重要的问题：</p>
+<blockquote>
+<p><strong>是不是每个问题都需要 RAG？</strong></p>
+</blockquote>
+<p>比如：</p>
+<blockquote>
+<p>Python list 和 tuple 有什么区别？</p>
+</blockquote>
+<p>LLM 本身完全可以回答。</p>
+<p>却仍然执行：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Embedding</span><br><span class="line">Vector Search</span><br><span class="line">Reranking</span><br><span class="line">LLM</span><br></pre></td></tr></table></figure>
+
+<p>不仅增加：</p>
+<ul>
+<li>延迟；</li>
+<li>Token；</li>
+<li>计算成本；</li>
+</ul>
+<p>还可能因为检索到错误资料反而降低答案质量。</p>
+<p>Adaptive-RAG 的思想是让系统先判断问题复杂度，然后选择：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">          Query</span><br><span class="line">            │</span><br><span class="line">        Classifier</span><br><span class="line">   ┌────────┼────────┐</span><br><span class="line">   ↓        ↓        ↓</span><br><span class="line">No RAG   Single RAG Multi-step RAG</span><br><span class="line">   │        │        │</span><br><span class="line">   └────────┴────────┘</span><br><span class="line">            ↓</span><br><span class="line">           LLM</span><br></pre></td></tr></table></figure>
+
+<p>相关研究展示了按照问题复杂度，在“不检索、单次检索、多步检索”之间动态选择策略的思路。(<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2403.14403?utm_source=chatgpt.com" title="Adaptive-RAG: Learning to Adapt Retrieval-Augmented Large Language Models through Question Complexity">arXiv</a>)</p>
+<p>这意味着：</p>
+<blockquote>
+<p><strong>Retrieval 从一个默认动作，开始变成一个决策。</strong></p>
+</blockquote>
+<p>这是 RAG 架构真正走向智能化的标志。</p>
+<hr>
+<h1 id="九、第五代：Self-RAG-Corrective-RAG"><a href="#九、第五代：Self-RAG-Corrective-RAG" class="headerlink" title="九、第五代：Self-RAG / Corrective RAG"></a>九、第五代：Self-RAG / Corrective RAG</h1><p>Adaptive RAG 解决：</p>
+<blockquote>
+<p>要不要检索？</p>
+</blockquote>
+<p>下一个问题是：</p>
+<blockquote>
+<p><strong>检索到的内容可信吗？</strong></p>
+</blockquote>
+<p>传统 RAG：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Retrieve</span><br><span class="line">   ↓</span><br><span class="line">Documents</span><br><span class="line">   ↓</span><br><span class="line">LLM</span><br></pre></td></tr></table></figure>
+
+<p>隐含假设：</p>
+<blockquote>
+<p>Retriever 给我的东西是对的。</p>
+</blockquote>
+<p>但现实不是如此。</p>
+<p>于是出现 Self-RAG、CRAG 之类的方法。</p>
+<p>Self-RAG 的核心思想是让模型能够按需检索，并对检索内容和生成结果进行自我评估，而不是机械地始终塞入固定数量文档。(<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2310.11511?utm_source=chatgpt.com" title="Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection">arXiv</a>)</p>
+<p>可以理解为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Question</span><br><span class="line">   ↓</span><br><span class="line">Need Retrieval?</span><br><span class="line">   ↓</span><br><span class="line">Retrieve</span><br><span class="line">   ↓</span><br><span class="line">Relevant?</span><br><span class="line">   ↓</span><br><span class="line">Generate</span><br><span class="line">   ↓</span><br><span class="line">Supported?</span><br><span class="line">   ↓</span><br><span class="line">Answer</span><br></pre></td></tr></table></figure>
+
+<p>而 Corrective RAG 更进一步：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Retrieve</span><br><span class="line">   ↓</span><br><span class="line">Evaluate Retrieval</span><br><span class="line">   │</span><br><span class="line"> ┌─┴────────────┐</span><br><span class="line"> ↓              ↓</span><br><span class="line">Good           Bad</span><br><span class="line"> ↓              ↓</span><br><span class="line">Use         Correct</span><br><span class="line">               │</span><br><span class="line">          Query Rewrite</span><br><span class="line">               │</span><br><span class="line">          New Retrieval</span><br><span class="line">               │</span><br><span class="line">             Web</span><br></pre></td></tr></table></figure>
+
+<p>CRAG 原始工作就是针对“Retriever 检索错了怎么办”这个问题，引入 Retrieval Evaluator，根据检索质量决定后续修正动作。(<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2401.15884?utm_source=chatgpt.com" title="Corrective Retrieval Augmented Generation">arXiv</a>)</p>
+<p>于是 RAG 出现一个非常重要的闭环：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Retrieve</span><br><span class="line">   ↓</span><br><span class="line">Evaluate</span><br><span class="line">   ↓</span><br><span class="line">Correct</span><br><span class="line">   ↓</span><br><span class="line">Retrieve</span><br></pre></td></tr></table></figure>
+
+<p>从：</p>
+<blockquote>
+<p>Retrieval Pipeline</p>
+</blockquote>
+<p>开始变成：</p>
+<blockquote>
+<p><strong>Retrieval Loop</strong></p>
+</blockquote>
+<hr>
+<h1 id="十、第六代：GraphRAG"><a href="#十、第六代：GraphRAG" class="headerlink" title="十、第六代：GraphRAG"></a>十、第六代：GraphRAG</h1><p>传统 Vector RAG 还有一个严重问题：</p>
+<blockquote>
+<p>Chunk 把知识结构切碎了。</p>
+</blockquote>
+<p>例如文档描述：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">华东事业部</span><br><span class="line">   │</span><br><span class="line">   ├── 上海区域</span><br><span class="line">   │      └── A经销商</span><br><span class="line">   │             └── 产品P</span><br><span class="line">   │</span><br><span class="line">   └── 江苏区域</span><br><span class="line">          └── B经销商</span><br></pre></td></tr></table></figure>
+
+<p>Chunk 后可能变成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Chunk 001</span><br><span class="line">上海区域销售情况……</span><br><span class="line"></span><br><span class="line">Chunk 035</span><br><span class="line">A经销商……</span><br><span class="line"></span><br><span class="line">Chunk 107</span><br><span class="line">产品P……</span><br><span class="line"></span><br><span class="line">Chunk 246</span><br><span class="line">华东事业部……</span><br></pre></td></tr></table></figure>
+
+<p>Vector Search 很容易找到：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">局部相似内容</span><br></pre></td></tr></table></figure>
+
+<p>却不擅长回答：</p>
+<blockquote>
+<p>华东事业部各区域经销商之间的结构是什么？</p>
+</blockquote>
+<p>或者：</p>
+<blockquote>
+<p>这些事件背后的主要参与者及相互关系是什么？</p>
+</blockquote>
+<p>于是 GraphRAG 出现。</p>
+<p>Microsoft 的 GraphRAG 工作将私有文本构造成知识图谱、社区和摘要，用来解决普通 chunk-based RAG 不擅长的“跨文档全局问题”。(<a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/publication/from-local-to-global-a-graph-rag-approach-to-query-focused-summarization/?utm_source=chatgpt.com" title="From Local to Global: A Graph RAG Approach to Query- ...">微软</a>)</p>
+<p>大致结构：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Documents</span><br><span class="line">    ↓</span><br><span class="line">Entity Extraction</span><br><span class="line">    ↓</span><br><span class="line">Relationship Extraction</span><br><span class="line">    ↓</span><br><span class="line">Knowledge Graph</span><br><span class="line">    ↓</span><br><span class="line">Community Detection</span><br><span class="line">    ↓</span><br><span class="line">Community Summary</span><br></pre></td></tr></table></figure>
+
+<p>查询时：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">           Question</span><br><span class="line">              │</span><br><span class="line">     ┌────────┴────────┐</span><br><span class="line">     ↓                 ↓</span><br><span class="line">Local Search       Global Search</span><br><span class="line">     ↓                 ↓</span><br><span class="line">Entity/Relation   Community Summary</span><br><span class="line">     └────────┬────────┘</span><br><span class="line">              ↓</span><br><span class="line">             LLM</span><br></pre></td></tr></table></figure>
+
+<h2 id="GraphRAG-优势"><a href="#GraphRAG-优势" class="headerlink" title="GraphRAG 优势"></a>GraphRAG 优势</h2><p>特别适合：</p>
+<ul>
+<li>跨文档关系；</li>
+<li>组织网络；</li>
+<li>风险关系；</li>
+<li>上下游关系；</li>
+<li>因果链；</li>
+<li>实体关系；</li>
+<li>全局总结。</li>
+</ul>
+<h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><p>代价也明显：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">文档</span><br><span class="line"> ↓</span><br><span class="line">实体抽取</span><br><span class="line"> ↓</span><br><span class="line">关系抽取</span><br><span class="line"> ↓</span><br><span class="line">图构建</span><br><span class="line"> ↓</span><br><span class="line">Community</span><br><span class="line"> ↓</span><br><span class="line">Summary</span><br></pre></td></tr></table></figure>
+
+<p>Indexing 成本远高于普通 Vector RAG。</p>
+<p>所以：</p>
+<blockquote>
+<p><strong>GraphRAG 不是 Vector RAG 的替代品。</strong></p>
+</blockquote>
+<p>更合理的是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Vector RAG</span><br><span class="line">    +</span><br><span class="line">Graph RAG</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="十一、第七代：Agentic-RAG"><a href="#十一、第七代：Agentic-RAG" class="headerlink" title="十一、第七代：Agentic RAG"></a>十一、第七代：Agentic RAG</h1><p>这一步我认为是整个演化里最关键的一次变化。</p>
+<p>传统 RAG 是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">程序控制 Retrieval</span><br></pre></td></tr></table></figure>
+
+<p>Agentic RAG 是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LLM / Agent 控制 Retrieval</span><br></pre></td></tr></table></figure>
+
+<p>传统：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">User</span><br><span class="line"> ↓</span><br><span class="line">Retriever</span><br><span class="line"> ↓</span><br><span class="line">LLM</span><br></pre></td></tr></table></figure>
+
+<p>Agentic：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">              User</span><br><span class="line">                ↓</span><br><span class="line">              Agent</span><br><span class="line">                │</span><br><span class="line">          Understand</span><br><span class="line">                │</span><br><span class="line">              Plan</span><br><span class="line">                │</span><br><span class="line">   ┌────────────┼─────────────┐</span><br><span class="line">   ↓            ↓             ↓</span><br><span class="line">Search        SQL          API Tool</span><br><span class="line">   ↓            ↓             ↓</span><br><span class="line">   └────────────┼─────────────┘</span><br><span class="line">                ↓</span><br><span class="line">             Reason</span><br><span class="line">                ↓</span><br><span class="line">        Need more data?</span><br><span class="line">           ↓          ↓</span><br><span class="line">          Yes         No</span><br><span class="line">           │           │</span><br><span class="line">           └── loop ───┘</span><br><span class="line">                       ↓</span><br><span class="line">                    Answer</span><br></pre></td></tr></table></figure>
+
+<p>Agentic RAG 相关研究通常把它概括为把 <strong>planning、reflection、tool use、多 Agent 协作</strong> 引入 RAG，使检索策略从固定流程变成动态过程。(<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2501.09136?utm_source=chatgpt.com" title="Agentic Retrieval-Augmented Generation: A Survey on Agentic RAG">arXiv</a>)</p>
+<p>例如用户问：</p>
+<blockquote>
+<p>为什么 7 月份华东区域毛利下降？</p>
+</blockquote>
+<p>普通 RAG：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Search &quot;华东 毛利下降&quot;</span><br></pre></td></tr></table></figure>
+
+<p>Agentic RAG：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Agent</span><br><span class="line"> │</span><br><span class="line"> ├─ 查询 6月、7月销售额</span><br><span class="line"> │</span><br><span class="line"> ├─ 查询销量</span><br><span class="line"> │</span><br><span class="line"> ├─ 查询售价</span><br><span class="line"> │</span><br><span class="line"> ├─ 查询单位材料成本</span><br><span class="line"> │</span><br><span class="line"> ├─ 查询客户结构变化</span><br><span class="line"> │</span><br><span class="line"> ├─ 查询产品结构变化</span><br><span class="line"> │</span><br><span class="line"> └─ 对比分析</span><br></pre></td></tr></table></figure>
+
+<p>发现：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">材料成本 ↑ 3%</span><br></pre></td></tr></table></figure>
+
+<p>再继续：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Agent</span><br><span class="line"> ↓</span><br><span class="line">查询材料采购价格</span><br><span class="line"> ↓</span><br><span class="line">发现某原材料上涨 12%</span><br><span class="line"> ↓</span><br><span class="line">查询该材料对应产品</span><br><span class="line"> ↓</span><br><span class="line">计算影响</span><br></pre></td></tr></table></figure>
+
+<p>最后才回答。</p>
+<p>这其实已经不太像传统意义上的：</p>
+<blockquote>
+<p>Retrieval Augmented Generation</p>
+</blockquote>
+<p>而更像：</p>
+<blockquote>
+<p><strong>Retrieval Augmented Reasoning</strong></p>
+</blockquote>
+<hr>
+<h1 id="十二、2024～2026：Long-Context-开始挑战传统-RAG"><a href="#十二、2024～2026：Long-Context-开始挑战传统-RAG" class="headerlink" title="十二、2024～2026：Long Context 开始挑战传统 RAG"></a>十二、2024～2026：Long Context 开始挑战传统 RAG</h1><p>随着 Context Window 越来越长，又出现一个新的问题：</p>
+<blockquote>
+<p>我为什么一定要 Chunk + Retrieve？</p>
+</blockquote>
+<p>假设一份文档只有：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">80K tokens</span><br></pre></td></tr></table></figure>
+
+<p>模型 Context 支持：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">200K / 1M tokens</span><br></pre></td></tr></table></figure>
+
+<p>理论上可以：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Document</span><br><span class="line">    ↓</span><br><span class="line">Entire Context</span><br><span class="line">    ↓</span><br><span class="line">LLM</span><br></pre></td></tr></table></figure>
+
+<p>避免：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Chunking</span><br><span class="line">Embedding</span><br><span class="line">Retrieval</span><br></pre></td></tr></table></figure>
+
+<p>因此开始出现：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RAG</span><br><span class="line">VS</span><br><span class="line">Long Context</span><br></pre></td></tr></table></figure>
+
+<p>相关实验显示了一个很有意思的结果：在资源充足的一些 benchmark 中，直接使用 Long Context 可以优于传统 RAG，而 RAG 的明显优势仍然在成本；因此产生了根据问题自动选择 RAG 或 Long Context 的混合方案。(<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2407.16833?utm_source=chatgpt.com" title="Retrieval Augmented Generation or Long-Context LLMs? A Comprehensive Study and Hybrid Approach">arXiv</a>)</p>
+<p>但这并不意味着：</p>
+<blockquote>
+<p>Long Context 会消灭 RAG。</p>
+</blockquote>
+<p>另一些实验也表明，Context 变长并不意味着性能会持续线性提高，过长上下文可能带来注意力稀释和性能下降。(<a target="_blank" rel="noopener" href="https://arxiv.org/html/2411.03538v1?utm_source=chatgpt.com" title="Long Context RAG Performance of Large Language Models">arXiv</a>)</p>
+<p>所以现在更合理的方向是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">            Query</span><br><span class="line">              ↓</span><br><span class="line">           Router</span><br><span class="line"> ┌────────────┼────────────┐</span><br><span class="line"> ↓            ↓            ↓</span><br><span class="line">LLM        Long Context    RAG</span><br><span class="line"> │                         │</span><br><span class="line"> │                    Hybrid Retrieval</span><br><span class="line"> │                         │</span><br><span class="line"> │                     Graph RAG</span><br><span class="line"> └────────────┬────────────┘</span><br><span class="line">              ↓</span><br><span class="line">            Agent</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="十三、把整个演化压缩成一张图"><a href="#十三、把整个演化压缩成一张图" class="headerlink" title="十三、把整个演化压缩成一张图"></a>十三、把整个演化压缩成一张图</h1><p>可以把整个历史看成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">Stage 0</span><br><span class="line">Pure LLM</span><br><span class="line">│</span><br><span class="line">│ 模型知识过时 / 私域未知</span><br><span class="line">↓</span><br><span class="line">Stage 1</span><br><span class="line">Naive RAG</span><br><span class="line">Vector DB + TopK</span><br><span class="line">│</span><br><span class="line">│ 检索质量不好</span><br><span class="line">↓</span><br><span class="line">Stage 2</span><br><span class="line">Advanced RAG</span><br><span class="line">Hybrid + Reranker + Query Rewrite</span><br><span class="line">│</span><br><span class="line">│ Pipeline 固定</span><br><span class="line">↓</span><br><span class="line">Stage 3</span><br><span class="line">Modular RAG</span><br><span class="line">Router + Multiple Retriever</span><br><span class="line">│</span><br><span class="line">│ 所有问题都检索成本太高</span><br><span class="line">↓</span><br><span class="line">Stage 4</span><br><span class="line">Adaptive RAG</span><br><span class="line">决定是否检索 / 如何检索</span><br><span class="line">│</span><br><span class="line">│ Retriever 可能出错</span><br><span class="line">↓</span><br><span class="line">Stage 5</span><br><span class="line">Self-RAG / CRAG</span><br><span class="line">Retrieve → Evaluate → Correct</span><br><span class="line">│</span><br><span class="line">│ Chunk 缺乏关系和全局视角</span><br><span class="line">↓</span><br><span class="line">Stage 6</span><br><span class="line">GraphRAG</span><br><span class="line">Entity + Relation + Community</span><br><span class="line">│</span><br><span class="line">│ 流程仍需要智能规划</span><br><span class="line">↓</span><br><span class="line">Stage 7</span><br><span class="line">Agentic RAG</span><br><span class="line">Plan → Retrieve → Reason → Retrieve</span><br><span class="line">│</span><br><span class="line">↓</span><br><span class="line">Stage 8</span><br><span class="line">RAG + Long Context + Tools + Memory</span><br></pre></td></tr></table></figure>
+
+<p>从架构思想看，本质变化是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Search</span><br><span class="line"> ↓</span><br><span class="line">Retrieval</span><br><span class="line"> ↓</span><br><span class="line">Knowledge Access</span><br><span class="line"> ↓</span><br><span class="line">Reasoning</span><br><span class="line"> ↓</span><br><span class="line">Decision Making</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="十四、各代架构优劣势对比"><a href="#十四、各代架构优劣势对比" class="headerlink" title="十四、各代架构优劣势对比"></a>十四、各代架构优劣势对比</h1><table>
+<thead>
+<tr>
+<th>架构</th>
+<th>优势</th>
+<th>缺点</th>
+<th>适合</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Pure LLM</td>
+<td>简单、低延迟</td>
+<td>知识过期、私域未知</td>
+<td>通用问答</td>
+</tr>
+<tr>
+<td>Naive RAG</td>
+<td>简单、便宜、易落地</td>
+<td>检索质量一般</td>
+<td>FAQ、文档 QA</td>
+</tr>
+<tr>
+<td>Advanced RAG</td>
+<td>准确率明显改善</td>
+<td>Pipeline复杂</td>
+<td>企业知识库</td>
+</tr>
+<tr>
+<td>Hybrid RAG</td>
+<td>语义+关键词兼顾</td>
+<td>调参复杂</td>
+<td>技术/业务文档</td>
+</tr>
+<tr>
+<td>Modular RAG</td>
+<td>多数据源</td>
+<td>架构复杂</td>
+<td>企业平台</td>
+</tr>
+<tr>
+<td>Adaptive RAG</td>
+<td>成本/效果平衡</td>
+<td>Router可能误判</td>
+<td>大规模系统</td>
+</tr>
+<tr>
+<td>Self/Corrective RAG</td>
+<td>鲁棒性高</td>
+<td>多次LLM调用</td>
+<td>高可靠问答</td>
+</tr>
+<tr>
+<td>GraphRAG</td>
+<td>关系/全局分析强</td>
+<td>构建成本高</td>
+<td>复杂知识网络</td>
+</tr>
+<tr>
+<td>Agentic RAG</td>
+<td>多步推理能力强</td>
+<td>延迟、成本、可控性</td>
+<td>Data Agent</td>
+</tr>
+<tr>
+<td>Long Context + RAG</td>
+<td>灵活、信息完整</td>
+<td>Token成本较高</td>
+<td>长文档分析</td>
+</tr>
+</tbody></table>
+<hr>
+<h1 id="十五、RAG-最大的优势其实不是“降低幻觉”"><a href="#十五、RAG-最大的优势其实不是“降低幻觉”" class="headerlink" title="十五、RAG 最大的优势其实不是“降低幻觉”"></a>十五、RAG 最大的优势其实不是“降低幻觉”</h1><p>经常看到这样的表述：</p>
+<blockquote>
+<p>RAG = 解决幻觉。</p>
+</blockquote>
+<p>这个理解过于简单。</p>
+<p>我更倾向于认为 RAG 真正重要的价值有五个：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">LLM</span><br><span class="line"> │</span><br><span class="line"> ├── Parametric Knowledge</span><br><span class="line"> │</span><br><span class="line"> └── External Knowledge</span><br><span class="line">          │</span><br><span class="line">          ├── Freshness</span><br><span class="line">          ├── Private</span><br><span class="line">          ├── Traceable</span><br><span class="line">          ├── Controllable</span><br><span class="line">          └── Replaceable</span><br></pre></td></tr></table></figure>
+
+<p>特别是企业场景中，后三个非常重要。</p>
+<h2 id="1-Knowledge-Freshness"><a href="#1-Knowledge-Freshness" class="headerlink" title="1. Knowledge Freshness"></a>1. Knowledge Freshness</h2><p>知识可以独立更新。</p>
+<p>###2. Private Knowledge</p>
+<p>可以接：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ERP</span><br><span class="line">MES</span><br><span class="line">CRM</span><br><span class="line">SRM</span><br><span class="line">DW</span><br><span class="line">Wiki</span><br><span class="line">SharePoint</span><br><span class="line">PDF</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-Traceability"><a href="#3-Traceability" class="headerlink" title="3. Traceability"></a>3. Traceability</h2><p>可以回答：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">答案是什么？</span><br><span class="line">       +</span><br><span class="line">依据是什么？</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-Knowledge-Governance"><a href="#4-Knowledge-Governance" class="headerlink" title="4. Knowledge Governance"></a>4. Knowledge Governance</h2><p>可以控制：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">哪些数据</span><br><span class="line">谁可以访问</span><br><span class="line">什么版本</span><br><span class="line">什么时候生效</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-Model-Knowledge-解耦"><a href="#5-Model-Knowledge-解耦" class="headerlink" title="5. Model / Knowledge 解耦"></a>5. Model / Knowledge 解耦</h2><p>这是企业架构尤其重要的一点：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">        AI Application</span><br><span class="line">              │</span><br><span class="line">    Knowledge Layer</span><br><span class="line">              │</span><br><span class="line">       Model Router</span><br><span class="line">   ┌──────────┼─────────┐</span><br><span class="line">   ↓          ↓         ↓</span><br><span class="line">GPT          Claude    Local LLM</span><br></pre></td></tr></table></figure>
+
+<p>换模型：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Knowledge Layer 不变</span><br></pre></td></tr></table></figure>
+
+<p>换知识：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LLM 不需要重新训练</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="十六、RAG-最大的弱点：它把问题从-Generation-转移到了-Retrieval"><a href="#十六、RAG-最大的弱点：它把问题从-Generation-转移到了-Retrieval" class="headerlink" title="十六、RAG 最大的弱点：它把问题从 Generation 转移到了 Retrieval"></a>十六、RAG 最大的弱点：它把问题从 Generation 转移到了 Retrieval</h1><p>这是做企业 RAG 最容易忽略的问题。</p>
+<p>很多项目：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">换 Embedding Model</span><br><span class="line">换 Vector DB</span><br><span class="line">换 LLM</span><br><span class="line">调 Prompt</span><br></pre></td></tr></table></figure>
+
+<p>最后准确率还是只有 70%。</p>
+<p>原因往往不是模型，而是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Data Quality</span><br><span class="line">     ↓</span><br><span class="line">Parsing</span><br><span class="line">     ↓</span><br><span class="line">Chunking</span><br><span class="line">     ↓</span><br><span class="line">Metadata</span><br><span class="line">     ↓</span><br><span class="line">Retrieval</span><br><span class="line">     ↓</span><br><span class="line">Ranking</span><br><span class="line">     ↓</span><br><span class="line">Context</span><br><span class="line">     ↓</span><br><span class="line">    LLM</span><br></pre></td></tr></table></figure>
+
+<p>任何一层错了都会传递。</p>
+<p>所以实际可以写成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">RAG Quality</span><br><span class="line">≈</span><br><span class="line">Data Quality</span><br><span class="line">× Retrieval Quality</span><br><span class="line">× Context Quality</span><br><span class="line">× LLM Reasoning Quality</span><br></pre></td></tr></table></figure>
+
+<p>这是乘法关系，不是加法关系。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Retriever Recall = 80%</span><br></pre></td></tr></table></figure>
+
+<p>意味着：</p>
+<blockquote>
+<p>20% 的问题，LLM 根本拿不到正确资料。</p>
+</blockquote>
+<p>后面再怎么 Prompt Engineering 都解决不了。</p>
+<hr>
+<h1 id="十七、一个容易误判的趋势：未来不是“RAG-会不会消失”"><a href="#十七、一个容易误判的趋势：未来不是“RAG-会不会消失”" class="headerlink" title="十七、一个容易误判的趋势：未来不是“RAG 会不会消失”"></a>十七、一个容易误判的趋势：未来不是“RAG 会不会消失”</h1><p>Long Context 越来越长以后，经常有人问：</p>
+<blockquote>
+<p>RAG 是否会被 Long Context 淘汰？</p>
+</blockquote>
+<p>我的判断是不会，但 <strong>Naive RAG 的重要性会降低</strong>。</p>
+<p>未来更可能是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">                    Agent</span><br><span class="line">                      │</span><br><span class="line">                   Router</span><br><span class="line">                      │</span><br><span class="line">      ┌───────────────┼────────────────┐</span><br><span class="line">      ↓               ↓                ↓</span><br><span class="line">Parametric        Long Context      Retrieval</span><br><span class="line">Knowledge                              │</span><br><span class="line">                               ┌───────┼───────┐</span><br><span class="line">                               ↓       ↓       ↓</span><br><span class="line">                             Vector   Graph    SQL</span><br><span class="line">                               │       │       │</span><br><span class="line">                               └───────┼───────┘</span><br><span class="line">                                       ↓</span><br><span class="line">                                     Tools</span><br></pre></td></tr></table></figure>
+
+<p>模型自己决定：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">这个问题我知道</span><br><span class="line">        ↓</span><br><span class="line">直接回答</span><br><span class="line"></span><br><span class="line">需要读完整合同</span><br><span class="line">        ↓</span><br><span class="line">Long Context</span><br><span class="line"></span><br><span class="line">需要找几个相关文档</span><br><span class="line">        ↓</span><br><span class="line">Vector RAG</span><br><span class="line"></span><br><span class="line">需要理解关系</span><br><span class="line">        ↓</span><br><span class="line">GraphRAG</span><br><span class="line"></span><br><span class="line">需要最新经营数据</span><br><span class="line">        ↓</span><br><span class="line">SQL</span><br><span class="line"></span><br><span class="line">需要最新实时信息</span><br><span class="line">        ↓</span><br><span class="line">API / Search</span><br><span class="line"></span><br><span class="line">需要多步分析</span><br><span class="line">        ↓</span><br><span class="line">Agent Loop</span><br></pre></td></tr></table></figure>
+
+<p>这才是比较完整的下一代架构。</p>
+<hr>
+<h1 id="十八、如果放到企业-Data-Agent-场景，会更容易理解"><a href="#十八、如果放到企业-Data-Agent-场景，会更容易理解" class="headerlink" title="十八、如果放到企业 Data Agent 场景，会更容易理解"></a>十八、如果放到企业 Data Agent 场景，会更容易理解</h1><p>假设将来构建企业 Data Agent：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">                    Data Agent</span><br><span class="line">                        │</span><br><span class="line">              ┌─────────┼─────────┐</span><br><span class="line">              ↓         ↓         ↓</span><br><span class="line">           Planner    Memory    Policy</span><br><span class="line">              │</span><br><span class="line">              ↓</span><br><span class="line">        Knowledge Router</span><br><span class="line">              │</span><br><span class="line">    ┌─────────┼─────────┬──────────┐</span><br><span class="line">    ↓         ↓         ↓          ↓</span><br><span class="line">Vector RAG GraphRAG  Semantic    API</span><br><span class="line">                      Layer</span><br><span class="line">                       ↓</span><br><span class="line">                  Metric / SQL</span><br><span class="line">                       ↓</span><br><span class="line">                     Hive</span><br></pre></td></tr></table></figure>
+
+<p>这时：</p>
+<p><strong>RAG 不再等于知识库。</strong></p>
+<p>它应该被理解为：</p>
+<blockquote>
+<p><strong>Agent 获取外部上下文的一种机制。</strong></p>
+</blockquote>
+<p>而：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Semantic Layer</span><br><span class="line">SQL Engine</span><br><span class="line">Knowledge Graph</span><br><span class="line">Vector DB</span><br><span class="line">Search Engine</span><br><span class="line">API</span><br><span class="line">MCP / Tools</span><br></pre></td></tr></table></figure>
+
+<p>本质上都属于：</p>
+<blockquote>
+<p><strong>External Knowledge / External Context</strong></p>
+</blockquote>
+<p>这也是我认为理解现代 RAG 最重要的一点。</p>
+<hr>
+<h1 id="最后总结成一句话"><a href="#最后总结成一句话" class="headerlink" title="最后总结成一句话"></a>最后总结成一句话</h1><p>LLM + RAG 的演化，本质上经历了：</p>
+<blockquote>
+<p><strong>“给 LLM 找几段资料” → “给 LLM 建立可靠的知识访问层” → “让 LLM 自己决定如何获取知识” → “让 Agent 在推理过程中持续获取、验证和利用外部世界的信息”。</strong></p>
+</blockquote>
+<p>因此站在 2026 年看，企业真正值得建设的已经不是一个孤立的 <strong>RAG 知识库</strong>，而是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">             Enterprise AI Knowledge Layer</span><br><span class="line">                        │</span><br><span class="line">      ┌─────────────────┼─────────────────┐</span><br><span class="line">      ↓                 ↓                 ↓</span><br><span class="line">Document Knowledge   Semantic Data    Operational</span><br><span class="line">      │                 │               Tools</span><br><span class="line">Vector / Graph       Metric / SQL      API / MCP</span><br><span class="line">      └─────────────────┼─────────────────┘</span><br><span class="line">                        ↓</span><br><span class="line">                   Agent Runtime</span><br><span class="line">                        ↓</span><br><span class="line">                       LLM</span><br></pre></td></tr></table></figure>
+
+<p>这条路线与我们前面讨论的 <strong>“Hive 数据仓库 → 指标语义层 → Agent 统一语义接口”</strong>实际上正好可以接起来：<strong>RAG 负责非结构化知识，Semantic Layer 负责结构化事实，Agent 负责决定什么时候用哪一种。</strong> 这比简单建设一个“企业向量知识库”更接近最终形态。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://itaoyuyin.com/2026/08/data-ai-native-01/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1833,78 +2436,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://itaoyuyin.com/2026/06/t-data-dev-paradigm-04/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="陶玉印">
-      <meta itemprop="description" content="陶玉印,15年数据治理与数据仓库实践者，涵盖数据治理、数据质量、数据仓库、数据平台、主数据管理、制造业数字化等领域。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="陶玉印的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2026/06/t-data-dev-paradigm-04/" class="post-title-link" itemprop="url">ChatBI来了，传统BI会消失吗？</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2026-06-30 10:00:00" itemprop="dateCreated datePublished" datetime="2026-06-30T10:00:00+08:00">2026-06-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2026-06-29 13:57:59" itemprop="dateModified" datetime="2026-06-29T13:57:59+08:00">2026-06-29</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>BI为什么成功？ChatBI又解决了什么问题？</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2026/06/t-data-dev-paradigm-04/">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1974,7 +2505,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-count">26</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
