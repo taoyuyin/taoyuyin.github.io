@@ -5143,7 +5143,7 @@
 
 <p>这才是比较完整的下一代架构。</p>
 <hr>
-<h1 id="十八、如果放到企业-Data-Agent-场景，会更容易理解"><a href="#十八、如果放到企业-Data-Agent-场景，会更容易理解" class="headerlink" title="十八、如果放到企业 Data Agent 场景，会更容易理解"></a>十八、如果放到企业 Data Agent 场景，会更容易理解</h1><p>假设将来构建企业 Data Agent：</p>
+<h1 id="十八、放到企业-Data-Agent-场景"><a href="#十八、放到企业-Data-Agent-场景" class="headerlink" title="十八、放到企业 Data Agent 场景"></a>十八、放到企业 Data Agent 场景</h1><p>企业 Data Agent：</p>
 <figure class="highlight text"><table><tr><td class="code"><pre><span class="line">                    Data Agent</span><br><span class="line">                        │</span><br><span class="line">              ┌─────────┼─────────┐</span><br><span class="line">              ↓         ↓         ↓</span><br><span class="line">           Planner    Memory    Policy</span><br><span class="line">              │</span><br><span class="line">              ↓</span><br><span class="line">        Knowledge Router</span><br><span class="line">              │</span><br><span class="line">    ┌─────────┼─────────┬──────────┐</span><br><span class="line">    ↓         ↓         ↓          ↓</span><br><span class="line">Vector RAG GraphRAG  Semantic    API</span><br><span class="line">                      Layer</span><br><span class="line">                       ↓</span><br><span class="line">                  Metric / SQL</span><br><span class="line">                       ↓</span><br><span class="line">                     Hive</span><br></pre></td></tr></table></figure>
 
 <p>这时：</p>
