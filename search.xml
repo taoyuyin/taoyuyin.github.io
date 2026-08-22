@@ -5798,61 +5798,76 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">Tracing</span><br><span class="line">Observability</span><br><span class="line">Evaluation</span><br><span class="line">Cost</span><br><span class="line">Token Budget</span><br><span class="line">Checkpoint</span><br><span class="line">Session</span><br><span class="line">Queue</span><br><span class="line">Scheduler</span><br><span class="line">Secrets</span><br><span class="line">Audit</span><br><span class="line">Multi-Agent</span><br></pre></td></tr></table></figure>
 
 <h1 id="八、Harness、Framework、Runtime、Orchestrator-到底有什么区别"><a href="#八、Harness、Framework、Runtime、Orchestrator-到底有什么区别" class="headerlink" title="八、Harness、Framework、Runtime、Orchestrator 到底有什么区别"></a>八、Harness、Framework、Runtime、Orchestrator 到底有什么区别</h1><p>现在行业仍然有术语混用。2026 年甚至已有论文专门研究“什么才算 Agent Harness”，指出 Claude Code、Codex CLI、Aider、Cline、OpenHands、SWE-agent 都可以被视为 Harness，但 Agent Framework、SDK、IDE Plugin、Eval Harness 和 Orchestrator 并不能简单等同。</p>
-<p>比较推荐下面这套划分。</p>
+<p>当前主流产品重新归类</p>
 <table>
 <thead>
 <tr>
-<th>层</th>
-<th>作用</th>
-<th>典型产品</th>
+<th>产品</th>
+<th>最核心定位</th>
+<th>备注</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>Model</td>
-<td>Intelligence</td>
-<td>GPT、Claude、Gemini、Qwen</td>
-</tr>
-<tr>
+<td><strong>LangChain</strong></td>
 <td>Framework</td>
-<td>构建 Agent 的 primitives</td>
-<td>LangChain</td>
+<td>Agent、Tool、Model 等开发抽象</td>
 </tr>
 <tr>
+<td><strong>Cordis</strong></td>
+<td>Composition Framework</td>
+<td>DeepSeek Harness 的插件与事件基础</td>
+</tr>
+<tr>
+<td><strong>LangGraph</strong></td>
 <td>Runtime</td>
-<td>durable execution</td>
-<td>LangGraph</td>
+<td>State、Checkpoint、Durable Execution</td>
 </tr>
 <tr>
-<td><strong>Harness</strong></td>
-<td><strong>让 Agent 真正工作的完整执行机制</strong></td>
-<td>Deep Agents、Claude Agent SDK、Codex Harness</td>
+<td><strong>DeepSeek Harness</strong></td>
+<td><strong>Composable Harness</strong></td>
+<td>Agent Loop、Session、Tool、Sandbox、Policy 全插件化</td>
 </tr>
 <tr>
-<td>Sandbox</td>
-<td>隔离执行</td>
-<td>Docker、E2B、VM</td>
+<td><strong>Deep Agents</strong></td>
+<td>Harness</td>
+<td>基于 LangGraph 的 Batteries-included Harness</td>
 </tr>
 <tr>
-<td>Orchestrator</td>
-<td>调度多个 Agent</td>
-<td>Symphony 等</td>
+<td><strong>Claude Agent SDK</strong></td>
+<td>Model-native Harness</td>
+<td>Claude 深度优化</td>
 </tr>
 <tr>
+<td><strong>Codex Harness</strong></td>
+<td>Model-native Harness</td>
+<td>Codex 执行核心</td>
+</tr>
+<tr>
+<td><strong>OpenHands SDK</strong></td>
+<td>Software Agent Harness</td>
+<td>Coding / Software Engineering 优化</td>
+</tr>
+<tr>
+<td><strong>AWS AgentCore Harness</strong></td>
+<td>Managed Harness</td>
+<td>云托管 Agent Harness</td>
+</tr>
+<tr>
+<td><strong>Agent Teams / Symphony 类</strong></td>
+<td>Orchestration</td>
+<td>多 Agent / 多任务协调</td>
+</tr>
+<tr>
+<td><strong>OpenHands Control Plane</strong></td>
 <td>Control Plane</td>
-<td>企业级统一治理 Agent</td>
-<td>OpenHands Control Plane 等</td>
-</tr>
-<tr>
-<td>Application</td>
-<td>最终用户体验</td>
-<td>Claude Code、Codex、IDE Agent</td>
+<td>Agent Fleet 管理</td>
 </tr>
 </tbody></table>
-<p>LangChain 自己也已经正式把这三个层级区分开：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">LangChain</span><br><span class="line">    Framework</span><br><span class="line"></span><br><span class="line">LangGraph</span><br><span class="line">    Runtime</span><br><span class="line"></span><br><span class="line">Deep Agents</span><br><span class="line">    Harness</span><br></pre></td></tr></table></figure>
+<p>可以把四个概念压缩成四句话：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Framework</span><br><span class="line">&#x3D; 怎么写 Agent</span><br><span class="line"></span><br><span class="line">Runtime</span><br><span class="line">&#x3D; Agent 怎么可靠地跑</span><br><span class="line"></span><br><span class="line">Harness</span><br><span class="line">&#x3D; Agent 到底怎么工作</span><br><span class="line"></span><br><span class="line">Orchestrator</span><br><span class="line">&#x3D; 多个 Agent 怎么协同运行</span><br></pre></td></tr></table></figure>
 
-<p>Deep Agents 在 LangGraph 上增加 planning、filesystem、subagent、memory、context management 等“开箱即用”的 Agent 能力。</p>
-<h1 id="九、Agent-Harness-已经演化到什么阶段"><a href="#九、Agent-Harness-已经演化到什么阶段" class="headerlink" title="九、Agent Harness 已经演化到什么阶段"></a>九、Agent Harness 已经演化到什么阶段</h1><p>如果按技术演进看，我会划成五代。</p>
+
+<h1 id="九、Agent-Harness-已经演化到什么阶段"><a href="#九、Agent-Harness-已经演化到什么阶段" class="headerlink" title="九、Agent Harness 已经演化到什么阶段"></a>九、Agent Harness 已经演化到什么阶段</h1><p>如果按技术演进看，可以划成五代。</p>
 <h2 id="Stage-1：Agent-Loop"><a href="#Stage-1：Agent-Loop" class="headerlink" title="Stage 1：Agent Loop"></a>Stage 1：Agent Loop</h2><p>大约 2023–2024。</p>
 <p>核心：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">LLM</span><br><span class="line"> ↓</span><br><span class="line">Tool</span><br><span class="line"> ↓</span><br><span class="line">Observation</span><br><span class="line"> ↓</span><br><span class="line">LLM</span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -5879,9 +5894,8 @@
 <p>以前：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">开发者</span><br><span class="line"> ↓</span><br><span class="line">自己写 Agent Loop</span><br><span class="line"> ↓</span><br><span class="line">自己维护 context</span><br><span class="line"> ↓</span><br><span class="line">自己接 tools</span><br><span class="line"> ↓</span><br><span class="line">自己做 sandbox</span><br><span class="line"> ↓</span><br><span class="line">自己做状态恢复</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>现在云厂商开始提供：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">model</span><br><span class="line">tools</span><br><span class="line">skills</span><br><span class="line">instructions</span><br><span class="line">policy</span><br><span class="line">memory</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<pre><code>    ↓</code></pre>
-<p>Managed Harness</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">model</span><br><span class="line">tools</span><br><span class="line">skills</span><br><span class="line">instructions</span><br><span class="line">policy</span><br><span class="line">memory</span><br><span class="line"></span><br><span class="line">        ↓</span><br><span class="line"></span><br><span class="line">Managed Harness</span><br></pre></td></tr></table></figure>
+
 <p>例如 AWS 在 2026 年 6 月 17 日宣布 Bedrock AgentCore Harness GA，直接提供：</p>
 <ul>
 <li>orchestration loop</li>
@@ -5930,7 +5944,7 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Agent运行</span><br><span class="line"> ↓</span><br><span class="line">Trace</span><br><span class="line"> ↓</span><br><span class="line">自动发现 Failure Pattern</span><br><span class="line"> ↓</span><br><span class="line">修改 Harness</span><br><span class="line"> ↓</span><br><span class="line">Eval</span><br><span class="line"> ↓</span><br><span class="line">保留提升</span><br><span class="line"> ↓</span><br><span class="line">继续演化</span><br></pre></td></tr></table></figure>
 
 <p>2026 年已经出现 Agentic Harness Engineering 相关研究，让系统根据执行轨迹自动优化 Harness；研究结果也表明性能提升更多来自 tools、middleware 和 memory，而不仅是 system prompt。</p>
-<p>不过这一层我会定义为：</p>
+<p>不过这一层一般定义为：</p>
 <blockquote>
 <p>研究期 / Early Adopter，而不是成熟生产标准。</p>
 </blockquote>
@@ -6104,9 +6118,9 @@
 <td>生产化</td>
 </tr>
 </tbody></table>
-<p>这里的星级是我基于当前产品定位做的架构成熟度判断，不是官方评分。</p>
+<p>这里的星级是基于当前产品定位做的架构成熟度判断，不是官方评分。</p>
 <p>另外，在 Coding Harness 这个更宽泛的分类里，Claude Code、Codex CLI、Aider、Cline、OpenHands、SWE-agent 等通常都可以归进去；2026 年针对 Harness 定义的研究也使用了这几种系统作为典型案例。</p>
-<h1 id="十三、我认为现在最重要的变化"><a href="#十三、我认为现在最重要的变化" class="headerlink" title="十三、我认为现在最重要的变化"></a>十三、我认为现在最重要的变化</h1><p>以前大家讨论 Agent，经常画成：</p>
+<h1 id="十三、目前最重要的变化"><a href="#十三、目前最重要的变化" class="headerlink" title="十三、目前最重要的变化"></a>十三、目前最重要的变化</h1><p>以前大家讨论 Agent，经常画成：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">         Agent</span><br><span class="line">           │</span><br><span class="line"> ┌─────────┼─────────┐</span><br><span class="line"> ▼         ▼         ▼</span><br><span class="line">LLM       RAG       Tools</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>现在更准确的架构应该是：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">                    Agent Application</span><br><span class="line">                           │</span><br><span class="line">                           ▼</span><br><span class="line">                    Agent Harness</span><br><span class="line">                           │</span><br><span class="line">       ┌───────────────────┼───────────────────┐</span><br><span class="line">       ▼                   ▼                   ▼</span><br><span class="line"> Model Router        Context Layer        Tool Layer</span><br><span class="line">       │                   │                   │</span><br><span class="line">       ▼                   ▼                   ▼</span><br><span class="line">GPT&#x2F;Claude&#x2F;...       Memory &#x2F; RAG          MCP &#x2F; API</span><br><span class="line">                           │</span><br><span class="line">                           ▼</span><br><span class="line">                        Runtime</span><br><span class="line">                           │</span><br><span class="line">                           ▼</span><br><span class="line">                        Sandbox</span><br><span class="line">                           │</span><br><span class="line">                           ▼</span><br><span class="line">                        Systems</span><br></pre></td></tr></table></figure>
@@ -6143,7 +6157,7 @@
 <blockquote>
 <p>未来企业 AI 平台的稳定层很可能不是某一个 LLM，而是 Model Router + Semantic/Knowledge Layer + Agent Harness + Agent Control Plane。</p>
 </blockquote>
-<p>而从 2026 年 8 月这个时间点看，我会把行业成熟度判断为：</p>
+<p>而从目前看，行业成熟度判断为：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Coding Harness             █████████░  成熟</span><br><span class="line">General Agent Harness      ███████░░░  快速成熟</span><br><span class="line">Managed Harness            ██████░░░░  早期生产期</span><br><span class="line">Enterprise Control Plane   ████░░░░░░  形成期</span><br><span class="line">Multi-Agent Fleet          ████░░░░░░  形成期</span><br><span class="line">Self-Evolving Harness      ██░░░░░░░░  研究期</span><br></pre></td></tr></table></figure>
 
 <p>这可能也是继 Model Router、Semantic Layer、MCP 之后，企业 Agent 架构里最值得重点关注的一层。</p>
