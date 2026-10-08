@@ -186,6 +186,725 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://itaoyuyin.com/2026/10/ai-ontology-overview/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="陶玉印">
+      <meta itemprop="description" content="陶玉印,15年数据治理与数据仓库实践者，涵盖数据治理、数据质量、数据仓库、数据平台、主数据管理、制造业数字化等领域。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="陶玉印的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2026/10/ai-ontology-overview/" class="post-title-link" itemprop="url">从知识表示到企业 AI：本体（Ontology）的发展、演进与产业实践</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-10-08 10:00:00 / 修改时间：16:16:41" itemprop="dateCreated datePublished" datetime="2026-10-08T10:00:00+08:00">2026-10-08</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="从知识表示到企业-AI：本体（Ontology）的发展、演进与产业实践"><a href="#从知识表示到企业-AI：本体（Ontology）的发展、演进与产业实践" class="headerlink" title="从知识表示到企业 AI：本体（Ontology）的发展、演进与产业实践"></a>从知识表示到企业 AI：本体（Ontology）的发展、演进与产业实践</h1><p>如果把企业数字化的发展过程拉长来看，会发现一个很有意思的现象：</p>
+<p><strong>企业过去一直在解决“数据存在哪里、怎么计算、怎么查询”的问题，而本体开始解决的是“这些数据究竟代表什么，以及它们之间是什么关系”的问题。</strong></p>
+<p>ERP、CRM、MES、WMS、SRM、数据仓库、数据湖解决了企业数据的采集、存储和计算；数据治理解决了数据标准、质量、元数据和责任；知识图谱进一步把数据组织成关系网络；而本体（Ontology）则试图在这些技术之上建立一套<strong>机器可以理解、推理和复用的业务世界模型</strong>。</p>
+<p>近年来 Palantir 将 Ontology 提升到企业操作系统和 AI Agent 的核心位置，又让这个原本主要存在于 AI、知识工程和 Semantic Web 领域的概念重新成为企业数据架构的重要话题。Palantir甚至直接将 Ontology 定义为企业的数字化表示，并将对象、关系、动作、逻辑和安全纳入其中。(<a target="_blank" rel="noopener" href="https://www.palantir.com/explore/platforms/foundry/ontology/?utm_source=chatgpt.com" title="Palantir Foundry Ontology">Palantir</a>)</p>
+<p>但需要特别注意：</p>
+<blockquote>
+<p><strong>今天企业讨论的 Ontology，并不是一个突然出现的新概念。</strong></p>
+</blockquote>
+<p>它已经经历了三十多年从<strong>知识表示 → Semantic Web → 知识图谱 → 企业语义层 → 企业 Ontology → AI/Agent Ontology</strong>的演进。</p>
+<p>下面把这条发展路线完整梳理一下。</p>
+<hr>
+<h1 id="一、为什么会出现-Ontology？"><a href="#一、为什么会出现-Ontology？" class="headerlink" title="一、为什么会出现 Ontology？"></a>一、为什么会出现 Ontology？</h1><h2 id="1-最早的问题：机器“有数据”，但“不懂数据”"><a href="#1-最早的问题：机器“有数据”，但“不懂数据”" class="headerlink" title="1. 最早的问题：机器“有数据”，但“不懂数据”"></a>1. 最早的问题：机器“有数据”，但“不懂数据”</h2><p>早期计算机系统主要解决的是：</p>
+<blockquote>
+<p>如何把现实世界的信息转换成计算机可以存储和处理的数据。</p>
+</blockquote>
+<p>例如一个制造企业可能有：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">ERP</span><br><span class="line"> ├── 物料</span><br><span class="line"> ├── 供应商</span><br><span class="line"> ├── 采购订单</span><br><span class="line"> └── 库存</span><br><span class="line"></span><br><span class="line">MES</span><br><span class="line"> ├── 工单</span><br><span class="line"> ├── 设备</span><br><span class="line"> ├── 工序</span><br><span class="line"> └── 生产记录</span><br><span class="line"></span><br><span class="line">CRM</span><br><span class="line"> ├── 客户</span><br><span class="line"> ├── 销售订单</span><br><span class="line"> └── 联系人</span><br></pre></td></tr></table></figure>
+
+<p>数据库可以很好地保存这些数据。</p>
+<p>但是对于机器来说：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ERP.material_id</span><br><span class="line">MES.product_id</span><br><span class="line">MES.wlbh</span><br><span class="line">CRM.product_code</span><br></pre></td></tr></table></figure>
+
+<p>它们只是几个字段。</p>
+<p>机器并不知道：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">material_id = product_id</span><br></pre></td></tr></table></figure>
+
+<p>也不知道：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">产品 → 属于 → 产品类别</span><br><span class="line">产品 → 由 → 供应商供应</span><br><span class="line">产品 → 在 → 工厂生产</span><br><span class="line">工单 → 生产 → 产品</span><br><span class="line">设备 → 执行 → 工序</span><br></pre></td></tr></table></figure>
+
+<p>更重要的是：</p>
+<p><strong>这些关系很多并不存在于数据库的字段定义里面，而存在于业务人员的认知中。</strong></p>
+<p>这就产生了一个非常基础的问题：</p>
+<blockquote>
+<p><strong>如何把“人对业务世界的理解”表达成机器可以理解和处理的形式？</strong></p>
+</blockquote>
+<p>这就是 Ontology 长期试图解决的问题。</p>
+<hr>
+<h1 id="二、Ontology-最初来自知识表示和-AI"><a href="#二、Ontology-最初来自知识表示和-AI" class="headerlink" title="二、Ontology 最初来自知识表示和 AI"></a>二、Ontology 最初来自知识表示和 AI</h1><p>Ontology 并不是互联网时代才出现的。</p>
+<p>哲学中的 Ontology 本身是“本体论”，研究：</p>
+<blockquote>
+<p>世界上有什么东西，它们是什么，以及它们之间是什么关系。</p>
+</blockquote>
+<p>进入计算机科学以后，这个概念被引入<strong>知识表示（Knowledge Representation）</strong>和人工智能。</p>
+<p>1993 年，Thomas Gruber 在论文 <em>A Translation Approach to Portable Ontology Specifications</em> 中给出了后来被广泛引用的定义：</p>
+<blockquote>
+<p>ontology 是对一个共享概念体系的形式化、明确的规范。</p>
+</blockquote>
+<p>它关注的是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Concept</span><br><span class="line">Relation</span><br><span class="line">Property</span><br><span class="line">Constraint</span><br></pre></td></tr></table></figure>
+
+<p>也就是说，不只是定义“有什么数据”，而是定义：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">什么东西存在？</span><br><span class="line">它属于什么类型？</span><br><span class="line">它具有什么属性？</span><br><span class="line">它和什么东西存在什么关系？</span><br><span class="line">这些关系有什么约束？</span><br></pre></td></tr></table></figure>
+
+<p>Gruber 当时的重要背景就是希望让不同 AI 系统之间能够共享和复用知识。(<a target="_blank" rel="noopener" href="https://tomgruber.org/writing/ontolingua-kaj-1993/?utm_source=chatgpt.com" title="A Translation Approach to Portable Ontology Specifications - Definition of Ontology as Specification">Tom Gruber</a>)</p>
+<p>所以从本质上讲：</p>
+<blockquote>
+<p><strong>Ontology 最初解决的是“知识如何被机器形式化表达”的问题。</strong></p>
+</blockquote>
+<hr>
+<h1 id="三、第一阶段：知识表示与专家系统"><a href="#三、第一阶段：知识表示与专家系统" class="headerlink" title="三、第一阶段：知识表示与专家系统"></a>三、第一阶段：知识表示与专家系统</h1><h3 id="时间：1970s～1990s"><a href="#时间：1970s～1990s" class="headerlink" title="时间：1970s～1990s"></a>时间：1970s～1990s</h3><p>这一阶段的核心关键词是：</p>
+<p><strong>Knowledge Representation + Expert System</strong></p>
+<p>典型技术包括：</p>
+<ul>
+<li>Semantic Network</li>
+<li>Frame</li>
+<li>Description Logic</li>
+<li>Knowledge Base</li>
+<li>Expert System</li>
+<li>KL-ONE</li>
+<li>CLASSIC</li>
+<li>Ontolingua</li>
+</ul>
+<p>当时人工智能系统通常需要专家把领域知识告诉机器。</p>
+<p>例如医疗诊断系统：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">疾病</span><br><span class="line"> ├── 是一种 → 疾病类别</span><br><span class="line"> ├── 具有症状 → 发热</span><br><span class="line"> ├── 具有症状 → 咳嗽</span><br><span class="line"> └── 推荐治疗 → xxx</span><br></pre></td></tr></table></figure>
+
+<p>机器通过规则和知识进行推理：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">如果：</span><br><span class="line">患者具有发热</span><br><span class="line">患者具有咳嗽</span><br><span class="line">患者具有某种实验室指标</span><br><span class="line"></span><br><span class="line">那么：</span><br><span class="line">可能属于某疾病</span><br></pre></td></tr></table></figure>
+
+<p>这一阶段实际上已经具备了今天 Ontology 的核心思想：</p>
+<blockquote>
+<p><strong>把领域知识从程序代码中抽离出来，形成可以复用的知识模型。</strong></p>
+</blockquote>
+<hr>
+<h1 id="四、Protege：Ontology-工具的重要起点"><a href="#四、Protege：Ontology-工具的重要起点" class="headerlink" title="四、Protégé：Ontology 工具的重要起点"></a>四、Protégé：Ontology 工具的重要起点</h1><p>这个阶段有一个非常重要的工具：</p>
+<h2 id="Protege"><a href="#Protege" class="headerlink" title="Protégé"></a>Protégé</h2><p>Protégé</p>
+<p>Protégé 最早可以追溯到 1980 年代 Stanford 的知识系统研究，后来逐渐发展成今天最著名的开源 Ontology 编辑器之一。</p>
+<p>它最初就是为了帮助专家构建知识模型。</p>
+<p>后来随着 RDF、OWL 的发展，Protégé 加入了对 RDF/OWL 的支持，目前支持 OWL 2，并可以连接 HermiT、Pellet 等推理器。(<a target="_blank" rel="noopener" href="https://protege.stanford.edu/about/?utm_source=chatgpt.com" title="About - Protégé">Protégé</a>)</p>
+<p>因此如果要寻找：</p>
+<blockquote>
+<p><strong>“Ontology 工程真正进入软件工具时代的代表产品是什么？”</strong></p>
+</blockquote>
+<p>Protégé 基本绕不开。</p>
+<hr>
+<h1 id="五、第二阶段：Semantic-Web——让整个互联网“可以理解”"><a href="#五、第二阶段：Semantic-Web——让整个互联网“可以理解”" class="headerlink" title="五、第二阶段：Semantic Web——让整个互联网“可以理解”"></a>五、第二阶段：Semantic Web——让整个互联网“可以理解”</h1><h3 id="时间：1990s～2000s"><a href="#时间：1990s～2000s" class="headerlink" title="时间：1990s～2000s"></a>时间：1990s～2000s</h3><p>随着互联网快速发展，新的问题出现了。</p>
+<p>网页对于人来说很好理解：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">苹果公司</span><br><span class="line">    ↓</span><br><span class="line">CEO</span><br><span class="line">    ↓</span><br><span class="line">Tim Cook</span><br></pre></td></tr></table></figure>
+
+<p>但是对于机器来说，HTML 更多描述的是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">文字</span><br><span class="line">图片</span><br><span class="line">链接</span><br><span class="line">布局</span><br></pre></td></tr></table></figure>
+
+<p>机器并不知道：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Apple</span><br></pre></td></tr></table></figure>
+
+<p>到底是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">公司？</span><br><span class="line">水果？</span><br><span class="line">产品？</span><br><span class="line">品牌？</span><br></pre></td></tr></table></figure>
+
+<p>于是 Tim Berners-Lee 提出了著名的：</p>
+<h1 id="Semantic-Web"><a href="#Semantic-Web" class="headerlink" title="Semantic Web"></a>Semantic Web</h1><p>核心思想可以简单理解成：</p>
+<blockquote>
+<p><strong>让 Web 上的信息不仅能够被人阅读，也能够被机器理解其语义。</strong></p>
+</blockquote>
+<p>这一阶段出现了非常重要的一套标准体系。</p>
+<hr>
+<h1 id="六、RDF：把世界表达成“关系”"><a href="#六、RDF：把世界表达成“关系”" class="headerlink" title="六、RDF：把世界表达成“关系”"></a>六、RDF：把世界表达成“关系”</h1><p>1999 年，W3C 正式发布 RDF Recommendation。(<a target="_blank" rel="noopener" href="https://www.w3.org/standards/history/REC-rdf-syntax/?utm_source=chatgpt.com" title="Resource Description Framework (RDF) Model and Syntax Specification publication history | Standards | W3C">W3C</a>)</p>
+<p>RDF 最重要的思想非常简单：</p>
+<blockquote>
+<p><strong>一切知识都可以表达成 Subject–Predicate–Object。</strong></p>
+</blockquote>
+<p>也就是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">主语 → 谓语 → 宾语</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">张三 → 就职于 → ABC公司</span><br><span class="line"></span><br><span class="line">ABC公司 → 位于 → 上海</span><br><span class="line"></span><br><span class="line">张三 → 担任 → 数据总监</span><br></pre></td></tr></table></figure>
+
+<p>转换成图结构：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">张三</span><br><span class="line"> │</span><br><span class="line"> └── 就职于 → ABC公司</span><br><span class="line">                │</span><br><span class="line">                └── 位于 → 上海</span><br></pre></td></tr></table></figure>
+
+<p>这和传统关系数据库最大的区别之一是：</p>
+<h3 id="数据库关注："><a href="#数据库关注：" class="headerlink" title="数据库关注："></a>数据库关注：</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Table</span><br><span class="line">Row</span><br><span class="line">Column</span><br></pre></td></tr></table></figure>
+
+<h3 id="RDF关注："><a href="#RDF关注：" class="headerlink" title="RDF关注："></a>RDF关注：</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Entity</span><br><span class="line">Relationship</span><br><span class="line">Meaning</span><br></pre></td></tr></table></figure>
+
+<p>这成为后来 Knowledge Graph 和 Enterprise Ontology 的重要基础。</p>
+<hr>
+<h1 id="七、OWL：让机器不仅“看到关系”，还可以“推理”"><a href="#七、OWL：让机器不仅“看到关系”，还可以“推理”" class="headerlink" title="七、OWL：让机器不仅“看到关系”，还可以“推理”"></a>七、OWL：让机器不仅“看到关系”，还可以“推理”</h1><p>RDF 解决了：</p>
+<blockquote>
+<p>如何表达关系？</p>
+</blockquote>
+<p>但还不够。</p>
+<p>例如我们定义：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Person</span><br><span class="line">Employee</span><br><span class="line">Company</span><br></pre></td></tr></table></figure>
+
+<p>并定义：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Employee ⊆ Person</span><br></pre></td></tr></table></figure>
+
+<p>那么如果：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">张三 is Employee</span><br></pre></td></tr></table></figure>
+
+<p>机器应该能够推断：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">张三 is Person</span><br></pre></td></tr></table></figure>
+
+<p>再比如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">每个 Employee 都必须属于一个 Company</span><br></pre></td></tr></table></figure>
+
+<p>这就已经涉及：</p>
+<blockquote>
+<p><strong>逻辑、约束和推理。</strong></p>
+</blockquote>
+<p>于是出现了：</p>
+<h1 id="OWL"><a href="#OWL" class="headerlink" title="OWL"></a>OWL</h1><p>Web Ontology Language。</p>
+<p>2004 年 OWL 成为 W3C Recommendation；2009 年又形成 OWL 2，2012 年完成第二版相关 Recommendation。(<a target="_blank" rel="noopener" href="https://www.w3.org/standards/history/owl-semantics/?utm_source=chatgpt.com" title="OWL Web Ontology Language Semantics and Abstract Syntax publication history | Standards | W3C">W3C</a>)</p>
+<p>这一步非常关键。</p>
+<p>因为从这里开始：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Ontology</span><br></pre></td></tr></table></figure>
+
+<p>不再只是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">词汇表</span><br></pre></td></tr></table></figure>
+
+<p>而开始具备：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">概念</span><br><span class="line">+</span><br><span class="line">关系</span><br><span class="line">+</span><br><span class="line">属性</span><br><span class="line">+</span><br><span class="line">约束</span><br><span class="line">+</span><br><span class="line">逻辑</span><br><span class="line">+</span><br><span class="line">推理</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="八、这一阶段形成了一套完整技术栈"><a href="#八、这一阶段形成了一套完整技术栈" class="headerlink" title="八、这一阶段形成了一套完整技术栈"></a>八、这一阶段形成了一套完整技术栈</h1><p>可以把 Semantic Web 时代的技术栈理解成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">  Ontology</span><br><span class="line">     │</span><br><span class="line">    OWL</span><br><span class="line">     │</span><br><span class="line">    RDF</span><br><span class="line">     │</span><br><span class="line">  SPARQL</span><br><span class="line">     │</span><br><span class="line">Triple Store</span><br></pre></td></tr></table></figure>
+
+<p>其中：</p>
+<table>
+<thead>
+<tr>
+<th>技术</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RDF</td>
+<td>表达知识</td>
+</tr>
+<tr>
+<td>RDFS</td>
+<td>定义类、属性和层次关系</td>
+</tr>
+<tr>
+<td>OWL</td>
+<td>表达复杂语义和逻辑</td>
+</tr>
+<tr>
+<td>SPARQL</td>
+<td>查询 RDF 图</td>
+</tr>
+<tr>
+<td>Reasoner</td>
+<td>根据规则进行推理</td>
+</tr>
+<tr>
+<td>Triple Store</td>
+<td>存储 RDF 三元组</td>
+</tr>
+<tr>
+<td>Protégé</td>
+<td>创建和维护 Ontology</td>
+</tr>
+</tbody></table>
+<p>这时已经形成了真正意义上的：</p>
+<blockquote>
+<p><strong>Ontology Engineering 技术体系。</strong></p>
+</blockquote>
+<hr>
+<h1 id="九、第三阶段：Ontology-Knowledge-Graph"><a href="#九、第三阶段：Ontology-Knowledge-Graph" class="headerlink" title="九、第三阶段：Ontology + Knowledge Graph"></a>九、第三阶段：Ontology + Knowledge Graph</h1><h3 id="时间：2000s～2010s"><a href="#时间：2000s～2010s" class="headerlink" title="时间：2000s～2010s"></a>时间：2000s～2010s</h3><p>Semantic Web 并没有完全按照最初设想成为整个互联网的统一语义基础设施。</p>
+<p>但其中非常重要的一部分技术留下来了：</p>
+<blockquote>
+<p><strong>Knowledge Graph</strong></p>
+</blockquote>
+<p>Google 在 2012 年推出 Knowledge Graph 后，这个概念开始进入大众视野。</p>
+<p>此后大量公司开始使用：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Ontology</span><br><span class="line">+</span><br><span class="line">Knowledge Graph</span><br><span class="line">+</span><br><span class="line">Entity Resolution</span><br><span class="line">+</span><br><span class="line">Reasoning</span><br></pre></td></tr></table></figure>
+
+<p>解决：</p>
+<ul>
+<li>搜索</li>
+<li>推荐</li>
+<li>风控</li>
+<li>医疗</li>
+<li>金融</li>
+<li>供应链</li>
+<li>企业知识管理</li>
+</ul>
+<p>等问题。</p>
+<p>这一阶段的核心变化是：</p>
+<blockquote>
+<p><strong>Ontology 从“知识模型”逐渐变成“知识图谱的数据模型”。</strong></p>
+</blockquote>
+<hr>
+<h1 id="十、Ontology-和-Knowledge-Graph-到底是什么关系？"><a href="#十、Ontology-和-Knowledge-Graph-到底是什么关系？" class="headerlink" title="十、Ontology 和 Knowledge Graph 到底是什么关系？"></a>十、Ontology 和 Knowledge Graph 到底是什么关系？</h1><p>这个问题非常重要。</p>
+<p>可以简单理解：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Ontology</span><br><span class="line">    ↓</span><br><span class="line">定义“世界应该怎样被理解”</span><br><span class="line">    </span><br><span class="line">Knowledge Graph</span><br><span class="line">    ↓</span><br><span class="line">存放“这个世界里实际发生了什么”</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<p>Ontology 定义：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Product</span><br><span class="line">Supplier</span><br><span class="line">Factory</span><br><span class="line"></span><br><span class="line">Product ── suppliedBy ── Supplier</span><br><span class="line">Product ── producedAt ── Factory</span><br></pre></td></tr></table></figure>
+
+<p>Knowledge Graph 存：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">P001</span><br><span class="line"> ├── suppliedBy → S001</span><br><span class="line"> └── producedAt → Factory-A</span><br></pre></td></tr></table></figure>
+
+<p>所以：</p>
+<blockquote>
+<p><strong>Ontology 是 Knowledge Graph 的语义模型，Knowledge Graph 是 Ontology 所描述世界的一组实例化知识。</strong></p>
+</blockquote>
+<p>当然，工业界实际产品中的两者边界并没有这么严格，有些产品把 Ontology、Knowledge Graph、Semantic Layer 混合在一起提供。</p>
+<hr>
+<h1 id="十一、这一阶段出现了一批重要公司和工具"><a href="#十一、这一阶段出现了一批重要公司和工具" class="headerlink" title="十一、这一阶段出现了一批重要公司和工具"></a>十一、这一阶段出现了一批重要公司和工具</h1><h2 id="1-Stanford-Protege"><a href="#1-Stanford-Protege" class="headerlink" title="1. Stanford Protégé"></a>1. Stanford Protégé</h2><p>继续成为最重要的 Ontology 建模工具之一。</p>
+<hr>
+<h2 id="2-Apache-Jena"><a href="#2-Apache-Jena" class="headerlink" title="2. Apache Jena"></a>2. Apache Jena</h2><p>Apache Jena</p>
+<p>Jena 最早由 HP Labs 在 2000 年左右开发，后来进入 Apache，并在 2012 年成为 Apache 顶级项目。</p>
+<p>它提供：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">RDF</span><br><span class="line">RDFS</span><br><span class="line">OWL</span><br><span class="line">SPARQL</span><br><span class="line">Reasoning</span><br><span class="line">Triple Store</span><br></pre></td></tr></table></figure>
+
+<p>等能力。(<a target="_blank" rel="noopener" href="https://jena.apache.org/about_jena/?utm_source=chatgpt.com" title="Apache Jena - Welcome to Apache Jena">Apache Jena</a>)</p>
+<p>因此它更像是：</p>
+<blockquote>
+<p><strong>构建 Semantic Web / Knowledge Graph 应用的开发框架。</strong></p>
+</blockquote>
+<hr>
+<h2 id="3-Ontotext-GraphDB"><a href="#3-Ontotext-GraphDB" class="headerlink" title="3. Ontotext GraphDB"></a>3. Ontotext GraphDB</h2><p>Ontotext 的 GraphDB 是典型 RDF Graph Database。</p>
+<p>它支持：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">RDF</span><br><span class="line">SPARQL</span><br><span class="line">OWL</span><br><span class="line">Inference</span><br><span class="line">Reasoning</span><br></pre></td></tr></table></figure>
+
+<p>并可以通过推理规则从已有知识中产生新的事实。(<a target="_blank" rel="noopener" href="https://graphdb.ontotext.com/documentation/10.4/?utm_source=chatgpt.com" title="What is GraphDB? — GraphDB 10.4 documentation">GraphDB</a>)</p>
+<hr>
+<h2 id="4-Stardog"><a href="#4-Stardog" class="headerlink" title="4. Stardog"></a>4. Stardog</h2><p>Stardog</p>
+<p>Stardog 更进一步，把：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Ontology</span><br><span class="line">+</span><br><span class="line">Knowledge Graph</span><br><span class="line">+</span><br><span class="line">Virtualization</span><br><span class="line">+</span><br><span class="line">Reasoning</span><br></pre></td></tr></table></figure>
+
+<p>组合成 Enterprise Knowledge Graph。</p>
+<p>它强调：</p>
+<blockquote>
+<p>不要求企业把所有数据搬到一个地方，而是根据语义把分散数据连接起来。</p>
+</blockquote>
+<p>这已经开始接近今天企业 Data Fabric / Semantic Layer 的思路。(<a target="_blank" rel="noopener" href="https://www.stardog.com/learn-stardog/?utm_source=chatgpt.com" title="Learn Stardog | Stardog">Stardog Union</a>)</p>
+<hr>
+<h1 id="十二、第四阶段：从-Knowledge-Graph-走向-Enterprise-Ontology"><a href="#十二、第四阶段：从-Knowledge-Graph-走向-Enterprise-Ontology" class="headerlink" title="十二、第四阶段：从 Knowledge Graph 走向 Enterprise Ontology"></a>十二、第四阶段：从 Knowledge Graph 走向 Enterprise Ontology</h1><h3 id="时间：2010s～2020s"><a href="#时间：2010s～2020s" class="headerlink" title="时间：2010s～2020s"></a>时间：2010s～2020s</h3><p>这一步是今天企业最值得关注的变化。</p>
+<p>传统 Knowledge Graph 往往关注：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">知识</span><br><span class="line">实体</span><br><span class="line">关系</span><br><span class="line">查询</span><br><span class="line">推理</span><br></pre></td></tr></table></figure>
+
+<p>但是企业真正的问题远远不止这些。</p>
+<p>企业需要回答：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">客户是谁？</span><br><span class="line">订单是什么？</span><br><span class="line">订单属于哪个客户？</span><br><span class="line"></span><br><span class="line">库存在哪里？</span><br><span class="line">为什么库存不足？</span><br><span class="line"></span><br><span class="line">哪个供应商负责这个物料？</span><br><span class="line"></span><br><span class="line">哪个工厂生产这个产品？</span><br><span class="line"></span><br><span class="line">这个订单出现问题以后应该怎么办？</span><br></pre></td></tr></table></figure>
+
+<p>于是 Ontology 开始从：</p>
+<blockquote>
+<p><strong>Knowledge Representation</strong></p>
+</blockquote>
+<p>逐渐走向：</p>
+<blockquote>
+<p><strong>Enterprise Semantic Model</strong></p>
+</blockquote>
+<p>也就是：</p>
+<h1 id="企业世界模型"><a href="#企业世界模型" class="headerlink" title="企业世界模型"></a>企业世界模型</h1><hr>
+<h1 id="十三、Palantir-是这个阶段最有代表性的公司"><a href="#十三、Palantir-是这个阶段最有代表性的公司" class="headerlink" title="十三、Palantir 是这个阶段最有代表性的公司"></a>十三、Palantir 是这个阶段最有代表性的公司</h1><p>如果说 Semantic Web 阶段的代表是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">W3C</span><br><span class="line">Stanford</span><br><span class="line">Protégé</span><br><span class="line">HP</span><br></pre></td></tr></table></figure>
+
+<p>那么 Enterprise Ontology 阶段最值得关注的公司之一就是：</p>
+<h1 id="Palantir"><a href="#Palantir" class="headerlink" title="Palantir"></a>Palantir</h1><p>Palantir Technologies</p>
+<p>Palantir 的 Ontology 和传统 OWL Ontology 有明显区别。</p>
+<p>它不只是描述：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Class</span><br><span class="line">Property</span><br><span class="line">Relationship</span><br></pre></td></tr></table></figure>
+
+<p>而是进一步描述：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Object</span><br><span class="line">Link</span><br><span class="line">Action</span><br><span class="line">Logic</span><br><span class="line">Security</span><br></pre></td></tr></table></figure>
+
+<p>Palantir 将 Ontology 放在 Foundry 的核心位置，把 ERP、MES、CRM、传感器等数据映射成现实世界中的对象，例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Factory</span><br><span class="line">Machine</span><br><span class="line">Product</span><br><span class="line">Customer</span><br><span class="line">Order</span><br><span class="line">Employee</span><br></pre></td></tr></table></figure>
+
+<p>然后通过关系连接这些对象。(<a target="_blank" rel="noopener" href="https://www.palantir.com/docs/foundry/architecture-center/overview?utm_source=chatgpt.com" title="Overview • Architecture center • Palantir">Palantir</a>)</p>
+<hr>
+<h1 id="十四、Palantir-的关键变化：Ontology-从“名词”走向“动词”"><a href="#十四、Palantir-的关键变化：Ontology-从“名词”走向“动词”" class="headerlink" title="十四、Palantir 的关键变化：Ontology 从“名词”走向“动词”"></a>十四、Palantir 的关键变化：Ontology 从“名词”走向“动词”</h1><p>这是企业 Ontology 非常重要的一次升级。</p>
+<p>传统 Ontology：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Product</span><br><span class="line">Supplier</span><br><span class="line">Order</span><br><span class="line"></span><br><span class="line">Product ── suppliedBy ── Supplier</span><br><span class="line">Order ── contains ── Product</span><br></pre></td></tr></table></figure>
+
+<p>它解决：</p>
+<blockquote>
+<p>世界是什么？</p>
+</blockquote>
+<p>Palantir进一步加入：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Action</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">PurchaseOrder</span><br><span class="line">    ↓</span><br><span class="line">cancel()</span><br><span class="line"></span><br><span class="line">ProductionOrder</span><br><span class="line">    ↓</span><br><span class="line">reschedule()</span><br><span class="line"></span><br><span class="line">Inventory</span><br><span class="line">    ↓</span><br><span class="line">transfer()</span><br><span class="line"></span><br><span class="line">Supplier</span><br><span class="line">    ↓</span><br><span class="line">block()</span><br></pre></td></tr></table></figure>
+
+<p>于是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Object = 名词</span><br><span class="line">Action = 动词</span><br></pre></td></tr></table></figure>
+
+<p>整个企业开始可以表达成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">对象</span><br><span class="line"> +</span><br><span class="line">关系</span><br><span class="line"> +</span><br><span class="line">业务逻辑</span><br><span class="line"> +</span><br><span class="line">动作</span><br></pre></td></tr></table></figure>
+
+<p>Palantir 官方现在将其 Ontology 描述为同时整合：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Data</span><br><span class="line">Logic</span><br><span class="line">Action</span><br><span class="line">Security</span><br></pre></td></tr></table></figure>
+
+<p>的企业决策系统。(<a target="_blank" rel="noopener" href="https://www.palantir.com/docs/foundry/ontology/why-ontology?utm_source=chatgpt.com" title="Why create an Ontology? • Palantir">Palantir</a>)</p>
+<p>这已经和传统 OWL Ontology 有了非常明显的产品形态差异。</p>
+<hr>
+<h1 id="十五、第五阶段：Ontology-开始成为-AI-的“世界模型”"><a href="#十五、第五阶段：Ontology-开始成为-AI-的“世界模型”" class="headerlink" title="十五、第五阶段：Ontology 开始成为 AI 的“世界模型”"></a>十五、第五阶段：Ontology 开始成为 AI 的“世界模型”</h1><h3 id="时间：2020s～"><a href="#时间：2020s～" class="headerlink" title="时间：2020s～"></a>时间：2020s～</h3><p>生成式 AI 出现以后，Ontology 又迎来了新的价值。</p>
+<p>LLM 最大的问题之一是：</p>
+<blockquote>
+<p><strong>它知道大量通用知识，但并不知道你的企业到底是什么。</strong></p>
+</blockquote>
+<p>例如用户问：</p>
+<blockquote>
+<p>“为什么 A 工厂本月 OEE 下降？”</p>
+</blockquote>
+<p>LLM需要知道：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">A工厂</span><br><span class="line"> ↓</span><br><span class="line">生产线</span><br><span class="line"> ↓</span><br><span class="line">设备</span><br><span class="line"> ↓</span><br><span class="line">工单</span><br><span class="line"> ↓</span><br><span class="line">产品</span><br><span class="line"> ↓</span><br><span class="line">产量</span><br><span class="line"> ↓</span><br><span class="line">设备运行时间</span><br><span class="line"> ↓</span><br><span class="line">停机原因</span><br></pre></td></tr></table></figure>
+
+<p>还要知道：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OEE = Availability × Performance × Quality</span><br></pre></td></tr></table></figure>
+
+<p>以及：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">哪些设备属于这个工厂？</span><br><span class="line">哪些工单在这个生产线？</span><br><span class="line">哪些数据可信？</span><br><span class="line">谁有权限查看？</span><br></pre></td></tr></table></figure>
+
+<p>这时单纯 RAG 并不一定足够。</p>
+<p>因为 RAG 擅长的是：</p>
+<blockquote>
+<p><strong>找到相关文本。</strong></p>
+</blockquote>
+<p>而 Ontology 更擅长：</p>
+<blockquote>
+<p><strong>定义企业世界中的对象、关系、属性、规则和动作。</strong></p>
+</blockquote>
+<hr>
+<h1 id="十六、因此-AI-时代出现了新的组合"><a href="#十六、因此-AI-时代出现了新的组合" class="headerlink" title="十六、因此 AI 时代出现了新的组合"></a>十六、因此 AI 时代出现了新的组合</h1><p>现在逐渐形成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">          AI Agent</span><br><span class="line">              │</span><br><span class="line">    ┌─────────┴─────────┐</span><br><span class="line">    │                   │</span><br><span class="line">Knowledge            Ontology</span><br><span class="line">  / RAG                  │</span><br><span class="line">    │                    │</span><br><span class="line">    └─────────┬──────────┘</span><br><span class="line">              │</span><br><span class="line">       Enterprise Data</span><br><span class="line">              │</span><br><span class="line">   ┌──────────┼──────────┐</span><br><span class="line">  ERP         MES        CRM</span><br></pre></td></tr></table></figure>
+
+<p>其中：</p>
+<h3 id="RAG"><a href="#RAG" class="headerlink" title="RAG"></a>RAG</h3><p>解决：</p>
+<blockquote>
+<p>“相关知识在哪里？”</p>
+</blockquote>
+<h3 id="Knowledge-Graph"><a href="#Knowledge-Graph" class="headerlink" title="Knowledge Graph"></a>Knowledge Graph</h3><p>解决：</p>
+<blockquote>
+<p>“实体之间有什么关系？”</p>
+</blockquote>
+<h3 id="Ontology"><a href="#Ontology" class="headerlink" title="Ontology"></a>Ontology</h3><p>解决：</p>
+<blockquote>
+<p>“这些实体和关系在业务世界里究竟意味着什么？”</p>
+</blockquote>
+<h3 id="Semantic-Layer"><a href="#Semantic-Layer" class="headerlink" title="Semantic Layer"></a>Semantic Layer</h3><p>解决：</p>
+<blockquote>
+<p>“企业如何用统一的业务语义访问数据？”</p>
+</blockquote>
+<h3 id="Agent"><a href="#Agent" class="headerlink" title="Agent"></a>Agent</h3><p>解决：</p>
+<blockquote>
+<p>“基于这些语义，如何进行推理和执行？”</p>
+</blockquote>
+<hr>
+<h1 id="十七、所以-Ontology-的发展实际上经历了五次变化"><a href="#十七、所以-Ontology-的发展实际上经历了五次变化" class="headerlink" title="十七、所以 Ontology 的发展实际上经历了五次变化"></a>十七、所以 Ontology 的发展实际上经历了五次变化</h1><p>可以把整个发展过程浓缩成一张图：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">1980s</span><br><span class="line">知识表示</span><br><span class="line">   │</span><br><span class="line">   ▼</span><br><span class="line">专家系统</span><br><span class="line">Knowledge Representation</span><br><span class="line">   │</span><br><span class="line">   ▼</span><br><span class="line">1990s</span><br><span class="line">Ontology</span><br><span class="line">概念 + 关系 + 规则</span><br><span class="line">   │</span><br><span class="line">   ▼</span><br><span class="line">2000s</span><br><span class="line">Semantic Web</span><br><span class="line">RDF + OWL + SPARQL</span><br><span class="line">   │</span><br><span class="line">   ▼</span><br><span class="line">2010s</span><br><span class="line">Knowledge Graph</span><br><span class="line">实体 + 关系 + 推理</span><br><span class="line">   │</span><br><span class="line">   ▼</span><br><span class="line">2010s～2020s</span><br><span class="line">Enterprise Ontology</span><br><span class="line">企业对象 + 业务语义</span><br><span class="line">   │</span><br><span class="line">   ▼</span><br><span class="line">2020s～</span><br><span class="line">AI / Agent Ontology</span><br><span class="line">对象 + 关系 + 逻辑 + Action</span><br><span class="line">   │</span><br><span class="line">   ▼</span><br><span class="line">Enterprise AI Operating Layer</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="十八、不同阶段解决的问题其实不一样"><a href="#十八、不同阶段解决的问题其实不一样" class="headerlink" title="十八、不同阶段解决的问题其实不一样"></a>十八、不同阶段解决的问题其实不一样</h1><table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>核心问题</th>
+<th>主要技术</th>
+<th>代表</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>知识表示</td>
+<td>如何让机器表示知识</td>
+<td>Frame、Semantic Network、Logic</td>
+<td>Stanford、AI研究机构</td>
+</tr>
+<tr>
+<td>Ontology</td>
+<td>如何定义共享概念</td>
+<td>Ontology、Description Logic</td>
+<td>Gruber、Protégé</td>
+</tr>
+<tr>
+<td>Semantic Web</td>
+<td>如何让 Web 数据具备语义</td>
+<td>RDF、OWL、SPARQL</td>
+<td>W3C</td>
+</tr>
+<tr>
+<td>Knowledge Graph</td>
+<td>如何连接实体和知识</td>
+<td>Graph、Inference</td>
+<td>Google、Neo4j、Ontotext</td>
+</tr>
+<tr>
+<td>Enterprise KG</td>
+<td>如何连接企业异构数据</td>
+<td>KG、Virtualization、Ontology</td>
+<td>Stardog、Ontotext</td>
+</tr>
+<tr>
+<td>Enterprise Ontology</td>
+<td>如何描述企业业务世界</td>
+<td>Object、Link、Action</td>
+<td>Palantir</td>
+</tr>
+<tr>
+<td>AI Ontology</td>
+<td>如何让 AI 理解企业世界</td>
+<td>Ontology + LLM + Agent</td>
+<td>Palantir、Stardog 等</td>
+</tr>
+</tbody></table>
+<hr>
+<h1 id="十九、几个容易混淆的概念"><a href="#十九、几个容易混淆的概念" class="headerlink" title="十九、几个容易混淆的概念"></a>十九、几个容易混淆的概念</h1><p>到了今天，这几个词经常混在一起：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Ontology</span><br><span class="line">Knowledge Graph</span><br><span class="line">Graph Database</span><br><span class="line">Semantic Layer</span><br><span class="line">Data Catalog</span><br><span class="line">Knowledge Base</span><br><span class="line">RAG</span><br><span class="line">Data Fabric</span><br></pre></td></tr></table></figure>
+
+<p>实际上它们解决的问题不同。</p>
+<h3 id="Graph-Database"><a href="#Graph-Database" class="headerlink" title="Graph Database"></a>Graph Database</h3><p>重点是：</p>
+<blockquote>
+<p><strong>怎么存和查询关系。</strong></p>
+</blockquote>
+<p>例如 Neo4j。</p>
+<hr>
+<h3 id="Knowledge-Graph-1"><a href="#Knowledge-Graph-1" class="headerlink" title="Knowledge Graph"></a>Knowledge Graph</h3><p>重点是：</p>
+<blockquote>
+<p><strong>把现实世界的实体和关系组织起来。</strong></p>
+</blockquote>
+<hr>
+<h3 id="Ontology-1"><a href="#Ontology-1" class="headerlink" title="Ontology"></a>Ontology</h3><p>重点是：</p>
+<blockquote>
+<p><strong>定义这些实体、关系和规则的业务语义。</strong></p>
+</blockquote>
+<hr>
+<h3 id="Semantic-Layer-1"><a href="#Semantic-Layer-1" class="headerlink" title="Semantic Layer"></a>Semantic Layer</h3><p>重点是：</p>
+<blockquote>
+<p><strong>给分析、BI、AI提供统一的业务语义访问层。</strong></p>
+</blockquote>
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">销售额</span><br><span class="line">客户</span><br><span class="line">订单</span><br><span class="line">毛利</span><br><span class="line">库存周转率</span><br></pre></td></tr></table></figure>
+
+<p>这些业务概念背后应该对应哪些数据、指标和计算逻辑。</p>
+<hr>
+<h3 id="Data-Catalog"><a href="#Data-Catalog" class="headerlink" title="Data Catalog"></a>Data Catalog</h3><p>重点是：</p>
+<blockquote>
+<p><strong>告诉你企业有哪些数据资产，以及它们在哪里、谁负责、质量如何。</strong></p>
+</blockquote>
+<hr>
+<h3 id="RAG-1"><a href="#RAG-1" class="headerlink" title="RAG"></a>RAG</h3><p>重点是：</p>
+<blockquote>
+<p><strong>从知识库中找到与当前问题相关的上下文。</strong></p>
+</blockquote>
+<hr>
+<h1 id="二十、一个制造企业的例子"><a href="#二十、一个制造企业的例子" class="headerlink" title="二十、一个制造企业的例子"></a>二十、一个制造企业的例子</h1><p>假设企业有：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ERP</span><br><span class="line">MES</span><br><span class="line">WMS</span><br><span class="line">SRM</span><br><span class="line">CRM</span><br></pre></td></tr></table></figure>
+
+<p>传统数据仓库：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ERP ─┐</span><br><span class="line">MES ─┤</span><br><span class="line">WMS ─┼──&gt; Data Warehouse ──&gt; BI</span><br><span class="line">SRM ─┤</span><br><span class="line">CRM ─┘</span><br></pre></td></tr></table></figure>
+
+<p>解决的是：</p>
+<blockquote>
+<p>把数据统一起来。</p>
+</blockquote>
+<p>但是到了企业 Ontology：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">     Enterprise Ontology</span><br><span class="line"></span><br><span class="line">        Product</span><br><span class="line">       /       \</span><br><span class="line">  suppliedBy   producedAt</span><br><span class="line">     /           \</span><br><span class="line">Supplier       Factory</span><br><span class="line">                   │</span><br><span class="line">                contains</span><br><span class="line">                   ↓</span><br><span class="line">                Machine</span><br><span class="line">                   │</span><br><span class="line">                executes</span><br><span class="line">                   ↓</span><br><span class="line">                Process</span><br><span class="line">                   │</span><br><span class="line">                generates</span><br><span class="line">                   ↓</span><br><span class="line">               Production</span><br><span class="line">                  Order</span><br></pre></td></tr></table></figure>
+
+<p>然后把数据映射进去：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">ERP.material</span><br><span class="line">       ↓</span><br><span class="line">    Product</span><br><span class="line"></span><br><span class="line">SRM.supplier</span><br><span class="line">       ↓</span><br><span class="line">    Supplier</span><br><span class="line"></span><br><span class="line">MES.device</span><br><span class="line">       ↓</span><br><span class="line">    Machine</span><br><span class="line"></span><br><span class="line">MES.workorder</span><br><span class="line">       ↓</span><br><span class="line"> ProductionOrder</span><br></pre></td></tr></table></figure>
+
+<p>这样 AI 问：</p>
+<blockquote>
+<p>“最近哪些产品存在供应风险？”</p>
+</blockquote>
+<p>就不需要只理解几十张表。</p>
+<p>它可以沿着：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Product</span><br><span class="line"> ↓</span><br><span class="line">Supplier</span><br><span class="line"> ↓</span><br><span class="line">Purchase Order</span><br><span class="line"> ↓</span><br><span class="line">Inventory</span><br><span class="line"> ↓</span><br><span class="line">Production Order</span><br></pre></td></tr></table></figure>
+
+<p>理解整个业务链路。</p>
+<p>如果进一步加入 Action：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Supplier</span><br><span class="line">    ↓</span><br><span class="line">风险评分</span><br><span class="line">    ↓</span><br><span class="line">触发采购策略</span><br><span class="line">    ↓</span><br><span class="line">生成替代供应商方案</span><br><span class="line">    ↓</span><br><span class="line">修改采购订单</span><br></pre></td></tr></table></figure>
+
+<p>Ontology 就从：</p>
+<blockquote>
+<p><strong>描述企业</strong></p>
+</blockquote>
+<p>逐渐变成：</p>
+<blockquote>
+<p><strong>驱动企业运行。</strong></p>
+</blockquote>
+<p>这正是 Palantir 今天强调的方向。(<a target="_blank" rel="noopener" href="https://www.palantir.com/explore/platforms/foundry/ontology/?utm_source=chatgpt.com" title="Palantir Foundry Ontology">Palantir</a>)</p>
+<hr>
+<h1 id="二十一、今天-Ontology-最重要的变化"><a href="#二十一、今天-Ontology-最重要的变化" class="headerlink" title="二十一、今天 Ontology 最重要的变化"></a>二十一、今天 Ontology 最重要的变化</h1><p>我认为今天最值得关注的并不是：</p>
+<blockquote>
+<p>“企业要不要建设一个 OWL Ontology？”</p>
+</blockquote>
+<p>而是：</p>
+<blockquote>
+<p><strong>企业是否需要建立一套机器可理解的企业业务世界模型。</strong></p>
+</blockquote>
+<p>这两个问题完全不同。</p>
+<p>传统 Ontology 工程更关注：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Class</span><br><span class="line">Property</span><br><span class="line">Relation</span><br><span class="line">Axiom</span><br><span class="line">Reasoning</span><br></pre></td></tr></table></figure>
+
+<p>现代 Enterprise Ontology 则开始关注：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Business Object</span><br><span class="line">Business Relationship</span><br><span class="line">Metric</span><br><span class="line">Business Rule</span><br><span class="line">Decision</span><br><span class="line">Action</span><br><span class="line">Workflow</span><br><span class="line">Permission</span><br><span class="line">Data Mapping</span><br><span class="line">API</span><br><span class="line">Agent Tool</span><br></pre></td></tr></table></figure>
+
+<p>这也是为什么今天 Palantir 的 Ontology 和十几年前 Semantic Web 领域讨论的 Ontology，看起来已经不是同一个产品形态。</p>
+<p>但底层思想其实是一脉相承的：</p>
+<blockquote>
+<p><strong>把人对世界的理解显式建模，让机器能够利用这些语义进行计算、推理和行动。</strong></p>
+</blockquote>
+<hr>
+<h1 id="二十二、今天值得关注的公司和工具"><a href="#二十二、今天值得关注的公司和工具" class="headerlink" title="二十二、今天值得关注的公司和工具"></a>二十二、今天值得关注的公司和工具</h1><p>如果站在企业技术选型的角度，可以把相关生态分成几类。</p>
+<h3 id="①-Ontology-建模"><a href="#①-Ontology-建模" class="headerlink" title="① Ontology 建模"></a>① Ontology 建模</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://protege.stanford.edu/?utm_source=chatgpt.com">Protégé</a></li>
+<li>WebProtégé</li>
+<li>TopBraid</li>
+<li>PoolParty</li>
+</ul>
+<p>Protégé仍然是学习和验证 OWL Ontology 最值得使用的工具之一。(<a target="_blank" rel="noopener" href="https://protege.stanford.edu/software/?utm_source=chatgpt.com" title="Software - Protégé">Protégé</a>)</p>
+<hr>
+<h3 id="②-Semantic-Web-RDF"><a href="#②-Semantic-Web-RDF" class="headerlink" title="② Semantic Web / RDF"></a>② Semantic Web / RDF</h3><ul>
+<li>Apache Jena</li>
+<li>RDF4J</li>
+<li>Eclipse RDF4J</li>
+<li>Apache Fuseki</li>
+</ul>
+<p>Apache Jena目前仍然提供 RDF、OWL、SPARQL、推理等完整能力。(<a target="_blank" rel="noopener" href="https://jena.apache.org/about_jena/?utm_source=chatgpt.com" title="Apache Jena - Welcome to Apache Jena">Apache Jena</a>)</p>
+<hr>
+<h3 id="③-Enterprise-Knowledge-Graph"><a href="#③-Enterprise-Knowledge-Graph" class="headerlink" title="③ Enterprise Knowledge Graph"></a>③ Enterprise Knowledge Graph</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://www.stardog.com/?utm_source=chatgpt.com">Stardog</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.ontotext.com/products/graphdb/?utm_source=chatgpt.com">Ontotext GraphDB</a></li>
+<li>Neo4j</li>
+<li>TopQuadrant</li>
+</ul>
+<p>Stardog已经明确把 Ontology、Knowledge Graph、Virtualization 和 Semantic Layer结合起来作为企业级平台。(<a target="_blank" rel="noopener" href="https://www.stardog.com/product/?utm_source=chatgpt.com" title="Product | Stardog">Stardog Union</a>)</p>
+<hr>
+<h3 id="④-Enterprise-Ontology-Operational-AI"><a href="#④-Enterprise-Ontology-Operational-AI" class="headerlink" title="④ Enterprise Ontology / Operational AI"></a>④ Enterprise Ontology / Operational AI</h3><p>最值得重点研究的是：</p>
+<h1 id="Palantir-Foundry-Ontology"><a href="#Palantir-Foundry-Ontology" class="headerlink" title="Palantir Foundry Ontology"></a>Palantir Foundry Ontology</h1><p>它把：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Data</span><br><span class="line">+</span><br><span class="line">Object</span><br><span class="line">+</span><br><span class="line">Relationship</span><br><span class="line">+</span><br><span class="line">Logic</span><br><span class="line">+</span><br><span class="line">Action</span><br><span class="line">+</span><br><span class="line">Security</span><br><span class="line">+</span><br><span class="line">Workflow</span><br><span class="line">+</span><br><span class="line">AI Agent</span><br></pre></td></tr></table></figure>
+
+<p>整合到一个企业运行模型中。</p>
+<p>这已经不再只是传统意义上的“知识图谱”。</p>
+<hr>
+<h1 id="二十三、一个更值得关注的趋势：Ontology-正在从“知识模型”变成“企业操作模型”"><a href="#二十三、一个更值得关注的趋势：Ontology-正在从“知识模型”变成“企业操作模型”" class="headerlink" title="二十三、一个更值得关注的趋势：Ontology 正在从“知识模型”变成“企业操作模型”"></a>二十三、一个更值得关注的趋势：Ontology 正在从“知识模型”变成“企业操作模型”</h1><p>这是我认为理解未来企业数据架构最重要的一点。</p>
+<p>过去：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">数据库</span><br><span class="line"> ↓</span><br><span class="line">数据仓库</span><br><span class="line"> ↓</span><br><span class="line">BI</span><br></pre></td></tr></table></figure>
+
+<p>解决：</p>
+<blockquote>
+<p>企业发生了什么？</p>
+</blockquote>
+<p>后来：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">数据仓库</span><br><span class="line">+</span><br><span class="line">数据治理</span><br><span class="line">+</span><br><span class="line">知识图谱</span><br></pre></td></tr></table></figure>
+
+<p>解决：</p>
+<blockquote>
+<p>企业的数据之间是什么关系？</p>
+</blockquote>
+<p>现在进一步：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Enterprise Ontology</span><br><span class="line">       │</span><br><span class="line"> ┌─────┼─────┐</span><br><span class="line"> ↓     ↓     ↓</span><br><span class="line">Data  Logic Action</span><br><span class="line"> │     │     │</span><br><span class="line"> └─────┼─────┘</span><br><span class="line">       ↓</span><br><span class="line">      Agent</span><br><span class="line">       ↓</span><br><span class="line">    Business</span><br></pre></td></tr></table></figure>
+
+<p>开始解决：</p>
+<blockquote>
+<p><strong>企业是什么？现在发生了什么？为什么？应该怎么做？谁可以做？做完之后如何影响企业？</strong></p>
+</blockquote>
+<p>这就是 Ontology 从传统知识工程走向 AI Agent 时代最大的变化。</p>
+<hr>
+<h1 id="二十四、对企业数据架构意味着什么？"><a href="#二十四、对企业数据架构意味着什么？" class="headerlink" title="二十四、对企业数据架构意味着什么？"></a>二十四、对企业数据架构意味着什么？</h1><p>结合你之前一直在研究的<strong>数据仓库 + 数据治理 + Semantic Layer + Data Agent</strong>方向，我认为可以把未来企业数据底座理解成下面这几层：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">           AI Agent / Copilot</span><br><span class="line">                   │</span><br><span class="line">                   ▼</span><br><span class="line">          Enterprise Ontology</span><br><span class="line">  ┌───────────────┼────────────────┐</span><br><span class="line">  │               │                │</span><br><span class="line">Object          Semantic          Action</span><br><span class="line">  │               │                │</span><br><span class="line">  │             Metrics            │</span><br><span class="line">  │             Terms              │</span><br><span class="line">  │             Rules              │</span><br><span class="line">  │               │                │</span><br><span class="line">  └───────────────┼────────────────┘</span><br><span class="line">                  ▼</span><br><span class="line">            Knowledge Graph</span><br><span class="line">                  │</span><br><span class="line">                  ▼</span><br><span class="line">            Data Semantic Layer</span><br><span class="line">                  │</span><br><span class="line">                  ▼</span><br><span class="line">       Data Warehouse / Lakehouse</span><br><span class="line">                  │</span><br><span class="line">       ┌──────────┼──────────┐</span><br><span class="line">       ▼          ▼          ▼</span><br><span class="line">      ERP        MES        CRM</span><br></pre></td></tr></table></figure>
+
+<p>其中：</p>
+<p><strong>数据仓库</strong>负责：</p>
+<blockquote>
+<p>把企业数据组织好。</p>
+</blockquote>
+<p><strong>数据治理</strong>负责：</p>
+<blockquote>
+<p>保证数据可信、可管、可追溯。</p>
+</blockquote>
+<p><strong>Semantic Layer</strong>负责：</p>
+<blockquote>
+<p>把技术字段转换成业务语言。</p>
+</blockquote>
+<p><strong>Ontology</strong>负责：</p>
+<blockquote>
+<p>建立企业世界中“对象—关系—规则—行为”的统一模型。</p>
+</blockquote>
+<p><strong>Knowledge Graph</strong>负责：</p>
+<blockquote>
+<p>保存和连接这些实体及关系。</p>
+</blockquote>
+<p><strong>Agent</strong>负责：</p>
+<blockquote>
+<p>利用这些语义理解问题、进行推理并执行动作。</p>
+</blockquote>
+<hr>
+<h1 id="二十五、最后：不要把-Ontology-理解成“又一个数据平台”"><a href="#二十五、最后：不要把-Ontology-理解成“又一个数据平台”" class="headerlink" title="二十五、最后：不要把 Ontology 理解成“又一个数据平台”"></a>二十五、最后：不要把 Ontology 理解成“又一个数据平台”</h1><p>如果把 Ontology 简单理解成：</p>
+<blockquote>
+<p>“知识图谱升级版”</p>
+</blockquote>
+<p>其实低估了它。</p>
+<p>更准确的理解应该是：</p>
+<blockquote>
+<p><strong>Ontology 是企业对现实业务世界的一套机器可理解的模型。</strong></p>
+</blockquote>
+<p>它的演进路径其实非常清晰：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">     人理解世界</span><br><span class="line">          ↓</span><br><span class="line">   知识表示</span><br><span class="line">          ↓</span><br><span class="line">     Ontology</span><br><span class="line">          ↓</span><br><span class="line">   Semantic Web</span><br><span class="line">          ↓</span><br><span class="line">   Knowledge Graph</span><br><span class="line">          ↓</span><br><span class="line">Enterprise Semantic Model</span><br><span class="line">          ↓</span><br><span class="line">Enterprise Ontology</span><br><span class="line">          ↓</span><br><span class="line">    AI / Agent</span><br><span class="line">          ↓</span><br><span class="line">AI 可理解、可推理、可行动的企业</span><br></pre></td></tr></table></figure>
+
+<p>因此，<strong>Ontology真正解决的长期问题并不是“如何把数据变成图”，而是如何把企业中分散在 ERP、MES、CRM、数据仓库、文档、规则和业务流程里的隐性业务认知，逐渐变成一套机器可以理解、查询、推理和执行的显式模型。</strong></p>
+<p>这也是为什么它会在 AI Agent 时代重新变得重要：过去 Ontology 的主要消费者是<strong>知识系统</strong>，而现在它的消费者开始变成<strong>AI Agent</strong>。</p>
+<p>甚至到了 2026 年，Palantir 已经把 Ontology MCP 推向 GA，使 Agent 可以通过 MCP 访问 Ontology 中的企业对象和动作，这说明 Ontology 正从传统的知识建模技术进一步走向 <strong>Agent 的企业语义与行动接口</strong>。(<a target="_blank" rel="noopener" href="https://www.palantir.com/docs/foundry/announcements/2026-06?utm_source=chatgpt.com" title="June 2026 • Announcements • Palantir">Palantir</a>)</p>
+<p><strong>从这个角度看，Ontology 很可能成为未来“数据仓库 → Semantic Layer → AI Agent”这条演进链条中的关键一层。</strong></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://itaoyuyin.com/2026/08/llm-ai-agent-harness/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -3330,72 +4049,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://itaoyuyin.com/2026/07/t-data-dev-paradigm-07/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="陶玉印">
-      <meta itemprop="description" content="陶玉印,15年数据治理与数据仓库实践者，涵盖数据治理、数据质量、数据仓库、数据平台、主数据管理、制造业数字化等领域。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="陶玉印的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2026/07/t-data-dev-paradigm-07/" class="post-title-link" itemprop="url">从开发答案到生成答案：AI 为什么会重构整个企业数据体系？</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2026-07-16 10:00:00 / 修改时间：16:49:35" itemprop="dateCreated datePublished" datetime="2026-07-16T10:00:00+08:00">2026-07-16</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>企业数据体系的发展史，本质上是一部不断降低“获取答案成本”的历史。从数据库到数据仓库，从 BI 到 ChatBI，再到今天的 Data Agent，技术形态不断变化，但企业真正追求的目标始终没有改变——如何更快、更准确、更低成本地获得经营问题的答案。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2026/07/t-data-dev-paradigm-07/">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -3465,7 +4118,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-count">29</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

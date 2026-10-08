@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://itaoyuyin.com/2026/10/ai-ontology-overview/</loc>
+    
+    <lastmod>2026-10-08</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://itaoyuyin.com/about/index.html</loc>
     
     <lastmod>2026-08-22</lastmod>
@@ -221,7 +228,7 @@
 
   <url>
     <loc>https://itaoyuyin.com/</loc>
-    <lastmod>2026-08-22</lastmod>
+    <lastmod>2026-10-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -231,21 +238,21 @@
   
   <url>
     <loc>https://itaoyuyin.com/categories/%E6%8A%80%E6%9C%AF/</loc>
-    <lastmod>2026-08-22</lastmod>
+    <lastmod>2026-10-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://itaoyuyin.com/categories/%E6%95%B0%E6%8D%AE/</loc>
-    <lastmod>2026-08-22</lastmod>
+    <lastmod>2026-10-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://itaoyuyin.com/categories/AI-Agent/</loc>
-    <lastmod>2026-08-22</lastmod>
+    <lastmod>2026-10-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
